@@ -71,49 +71,10 @@ public static class PrototypeSceneBootstrap
         Texture2D midStars = CreateStarTexture(256, 512, 90, 1, 0.25f, 0.7f);
         Texture2D nearStars = CreateStarTexture(256, 512, 170, 2, 0.45f, 1f);
 
-        CreateParallaxQuad(
-            "FarBackground",
-            camera,
-            farTexture,
-            new Color(0.82f, 0.86f, 1f, 0.9f),
-            new Vector3(0f, 0f, 26f),
-            new Vector3(layerWidth, layerHeight, 1f),
-            new Vector2(1.2f, 1.8f),
-            0.008f,
-            0.0015f);
-
-        CreateParallaxQuad(
-            "MidGlow",
-            camera,
-            farTexture,
-            new Color(0.45f, 0.55f, 0.8f, 0.22f),
-            new Vector3(0f, 0f, 24f),
-            new Vector3(layerWidth, layerHeight, 1f),
-            new Vector2(1.6f, 2.4f),
-            0.018f,
-            0.003f);
-
-        CreateParallaxQuad(
-            "MidStars",
-            camera,
-            midStars,
-            new Color(0.72f, 0.84f, 1f, 0.55f),
-            new Vector3(0f, 0f, 22f),
-            new Vector3(layerWidth, layerHeight, 1f),
-            new Vector2(1.2f, 2f),
-            0.045f,
-            0.006f);
-
-        CreateParallaxQuad(
-            "NearStars",
-            camera,
-            nearStars,
-            new Color(0.95f, 0.98f, 1f, 0.85f),
-            new Vector3(0f, 0f, 20f),
-            new Vector3(layerWidth, layerHeight, 1f),
-            new Vector2(1.5f, 2.6f),
-            0.085f,
-            0.012f);
+        CreateParallaxQuad("FarBackground", camera, farTexture, new Color(0.82f, 0.86f, 1f, 0.9f), new Vector3(0f, 0f, 26f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.2f, 1.8f), 0.008f, 0.0015f);
+        CreateParallaxQuad("MidGlow", camera, farTexture, new Color(0.45f, 0.55f, 0.8f, 0.22f), new Vector3(0f, 0f, 24f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.6f, 2.4f), 0.018f, 0.003f);
+        CreateParallaxQuad("MidStars", camera, midStars, new Color(0.72f, 0.84f, 1f, 0.55f), new Vector3(0f, 0f, 22f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.2f, 2f), 0.045f, 0.006f);
+        CreateParallaxQuad("NearStars", camera, nearStars, new Color(0.95f, 0.98f, 1f, 0.85f), new Vector3(0f, 0f, 20f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.5f, 2.6f), 0.085f, 0.012f);
 
         CreateSpaceParticles(camera, visibleWidth, visibleHeight);
     }
@@ -139,9 +100,7 @@ public static class PrototypeSceneBootstrap
         main.startLifetime = 4f;
         main.startSpeed = 0.25f;
         main.startSize = 0.08f;
-        main.startColor = new ParticleSystem.MinMaxGradient(
-            new Color(0.7f, 0.85f, 1f, 0.1f),
-            new Color(1f, 1f, 1f, 0.45f));
+        main.startColor = new ParticleSystem.MinMaxGradient(new Color(0.7f, 0.85f, 1f, 0.1f), new Color(1f, 1f, 1f, 0.45f));
         main.maxParticles = 70;
 
         var emission = particles.emission;
@@ -170,25 +129,29 @@ public static class PrototypeSceneBootstrap
         float wallHeight = visibleHeight + 2f;
         float wallZ = 14f;
 
-        GameObject leftWall = CreateSpriteObject(
-            "LeftWall",
-            camera.transform,
+        CreateWallStripe(camera.transform, sprite, "LeftWall", LeftWallX - 0.75f, wallHeight, wallZ);
+        CreateWallStripe(camera.transform, sprite, "RightWall", RightWallX + 0.75f, wallHeight, wallZ);
+    }
+
+    private static void CreateWallStripe(Transform parent, Sprite sprite, string name, float x, float height, float z)
+    {
+        GameObject glow = CreateSpriteObject(
+            name + "Glow",
+            parent,
             sprite,
-            new Color(0.92f, 0.92f, 0.98f, 1f),
-            new Vector3(0.28f, wallHeight, 1f),
-            new Vector3(LeftWallX - 0.75f, 0f, wallZ));
+            new Color(0.7f, 0.8f, 1f, 0.28f),
+            new Vector3(0.5f, height, 1f),
+            new Vector3(x, 0f, z + 0.2f));
+        glow.GetComponent<SpriteRenderer>().sortingOrder = 8;
 
-        leftWall.GetComponent<SpriteRenderer>().sortingOrder = -2;
-
-        GameObject rightWall = CreateSpriteObject(
-            "RightWall",
-            camera.transform,
+        GameObject core = CreateSpriteObject(
+            name,
+            parent,
             sprite,
-            new Color(0.92f, 0.92f, 0.98f, 1f),
-            new Vector3(0.28f, wallHeight, 1f),
-            new Vector3(RightWallX + 0.75f, 0f, wallZ));
-
-        rightWall.GetComponent<SpriteRenderer>().sortingOrder = -2;
+            new Color(0.96f, 0.97f, 1f, 1f),
+            new Vector3(0.16f, height, 1f),
+            new Vector3(x, 0f, z));
+        core.GetComponent<SpriteRenderer>().sortingOrder = 9;
     }
 
     private static GameObject CreatePlayer(Transform root, Sprite sprite)
@@ -206,14 +169,7 @@ public static class PrototypeSceneBootstrap
         collider.isTrigger = true;
         collider.size = new Vector2(0.7f, 0.7f);
 
-        GameObject body = CreateSpriteObject(
-            "Body",
-            player.transform,
-            sprite,
-            new Color(0.2f, 0.9f, 1f, 1f),
-            new Vector3(0.7f, 0.7f, 1f),
-            Vector3.zero);
-
+        GameObject body = CreateSpriteObject("Body", player.transform, sprite, new Color(0.2f, 0.9f, 1f, 1f), new Vector3(0.7f, 0.7f, 1f), Vector3.zero);
         body.GetComponent<SpriteRenderer>().sortingOrder = 2;
 
         PlayerController controller = player.AddComponent<PlayerController>();
@@ -234,14 +190,7 @@ public static class PrototypeSceneBootstrap
 
         obstacle.AddComponent<ObstacleMarker>();
 
-        GameObject body = CreateSpriteObject(
-            "Body",
-            obstacle.transform,
-            sprite,
-            new Color(1f, 0.35f, 0.35f, 1f),
-            new Vector3(0.9f, 0.9f, 1f),
-            Vector3.zero);
-
+        GameObject body = CreateSpriteObject("Body", obstacle.transform, sprite, new Color(1f, 0.35f, 0.35f, 1f), new Vector3(0.9f, 0.9f, 1f), Vector3.zero);
         body.GetComponent<SpriteRenderer>().sortingOrder = 2;
 
         return obstacle;
@@ -281,28 +230,8 @@ public static class PrototypeSceneBootstrap
 
         canvasObject.AddComponent<GraphicRaycaster>();
 
-        scoreText = CreateText(
-            canvas.transform,
-            font,
-            "ScoreText",
-            "Score: 0",
-            new Vector2(0.5f, 1f),
-            new Vector2(0.5f, 1f),
-            new Vector2(0f, -80f),
-            42,
-            Color.white);
-
-        gameOverText = CreateText(
-            canvas.transform,
-            font,
-            "GameOverText",
-            "Game Over\nTap or Press R to Restart",
-            new Vector2(0.5f, 0.5f),
-            new Vector2(0.5f, 0.5f),
-            Vector2.zero,
-            48,
-            Color.white);
-
+        scoreText = CreateText(canvas.transform, font, "ScoreText", "Score: 0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -80f), 42, Color.white);
+        gameOverText = CreateText(canvas.transform, font, "GameOverText", "Game Over\nTap or Press R to Restart", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, 48, Color.white);
         gameOverText.alignment = TextAnchor.MiddleCenter;
     }
 
@@ -328,16 +257,7 @@ public static class PrototypeSceneBootstrap
         return text;
     }
 
-    private static GameObject CreateParallaxQuad(
-        string name,
-        Camera camera,
-        Texture2D texture,
-        Color tint,
-        Vector3 localPosition,
-        Vector3 localScale,
-        Vector2 textureScale,
-        float yScrollFactor,
-        float xScrollFactor)
+    private static GameObject CreateParallaxQuad(string name, Camera camera, Texture2D texture, Color tint, Vector3 localPosition, Vector3 localScale, Vector2 textureScale, float yScrollFactor, float xScrollFactor)
     {
         GameObject quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
         quad.name = name;
