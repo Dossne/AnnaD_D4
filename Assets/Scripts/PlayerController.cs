@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float earlyUpwardSpeed = 4.5f;
     [SerializeField] private float midUpwardSpeed = 6f;
     [SerializeField] private float lateUpwardSpeed = 7.8f;
+    [SerializeField] private float speedIncreasePerSecond = 0.08f;
     [SerializeField] private float switchSpeed = 24f;
     [SerializeField] private float wallSnapDistance = 0.12f;
     [SerializeField] private float leftWallX = -2f;
@@ -80,19 +81,8 @@ public class PlayerController : MonoBehaviour
 
     private float GetCurrentUpwardSpeed()
     {
-        if (elapsedRunTime < 10f)
-        {
-            return earlyUpwardSpeed;
-        }
-
-        if (elapsedRunTime < 30f)
-        {
-            float t = Mathf.InverseLerp(10f, 30f, elapsedRunTime);
-            return Mathf.Lerp(midUpwardSpeed, midUpwardSpeed + 0.4f, t);
-        }
-
-        float lateT = Mathf.Clamp01((elapsedRunTime - 30f) / 20f);
-        return Mathf.Lerp(lateUpwardSpeed, lateUpwardSpeed + 0.6f, lateT);
+        float acceleratedSpeed = earlyUpwardSpeed + elapsedRunTime * speedIncreasePerSecond;
+        return Mathf.Min(acceleratedSpeed, lateUpwardSpeed);
     }
 
     private void SwitchSide()
