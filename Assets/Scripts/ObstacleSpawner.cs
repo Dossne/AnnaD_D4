@@ -17,16 +17,14 @@ public class ObstacleSpawner : MonoBehaviour
     private float nextSpawnY;
     private float elapsedTime;
     private bool nextSpawnOnLeft = true;
+    private int sameSideChainCount;
 
     private struct DifficultyPhase
     {
         public float spawnChance;
         public float sideChangeChance;
         public int maxChainLength;
-        public bool allowDoubleRows;
     }
-
-    private int sameSideChainCount;
 
     private void Start()
     {
@@ -70,8 +68,7 @@ public class ObstacleSpawner : MonoBehaviour
             {
                 spawnChance = 0.28f,
                 sideChangeChance = 0.12f,
-                maxChainLength = 4,
-                allowDoubleRows = false
+                maxChainLength = 4
             };
         }
 
@@ -81,8 +78,7 @@ public class ObstacleSpawner : MonoBehaviour
             {
                 spawnChance = 0.55f,
                 sideChangeChance = 0.45f,
-                maxChainLength = 2,
-                allowDoubleRows = false
+                maxChainLength = 2
             };
         }
 
@@ -90,8 +86,7 @@ public class ObstacleSpawner : MonoBehaviour
         {
             spawnChance = 0.82f,
             sideChangeChance = 0.65f,
-            maxChainLength = 2,
-            allowDoubleRows = true
+            maxChainLength = 2
         };
     }
 
@@ -133,13 +128,9 @@ public class ObstacleSpawner : MonoBehaviour
             sameSideChainCount = 0;
         }
 
+        // Safety rule: exactly one obstacle lane per row, never both walls together.
         SpawnSingle(nextSpawnOnLeft, spawnY);
         sameSideChainCount++;
-
-        if (phase.allowDoubleRows && Random.value < 0.28f)
-        {
-            SpawnSingle(!nextSpawnOnLeft, spawnY + spawnStepY * 0.45f);
-        }
     }
 
     private void SpawnSingle(bool spawnLeft, float spawnY)
