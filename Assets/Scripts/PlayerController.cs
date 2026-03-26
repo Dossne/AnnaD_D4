@@ -81,8 +81,9 @@ public class PlayerController : MonoBehaviour
 
     private float GetCurrentUpwardSpeed()
     {
+        float baseTopSpeed = Mathf.Max(midUpwardSpeed, lateUpwardSpeed);
         float acceleratedSpeed = earlyUpwardSpeed + elapsedRunTime * speedIncreasePerSecond;
-        return Mathf.Min(acceleratedSpeed, lateUpwardSpeed);
+        return Mathf.Min(acceleratedSpeed, baseTopSpeed);
     }
 
     private void SwitchSide()
@@ -110,7 +111,8 @@ public class PlayerController : MonoBehaviour
         Transform visualTarget = null,
         float midSpeed = 6f,
         float lateSpeed = 7.8f,
-        float snapDistance = 0.12f)
+        float snapDistance = 0.12f,
+        float accelerationPerSecond = 0.08f)
     {
         earlyUpwardSpeed = moveSpeed;
         switchSpeed = horizontalSwitchSpeed;
@@ -122,5 +124,6 @@ public class PlayerController : MonoBehaviour
         midUpwardSpeed = midSpeed;
         lateUpwardSpeed = lateSpeed;
         wallSnapDistance = snapDistance;
+        speedIncreasePerSecond = accelerationPerSecond;
     }
 }

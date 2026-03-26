@@ -10,11 +10,12 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private Text scoreText;
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private Text gameOverText;
-    [SerializeField] private Button restartButton;
+    [SerializeField] private Image flashOverlay;
 
     private float survivalTime;
     private bool isGameOver;
     private bool isRestarting;
+    private Coroutine flashRoutine;
 
     private void Awake()
     {
@@ -39,19 +40,15 @@ public class ScoreManager : MonoBehaviour
     {
         UpdateScoreText();
         SetGameOverPanelVisible(false);
-
-        if (restartButton != null)
-        {
-            restartButton.onClick.RemoveListener(OnRestartPressed);
-            restartButton.onClick.AddListener(OnRestartPressed);
-        }
+        SetFlashAlpha(0f);
     }
 
     private void Update()
     {
         if (isGameOver)
         {
-            if (!isRestarting && Input.GetKeyDown(KeyCode.R))
+            bool restartPressed = Input.GetMouseButtonDown(0) || Input.touchCount > 0 || Input.GetKeyDown(KeyCode.R);
+            if (!isRestarting && restartPressed)
             {
                 StartCoroutine(RestartPrototypeNextFrame());
             }
@@ -79,40 +76,27 @@ public class ScoreManager : MonoBehaviour
 
         if (gameOverText != null)
         {
-            gameOverText.text = "Game Over";
+            gameOverText.text = "GAME OVER";
         }
 
+        Camera.main?.GetComponent<CameraFollow>()?.PlayHitEffect();
+        PlayFlash();
         SetGameOverPanelVisible(true);
     }
 
-    public void Configure(PlayerController playerController, Text scoreLabel, GameObject panel, Text gameOverLabel, Button restart)
+    public void Configure(PlayerController playerController, Text scoreLabel, GameObject panel, Text gameOverLabel, Image flashImage)
     {
         player = playerController;
         scoreText = scoreLabel;
         gameOverPanel = panel;
         gameOverText = gameOverLabel;
-        restartButton = restart;
+        flashOverlay = flashImage;
         isGameOver = false;
         isRestarting = false;
         survivalTime = 0f;
         UpdateScoreText();
         SetGameOverPanelVisible(false);
-
-        if (restartButton != null)
-        {
-            restartButton.onClick.RemoveListener(OnRestartPressed);
-            restartButton.onClick.AddListener(OnRestartPressed);
-        }
-    }
-
-    public void OnRestartPressed()
-    {
-        if (!isGameOver || isRestarting)
-        {
-            return;
-        }
-
-        StartCoroutine(RestartPrototypeNextFrame());
+        SetFlashAlpha(0f);
     }
 
     private IEnumerator RestartPrototypeNextFrame()
@@ -121,6 +105,50 @@ public class ScoreManager : MonoBehaviour
         Instance = null;
         yield return null;
         PrototypeSceneBootstrap.RestartPrototype();
+    }
+
+    private void PlayFlash()
+    {
+        if (flashOverlay == null)
+        {
+            return;
+        }
+
+        if (flashRoutine != null)
+        {
+            StopCoroutine(flashRoutine);
+        }
+
+        flashRoutine = StartCoroutine(FlashRoutine());
+    }
+
+    private IEnumerator FlashRoutine()
+    {
+        float duration = 0.18f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float alpha = Mathf.Lerp(0.18f, 0f, elapsed / duration);
+            SetFlashAlpha(alpha);
+            yield return null;
+        }
+
+        SetFlashAlpha(0f);
+        flashRoutine = null;
+    }
+
+    private void SetFlashAlpha(float alpha)
+    {
+        if (flashOverlay == null)
+        {
+            return;
+        }
+
+        Color color = flashOverlay.color;
+        color.a = alpha;
+        flashOverlay.color = color;
     }
 
     private void SetGameOverPanelVisible(bool visible)
