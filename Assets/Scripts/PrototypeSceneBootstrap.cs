@@ -1,3 +1,4 @@
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -36,7 +37,7 @@ public static class PrototypeSceneBootstrap
         Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
 
         GameObject root = new GameObject("PrototypeRuntime");
-        CreateBackdrop(camera, baseSprite);
+        CreateParallaxBackdrop(camera);
         CreateWalls(camera, baseSprite);
 
         GameObject player = CreatePlayer(root.transform, baseSprite);
@@ -49,7 +50,7 @@ public static class PrototypeSceneBootstrap
         camera.orthographic = true;
         camera.orthographicSize = 8.8f;
         camera.clearFlags = CameraClearFlags.SolidColor;
-        camera.backgroundColor = new Color(0.12f, 0.12f, 0.14f, 1f);
+        camera.backgroundColor = new Color(0.05f, 0.05f, 0.1f, 1f);
         camera.transform.position = new Vector3(0f, 0f, -10f);
 
         CameraFollow follow = camera.GetComponent<CameraFollow>();
@@ -59,20 +60,108 @@ public static class PrototypeSceneBootstrap
         }
     }
 
-    private static void CreateBackdrop(Camera camera, Sprite sprite)
+    private static void CreateParallaxBackdrop(Camera camera)
     {
         float visibleHeight = camera.orthographicSize * 2f;
         float visibleWidth = visibleHeight * camera.aspect;
+        float layerWidth = visibleWidth + 2f;
+        float layerHeight = visibleHeight + 2f;
 
-        GameObject background = CreateSpriteObject(
-            "Background",
-            camera.transform,
-            sprite,
-            new Color(0.16f, 0.16f, 0.18f, 1f),
-            new Vector3(visibleWidth + 1f, visibleHeight + 1f, 1f),
-            new Vector3(0f, 0f, 15f));
+        Texture2D farTexture = LoadSpaceBackgroundTexture();
+        Texture2D midStars = CreateStarTexture(256, 512, 90, 1, 0.25f, 0.7f);
+        Texture2D nearStars = CreateStarTexture(256, 512, 170, 2, 0.45f, 1f);
 
-        background.GetComponent<SpriteRenderer>().sortingOrder = -10;
+        CreateParallaxQuad(
+            "FarBackground",
+            camera,
+            farTexture,
+            new Color(0.82f, 0.86f, 1f, 0.9f),
+            new Vector3(0f, 0f, 26f),
+            new Vector3(layerWidth, layerHeight, 1f),
+            new Vector2(1.2f, 1.8f),
+            0.008f,
+            0.0015f);
+
+        CreateParallaxQuad(
+            "MidGlow",
+            camera,
+            farTexture,
+            new Color(0.45f, 0.55f, 0.8f, 0.22f),
+            new Vector3(0f, 0f, 24f),
+            new Vector3(layerWidth, layerHeight, 1f),
+            new Vector2(1.6f, 2.4f),
+            0.018f,
+            0.003f);
+
+        CreateParallaxQuad(
+            "MidStars",
+            camera,
+            midStars,
+            new Color(0.72f, 0.84f, 1f, 0.55f),
+            new Vector3(0f, 0f, 22f),
+            new Vector3(layerWidth, layerHeight, 1f),
+            new Vector2(1.2f, 2f),
+            0.045f,
+            0.006f);
+
+        CreateParallaxQuad(
+            "NearStars",
+            camera,
+            nearStars,
+            new Color(0.95f, 0.98f, 1f, 0.85f),
+            new Vector3(0f, 0f, 20f),
+            new Vector3(layerWidth, layerHeight, 1f),
+            new Vector2(1.5f, 2.6f),
+            0.085f,
+            0.012f);
+
+        CreateSpaceParticles(camera, visibleWidth, visibleHeight);
+    }
+
+    private static void CreateSpaceParticles(Camera camera, float visibleWidth, float visibleHeight)
+    {
+        GameObject particlesObject = new GameObject("SpaceParticles");
+        particlesObject.transform.SetParent(camera.transform);
+        particlesObject.transform.localPosition = new Vector3(0f, 0f, 18f);
+
+        ParticleSystem particles = particlesObject.AddComponent<ParticleSystem>();
+        ParticleSystemRenderer renderer = particlesObject.GetComponent<ParticleSystemRenderer>();
+        renderer.material = new Material(Shader.Find("Particles/Standard Unlit"));
+        renderer.renderMode = ParticleSystemRenderMode.Billboard;
+        renderer.sortMode = ParticleSystemSortMode.Distance;
+        renderer.minParticleSize = 0.02f;
+        renderer.maxParticleSize = 0.08f;
+
+        var main = particles.main;
+        main.playOnAwake = true;
+        main.loop = true;
+        main.simulationSpace = ParticleSystemSimulationSpace.Local;
+        main.startLifetime = 4f;
+        main.startSpeed = 0.25f;
+        main.startSize = 0.08f;
+        main.startColor = new ParticleSystem.MinMaxGradient(
+            new Color(0.7f, 0.85f, 1f, 0.1f),
+            new Color(1f, 1f, 1f, 0.45f));
+        main.maxParticles = 70;
+
+        var emission = particles.emission;
+        emission.rateOverTime = 10f;
+
+        var shape = particles.shape;
+        shape.shapeType = ParticleSystemShapeType.Box;
+        shape.scale = new Vector3(visibleWidth + 2f, visibleHeight + 2f, 0.1f);
+
+        var velocityOverLifetime = particles.velocityOverLifetime;
+        velocityOverLifetime.enabled = true;
+        velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(-0.02f, 0.02f);
+        velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(-0.35f, -0.15f);
+
+        var noise = particles.noise;
+        noise.enabled = true;
+        noise.strength = 0.08f;
+        noise.frequency = 0.2f;
+
+        particles.Play();
     }
 
     private static void CreateWalls(Camera camera, Sprite sprite)
@@ -239,6 +328,37 @@ public static class PrototypeSceneBootstrap
         return text;
     }
 
+    private static GameObject CreateParallaxQuad(
+        string name,
+        Camera camera,
+        Texture2D texture,
+        Color tint,
+        Vector3 localPosition,
+        Vector3 localScale,
+        Vector2 textureScale,
+        float yScrollFactor,
+        float xScrollFactor)
+    {
+        GameObject quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        quad.name = name;
+        quad.transform.SetParent(camera.transform);
+        quad.transform.localPosition = localPosition;
+        quad.transform.localScale = localScale;
+
+        Object.Destroy(quad.GetComponent<Collider>());
+
+        MeshRenderer renderer = quad.GetComponent<MeshRenderer>();
+        renderer.material = new Material(Shader.Find("Unlit/Transparent"));
+        renderer.material.mainTexture = texture;
+        renderer.material.mainTextureScale = textureScale;
+        renderer.material.color = tint;
+
+        ParallaxMaterialScroller scroller = quad.AddComponent<ParallaxMaterialScroller>();
+        scroller.Configure(camera.transform, yScrollFactor, xScrollFactor);
+
+        return quad;
+    }
+
     private static GameObject CreateSpriteObject(string name, Transform parent, Sprite sprite, Color color, Vector3 scale, Vector3 localPosition)
     {
         GameObject gameObject = new GameObject(name);
@@ -251,6 +371,56 @@ public static class PrototypeSceneBootstrap
         renderer.color = color;
 
         return gameObject;
+    }
+
+    private static Texture2D LoadSpaceBackgroundTexture()
+    {
+        string texturePath = Path.Combine(Application.dataPath, "Art", "SpaceBackground.png");
+        if (!File.Exists(texturePath))
+        {
+            return CreateStarTexture(256, 512, 120, 1, 0.2f, 0.8f);
+        }
+
+        byte[] fileBytes = File.ReadAllBytes(texturePath);
+        Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+        texture.LoadImage(fileBytes, false);
+        texture.wrapMode = TextureWrapMode.Repeat;
+        texture.filterMode = FilterMode.Bilinear;
+        return texture;
+    }
+
+    private static Texture2D CreateStarTexture(int width, int height, int starCount, int starSize, float minAlpha, float maxAlpha)
+    {
+        Texture2D texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+        Color clear = new Color(0f, 0f, 0f, 0f);
+        Color[] clearPixels = new Color[width * height];
+        for (int i = 0; i < clearPixels.Length; i++)
+        {
+            clearPixels[i] = clear;
+        }
+
+        texture.SetPixels(clearPixels);
+
+        for (int i = 0; i < starCount; i++)
+        {
+            int x = Random.Range(0, width - starSize);
+            int y = Random.Range(0, height - starSize);
+            float alpha = Random.Range(minAlpha, maxAlpha);
+            Color starColor = new Color(1f, 1f, 1f, alpha);
+
+            for (int px = 0; px < starSize; px++)
+            {
+                for (int py = 0; py < starSize; py++)
+                {
+                    texture.SetPixel(x + px, y + py, starColor);
+                }
+            }
+        }
+
+        texture.Apply();
+        texture.wrapMode = TextureWrapMode.Repeat;
+        texture.filterMode = FilterMode.Point;
+        return texture;
     }
 
     private static Sprite CreateSolidSprite()
