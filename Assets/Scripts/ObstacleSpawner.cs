@@ -12,18 +12,22 @@ public class ObstacleSpawner : MonoBehaviour
     [SerializeField] private int maxSpawnedObstacles = 30;
     [SerializeField] private float spawnPaddingAboveView = 2f;
     [SerializeField] private float cleanupPaddingBelowView = 4f;
+    [SerializeField] private float initialVisibleSpawnOffsetY = 4f;
+    [SerializeField] private float initialVisibleEndPadding = 2f;
 
     private readonly Queue<GameObject> spawnedObstacles = new Queue<GameObject>();
     private float nextSpawnY;
     private float elapsedTime;
     private bool nextSpawnOnLeft = true;
     private int sameSideChainCount;
+    private int consecutiveEmptyRows;
 
     private struct DifficultyPhase
     {
         public float spawnChance;
         public float sideChangeChance;
         public int maxChainLength;
+        public int maxEmptyRows;
     }
 
     private void Start()
@@ -35,10 +39,14 @@ public class ObstacleSpawner : MonoBehaviour
             return;
         }
 
-        float initialSpawnY = Mathf.Max(player.position.y + startOffsetY, GetTopOfViewY() + spawnPaddingAboveView);
-        nextSpawnY = initialSpawnY;
         nextSpawnOnLeft = Random.value < 0.5f;
         sameSideChainCount = 0;
+        consecutiveEmptyRows = 0;
+
+        SeedOpeningRows();
+
+        float firstOffscreenSpawnY = Mathf.Max(GetTopOfViewY() + spawnPaddingAboveView, player.position.y + startOffsetY);
+        nextSpawnY = Mathf.Ceil(firstOffscreenSpawnY / spawnStepY) * spawnStepY;
     }
 
     private void Update()
@@ -53,11 +61,22 @@ public class ObstacleSpawner : MonoBehaviour
         float spawnTriggerY = Mathf.Max(player.position.y + startOffsetY, GetTopOfViewY() + spawnPaddingAboveView);
         while (spawnTriggerY >= nextSpawnY)
         {
-            SpawnRow(nextSpawnY);
+            SpawnRow(nextSpawnY, false);
             nextSpawnY += spawnStepY;
         }
 
         CleanupObstaclesBelowView();
+    }
+
+    private void SeedOpeningRows()
+    {
+        float seedStartY = player.position.y + initialVisibleSpawnOffsetY;
+        float seedEndY = GetTopOfViewY() - initialVisibleEndPadding;
+
+        for (float spawnY = seedStartY; spawnY <= seedEndY; spawnY += spawnStepY)
+        {
+            SpawnRow(spawnY, true);
+        }
     }
 
     private DifficultyPhase GetCurrentPhase()
@@ -66,9 +85,10 @@ public class ObstacleSpawner : MonoBehaviour
         {
             return new DifficultyPhase
             {
-                spawnChance = 0.28f,
+                spawnChance = 0.45f,
                 sideChangeChance = 0.12f,
-                maxChainLength = 4
+                maxChainLength = 4,
+                maxEmptyRows = 1
             };
         }
 
@@ -76,17 +96,19 @@ public class ObstacleSpawner : MonoBehaviour
         {
             return new DifficultyPhase
             {
-                spawnChance = 0.55f,
+                spawnChance = 0.65f,
                 sideChangeChance = 0.45f,
-                maxChainLength = 2
+                maxChainLength = 2,
+                maxEmptyRows = 1
             };
         }
 
         return new DifficultyPhase
         {
-            spawnChance = 0.82f,
+            spawnChance = 0.85f,
             sideChangeChance = 0.65f,
-            maxChainLength = 2
+            maxChainLength = 2,
+            maxEmptyRows = 0
         };
     }
 
@@ -112,12 +134,14 @@ public class ObstacleSpawner : MonoBehaviour
         return mainCamera.transform.position.y - mainCamera.orthographicSize;
     }
 
-    private void SpawnRow(float spawnY)
+    private void SpawnRow(float spawnY, bool forceSpawn)
     {
         DifficultyPhase phase = GetCurrentPhase();
-        if (Random.value >= phase.spawnChance)
+        bool shouldSpawn = forceSpawn || Random.value < phase.spawnChance || consecutiveEmptyRows >= phase.maxEmptyRows;
+        if (!shouldSpawn)
         {
             sameSideChainCount = 0;
+            consecutiveEmptyRows++;
             return;
         }
 
@@ -131,6 +155,7 @@ public class ObstacleSpawner : MonoBehaviour
         // Safety rule: exactly one obstacle lane per row, never both walls together.
         SpawnSingle(nextSpawnOnLeft, spawnY);
         sameSideChainCount++;
+        consecutiveEmptyRows = 0;
     }
 
     private void SpawnSingle(bool spawnLeft, float spawnY)
