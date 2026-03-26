@@ -259,7 +259,7 @@ public static class PrototypeSceneBootstrap
 
         canvasObject.AddComponent<GraphicRaycaster>();
 
-        EnsureEventSystem(root);
+        EnsureEventSystem();
 
         scoreText = CreateText(canvas.transform, font, "ScoreText", "Score: 0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -80f), 42, Color.white);
 
@@ -311,15 +311,20 @@ public static class PrototypeSceneBootstrap
         gameOverPanel.SetActive(false);
     }
 
-    private static void EnsureEventSystem(Transform root)
+    private static void EnsureEventSystem()
     {
-        if (Object.FindObjectOfType<EventSystem>() != null)
+        EventSystem existingEventSystem = Object.FindObjectOfType<EventSystem>();
+        if (existingEventSystem != null)
         {
+            if (existingEventSystem.GetComponent<StandaloneInputModule>() == null)
+            {
+                existingEventSystem.gameObject.AddComponent<StandaloneInputModule>();
+            }
+
             return;
         }
 
         GameObject eventSystemObject = new GameObject("EventSystem");
-        eventSystemObject.transform.SetParent(root);
         eventSystemObject.AddComponent<EventSystem>();
         eventSystemObject.AddComponent<StandaloneInputModule>();
     }

@@ -27,6 +27,14 @@ public class ScoreManager : MonoBehaviour
         Instance = this;
     }
 
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+    }
+
     private void Start()
     {
         UpdateScoreText();
@@ -110,6 +118,7 @@ public class ScoreManager : MonoBehaviour
     private IEnumerator RestartPrototypeNextFrame()
     {
         isRestarting = true;
+        Instance = null;
         yield return null;
         PrototypeSceneBootstrap.RestartPrototype();
     }
