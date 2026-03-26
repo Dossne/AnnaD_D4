@@ -36,8 +36,8 @@ public static class PrototypeSceneBootstrap
         Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
 
         GameObject root = new GameObject("PrototypeRuntime");
-        CreateBackdrop(camera.transform, baseSprite);
-        CreateWalls(camera.transform, baseSprite);
+        CreateBackdrop(camera, baseSprite);
+        CreateWalls(camera, baseSprite);
 
         GameObject player = CreatePlayer(root.transform, baseSprite);
         GameObject obstacleTemplate = CreateObstacleTemplate(root.transform, baseSprite);
@@ -59,37 +59,43 @@ public static class PrototypeSceneBootstrap
         }
     }
 
-    private static void CreateBackdrop(Transform cameraTransform, Sprite sprite)
+    private static void CreateBackdrop(Camera camera, Sprite sprite)
     {
+        float visibleHeight = camera.orthographicSize * 2f;
+        float visibleWidth = visibleHeight * camera.aspect;
+
         GameObject background = CreateSpriteObject(
             "Background",
-            cameraTransform,
+            camera.transform,
             sprite,
             new Color(0.16f, 0.16f, 0.18f, 1f),
-            new Vector3(8f, 24f, 1f),
+            new Vector3(visibleWidth + 1f, visibleHeight + 1f, 1f),
             new Vector3(0f, 0f, 15f));
 
         background.GetComponent<SpriteRenderer>().sortingOrder = -10;
     }
 
-    private static void CreateWalls(Transform cameraTransform, Sprite sprite)
+    private static void CreateWalls(Camera camera, Sprite sprite)
     {
+        float visibleHeight = camera.orthographicSize * 2f;
+        float wallHeight = visibleHeight + 2f;
+
         GameObject leftWall = CreateSpriteObject(
             "LeftWall",
-            cameraTransform,
+            camera.transform,
             sprite,
             new Color(0.8f, 0.8f, 0.85f, 1f),
-            new Vector3(0.2f, 24f, 1f),
+            new Vector3(0.2f, wallHeight, 1f),
             new Vector3(LeftWallX - 0.75f, 0f, 0f));
 
         leftWall.GetComponent<SpriteRenderer>().sortingOrder = -2;
 
         GameObject rightWall = CreateSpriteObject(
             "RightWall",
-            cameraTransform,
+            camera.transform,
             sprite,
             new Color(0.8f, 0.8f, 0.85f, 1f),
-            new Vector3(0.2f, 24f, 1f),
+            new Vector3(0.2f, wallHeight, 1f),
             new Vector3(RightWallX + 0.75f, 0f, 0f));
 
         rightWall.GetComponent<SpriteRenderer>().sortingOrder = -2;

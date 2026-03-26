@@ -12,7 +12,7 @@ public class ObstacleSpawner : MonoBehaviour
     [SerializeField] private int maxSpawnedObstacles = 30;
     [SerializeField] private float spawnPaddingAboveView = 2f;
     [SerializeField] private float cleanupPaddingBelowView = 4f;
-    [SerializeField] private float initialVisibleSpawnOffsetY = 4f;
+    [SerializeField] private float initialVisibleSpawnOffsetY = 7f;
     [SerializeField] private float initialVisibleEndPadding = 2f;
 
     private readonly Queue<GameObject> spawnedObstacles = new Queue<GameObject>();
@@ -152,7 +152,6 @@ public class ObstacleSpawner : MonoBehaviour
             sameSideChainCount = 0;
         }
 
-        // Safety rule: exactly one obstacle lane per row, never both walls together.
         SpawnSingle(nextSpawnOnLeft, spawnY);
         sameSideChainCount++;
         consecutiveEmptyRows = 0;
