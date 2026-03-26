@@ -43,27 +43,18 @@ public class ObstacleSpawner : MonoBehaviour
 
     private void SpawnRow(float spawnY)
     {
-        bool spawnLeft = Random.value < obstacleChancePerSide;
-        bool spawnRight = Random.value < obstacleChancePerSide;
-
-        if (!spawnLeft && !spawnRight)
+        if (Random.value >= obstacleChancePerSide)
         {
-            if (Random.value < 0.5f)
-            {
-                spawnLeft = true;
-            }
-            else
-            {
-                spawnRight = true;
-            }
+            return;
         }
+
+        bool spawnLeft = Random.value < 0.5f;
 
         if (spawnLeft)
         {
             SpawnObstacle(new Vector2(leftWallX, spawnY), true);
         }
-
-        if (spawnRight)
+        else
         {
             SpawnObstacle(new Vector2(rightWallX, spawnY), false);
         }
