@@ -152,7 +152,7 @@ public static class PrototypeSceneBootstrap
 
         ParticleSystem particles = particlesObject.AddComponent<ParticleSystem>();
         ParticleSystemRenderer renderer = particlesObject.GetComponent<ParticleSystemRenderer>();
-        renderer.material = new Material(Shader.Find("Particles/Standard Unlit"));
+        renderer.material = CreateParticleMaterial();
         renderer.renderMode = ParticleSystemRenderMode.Billboard;
         renderer.sortMode = ParticleSystemSortMode.Distance;
         renderer.minParticleSize = 0.004f;
@@ -218,7 +218,7 @@ public static class PrototypeSceneBootstrap
 
         Texture2D shimmerTexture = CreateWallShimmerTexture(64, 256);
         GameObject shimmer = CreateScrollingQuad(name + "Shimmer", parent, shimmerTexture, highlightColor, new Vector3(x, 0f, z - 0.2f), new Vector3(0.42f, height, 1f), new Vector2(1f, 2.5f), 0f, 0f, 0.65f, 0f, 11);
-        shimmer.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
+        shimmer.transform.localEulerAngles = Vector3.zero;
     }
 
     private static Texture2D CreateWallShimmerTexture(int width, int height)
@@ -269,7 +269,7 @@ public static class PrototypeSceneBootstrap
         Object.Destroy(quad.GetComponent<Collider>());
 
         MeshRenderer renderer = quad.GetComponent<MeshRenderer>();
-        renderer.material = new Material(Shader.Find("Unlit/Transparent"));
+        renderer.material = CreateTransparentMaterial();
         renderer.material.mainTexture = texture;
         renderer.material.mainTextureScale = textureScale;
         renderer.material.mainTextureOffset = Vector2.zero;
@@ -280,6 +280,45 @@ public static class PrototypeSceneBootstrap
         scroller.Configure(null, yScrollFactor, xScrollFactor, autoScrollY, autoScrollX);
 
         return quad;
+    }
+
+    private static Material CreateTransparentMaterial()
+    {
+        Shader shader = FindFirstAvailableShader(
+            "Sprites/Default",
+            "Universal Render Pipeline/Unlit",
+            "Unlit/Texture",
+            "Unlit/Transparent",
+            "Legacy Shaders/Transparent/Diffuse");
+
+        return new Material(shader);
+    }
+
+    private static Material CreateParticleMaterial()
+    {
+        Shader shader = FindFirstAvailableShader(
+            "Particles/Standard Unlit",
+            "Particles/Alpha Blended",
+            "Mobile/Particles/Alpha Blended",
+            "Sprites/Default",
+            "Unlit/Texture");
+
+        return new Material(shader);
+    }
+
+    private static Shader FindFirstAvailableShader(params string[] shaderNames)
+    {
+        for (int i = 0; i < shaderNames.Length; i++)
+        {
+            Shader shader = Shader.Find(shaderNames[i]);
+            if (shader != null)
+            {
+                return shader;
+            }
+        }
+
+        Debug.LogError("No supported runtime shader found for prototype visuals.");
+        return Shader.Find("Sprites/Default");
     }
 
     private static GameObject CreatePlayer(Transform root, Sprite sprite)
@@ -516,7 +555,7 @@ public static class PrototypeSceneBootstrap
         Object.Destroy(quad.GetComponent<Collider>());
 
         MeshRenderer renderer = quad.GetComponent<MeshRenderer>();
-        renderer.material = new Material(Shader.Find("Unlit/Transparent"));
+        renderer.material = CreateTransparentMaterial();
         renderer.material.mainTexture = texture;
         renderer.material.mainTextureScale = textureScale;
         renderer.material.mainTextureOffset = Vector2.zero;
