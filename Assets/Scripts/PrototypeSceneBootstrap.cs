@@ -33,7 +33,7 @@ public static class PrototypeSceneBootstrap
         SetupCamera(camera);
 
         Sprite baseSprite = CreateSolidSprite();
-        Font font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
 
         GameObject root = new GameObject("PrototypeRuntime");
         CreateBackdrop(root.transform, camera.transform, baseSprite);
@@ -279,4 +279,5 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
     }
 }
+
 
