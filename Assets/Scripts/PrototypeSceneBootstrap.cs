@@ -265,12 +265,18 @@ public static class PrototypeSceneBootstrap
         CameraFollow follow = camera.GetComponent<CameraFollow>();
         follow.Configure(player.transform, 3.5f);
 
-        CreateCanvas(root, font, out Text scoreText, out GameObject gameOverPanel, out Text gameOverText, out Text gameOverScoreText, out Image flashOverlay);
-        scoreManager.Configure(player.GetComponent<PlayerController>(), scoreText, gameOverPanel, gameOverText, gameOverScoreText, flashOverlay);
+        CreateCanvas(root, font, sprite, out Text scoreText, out GameObject gameOverPanel, out Text gameOverText, out Text gameOverScoreText, out Image flashOverlay, out Button restartButton);
+        scoreManager.Configure(player.GetComponent<PlayerController>(), scoreText, gameOverPanel, gameOverText, gameOverScoreText, flashOverlay, restartButton);
     }
 
-    private static void CreateCanvas(Transform root, Font font, out Text scoreText, out GameObject gameOverPanel, out Text gameOverText, out Text gameOverScoreText, out Image flashOverlay)
+    private static void CreateCanvas(Transform root, Font font, Sprite sprite, out Text scoreText, out GameObject gameOverPanel, out Text gameOverText, out Text gameOverScoreText, out Image flashOverlay, out Button restartButton)
     {
+        Color neonCyan = new Color(0.55f, 0.98f, 1f, 1f);
+        Color neonBlue = new Color(0.18f, 0.82f, 1f, 1f);
+        Color neonBorder = new Color(0.36f, 0.92f, 1f, 0.78f);
+        Color panelColor = new Color(0.02f, 0.05f, 0.11f, 0.9f);
+        Color mutedText = new Color(0.77f, 0.9f, 1f, 0.95f);
+
         GameObject canvasObject = new GameObject("Canvas");
         canvasObject.transform.SetParent(root);
 
@@ -290,29 +296,66 @@ public static class PrototypeSceneBootstrap
         flashOverlay = CreateFullscreenImage(canvas.transform, "FlashOverlay", new Color(1f, 1f, 1f, 0f));
         flashOverlay.raycastTarget = false;
 
-        scoreText = CreateText(canvas.transform, font, "ScoreText", "Score: 0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -80f), 42, Color.white);
+        scoreText = CreateText(canvas.transform, font, "ScoreText", "Score: 0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -96f), 50, neonCyan);
+        scoreText.fontStyle = FontStyle.Bold;
+        scoreText.alignment = TextAnchor.MiddleCenter;
+        AddOutline(scoreText.gameObject, new Color(0.08f, 0.3f, 0.42f, 0.95f), new Vector2(1.5f, -1.5f));
+        AddShadow(scoreText.gameObject, new Color(0f, 0f, 0f, 0.6f), new Vector2(0f, -3f));
 
         gameOverPanel = new GameObject("GameOverPanel");
         gameOverPanel.transform.SetParent(canvas.transform);
         Image panelImage = gameOverPanel.AddComponent<Image>();
-        panelImage.color = new Color(0.02f, 0.04f, 0.1f, 0.82f);
+        panelImage.color = panelColor;
+        AddOutline(gameOverPanel, neonBorder, new Vector2(2f, -2f));
+        AddShadow(gameOverPanel, new Color(0f, 0.08f, 0.14f, 0.45f), new Vector2(0f, -6f));
 
         RectTransform panelRect = gameOverPanel.GetComponent<RectTransform>();
         panelRect.anchorMin = new Vector2(0.5f, 0.5f);
         panelRect.anchorMax = new Vector2(0.5f, 0.5f);
         panelRect.pivot = new Vector2(0.5f, 0.5f);
-        panelRect.sizeDelta = new Vector2(760f, 380f);
-        panelRect.anchoredPosition = new Vector2(0f, 120f);
+        panelRect.sizeDelta = new Vector2(760f, 470f);
+        panelRect.anchoredPosition = new Vector2(0f, 90f);
 
-        gameOverText = CreateText(gameOverPanel.transform, font, "GameOverText", "GAME OVER", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -90f), 86, Color.white);
+        gameOverText = CreateText(gameOverPanel.transform, font, "GameOverText", "GAME OVER", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -92f), 84, Color.white);
         gameOverText.alignment = TextAnchor.MiddleCenter;
         gameOverText.fontStyle = FontStyle.Bold;
+        AddOutline(gameOverText.gameObject, new Color(0.13f, 0.62f, 0.76f, 1f), new Vector2(2f, -2f));
 
-        gameOverScoreText = CreateText(gameOverPanel.transform, font, "GameOverScoreText", "Score: 0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -180f), 44, Color.white);
+        gameOverScoreText = CreateText(gameOverPanel.transform, font, "GameOverScoreText", "Score: 0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -182f), 44, neonCyan);
         gameOverScoreText.alignment = TextAnchor.MiddleCenter;
+        gameOverScoreText.fontStyle = FontStyle.Bold;
 
-        Text hintText = CreateText(gameOverPanel.transform, font, "HintText", "Tap anywhere to restart", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -255f), 34, new Color(0.8f, 0.9f, 1f, 1f));
+        Text hintText = CreateText(gameOverPanel.transform, font, "HintText", "Tap anywhere to restart", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -260f), 28, mutedText);
         hintText.alignment = TextAnchor.MiddleCenter;
+
+        GameObject buttonObject = new GameObject("RestartButton");
+        buttonObject.transform.SetParent(gameOverPanel.transform);
+        Image buttonImage = buttonObject.AddComponent<Image>();
+        buttonImage.sprite = sprite;
+        buttonImage.type = Image.Type.Sliced;
+        buttonImage.color = new Color(0.08f, 0.52f, 0.68f, 0.95f);
+        restartButton = buttonObject.AddComponent<Button>();
+        restartButton.targetGraphic = buttonImage;
+        ColorBlock colors = restartButton.colors;
+        colors.normalColor = new Color(0.08f, 0.52f, 0.68f, 0.95f);
+        colors.highlightedColor = new Color(0.12f, 0.66f, 0.82f, 1f);
+        colors.pressedColor = new Color(0.05f, 0.36f, 0.5f, 1f);
+        colors.selectedColor = colors.highlightedColor;
+        restartButton.colors = colors;
+        AddOutline(buttonObject, neonBlue, new Vector2(2f, -2f));
+        AddShadow(buttonObject, new Color(0f, 0.2f, 0.26f, 0.55f), new Vector2(0f, -4f));
+
+        RectTransform buttonRect = buttonObject.GetComponent<RectTransform>();
+        buttonRect.anchorMin = new Vector2(0.5f, 0.5f);
+        buttonRect.anchorMax = new Vector2(0.5f, 0.5f);
+        buttonRect.pivot = new Vector2(0.5f, 0.5f);
+        buttonRect.sizeDelta = new Vector2(330f, 96f);
+        buttonRect.anchoredPosition = new Vector2(0f, -108f);
+
+        Text buttonText = CreateText(buttonObject.transform, font, "RestartLabel", "RESTART", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, 34, Color.white);
+        buttonText.alignment = TextAnchor.MiddleCenter;
+        buttonText.fontStyle = FontStyle.Bold;
+        AddOutline(buttonText.gameObject, new Color(0.06f, 0.24f, 0.35f, 1f), new Vector2(1f, -1f));
 
         gameOverPanel.SetActive(false);
     }
@@ -333,6 +376,22 @@ public static class PrototypeSceneBootstrap
         GameObject eventSystemObject = new GameObject("EventSystem");
         eventSystemObject.AddComponent<EventSystem>();
         eventSystemObject.AddComponent<StandaloneInputModule>();
+    }
+
+    private static void AddOutline(GameObject target, Color color, Vector2 distance)
+    {
+        Outline outline = target.AddComponent<Outline>();
+        outline.effectColor = color;
+        outline.effectDistance = distance;
+        outline.useGraphicAlpha = true;
+    }
+
+    private static void AddShadow(GameObject target, Color color, Vector2 distance)
+    {
+        Shadow shadow = target.AddComponent<Shadow>();
+        shadow.effectColor = color;
+        shadow.effectDistance = distance;
+        shadow.useGraphicAlpha = true;
     }
 
     private static Image CreateFullscreenImage(Transform parent, string name, Color color)

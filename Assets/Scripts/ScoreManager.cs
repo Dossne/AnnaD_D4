@@ -12,6 +12,7 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private Text gameOverText;
     [SerializeField] private Text gameOverScoreText;
     [SerializeField] private Image flashOverlay;
+    [SerializeField] private Button restartButton;
 
     private float survivalTime;
     private bool isGameOver;
@@ -42,6 +43,7 @@ public class ScoreManager : MonoBehaviour
         UpdateScoreText();
         SetGameOverPanelVisible(false);
         SetFlashAlpha(0f);
+        BindRestartButton();
     }
 
     private void Update()
@@ -90,7 +92,7 @@ public class ScoreManager : MonoBehaviour
         SetGameOverPanelVisible(true);
     }
 
-    public void Configure(PlayerController playerController, Text scoreLabel, GameObject panel, Text gameOverLabel, Text gameOverScoreLabel, Image flashImage)
+    public void Configure(PlayerController playerController, Text scoreLabel, GameObject panel, Text gameOverLabel, Text gameOverScoreLabel, Image flashImage, Button restart)
     {
         player = playerController;
         scoreText = scoreLabel;
@@ -98,6 +100,7 @@ public class ScoreManager : MonoBehaviour
         gameOverText = gameOverLabel;
         gameOverScoreText = gameOverScoreLabel;
         flashOverlay = flashImage;
+        restartButton = restart;
         isGameOver = false;
         isRestarting = false;
         survivalTime = 0f;
@@ -108,6 +111,27 @@ public class ScoreManager : MonoBehaviour
         if (gameOverScoreText != null)
         {
             gameOverScoreText.text = "Score: 0";
+        }
+
+        BindRestartButton();
+    }
+
+    private void BindRestartButton()
+    {
+        if (restartButton == null)
+        {
+            return;
+        }
+
+        restartButton.onClick.RemoveListener(OnRestartButtonPressed);
+        restartButton.onClick.AddListener(OnRestartButtonPressed);
+    }
+
+    private void OnRestartButtonPressed()
+    {
+        if (isGameOver && !isRestarting)
+        {
+            StartCoroutine(RestartPrototypeNextFrame());
         }
     }
 
