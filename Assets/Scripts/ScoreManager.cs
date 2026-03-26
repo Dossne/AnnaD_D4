@@ -36,17 +36,7 @@ public class ScoreManager : MonoBehaviour
 
     private void Update()
     {
-        if (isGameOver)
-        {
-            if (ShouldRestart())
-            {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-            }
-
-            return;
-        }
-
-        if (player == null || !player.IsAlive)
+        if (isGameOver || player == null || !player.IsAlive)
         {
             return;
         }
@@ -67,8 +57,10 @@ public class ScoreManager : MonoBehaviour
         if (gameOverText != null)
         {
             gameOverText.gameObject.SetActive(true);
-            gameOverText.text = "Game Over\nTap or Press R to Restart";
+            gameOverText.text = "Game Over";
         }
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void Configure(PlayerController playerController, Text scoreLabel, Text gameOverLabel)
@@ -82,13 +74,6 @@ public class ScoreManager : MonoBehaviour
         {
             gameOverText.gameObject.SetActive(false);
         }
-    }
-
-    private bool ShouldRestart()
-    {
-        return Input.GetKeyDown(KeyCode.R)
-            || Input.GetMouseButtonDown(0)
-            || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began);
     }
 
     private void UpdateScoreText()
