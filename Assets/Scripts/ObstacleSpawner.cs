@@ -9,13 +9,19 @@ public class ObstacleSpawner : MonoBehaviour
     [SerializeField] private float rightWallX = 2f;
     [SerializeField] private float startOffsetY = 8f;
     [SerializeField] private float spawnStepY = 3f;
-    [SerializeField] private float obstacleChancePerSide = 0.6f;
+    [SerializeField] private float obstacleChancePerSide = 0.7f;
     [SerializeField] private int maxSpawnedObstacles = 30;
     [SerializeField] private float spawnPaddingAboveView = 2f;
     [SerializeField] private float cleanupPaddingBelowView = 4f;
+    [SerializeField] private float startSpawnChance = 0.3f;
+    [SerializeField] private float difficultyRampDuration = 45f;
+    [SerializeField] private float startSideChangeChance = 0.12f;
+    [SerializeField] private float endSideChangeChance = 0.7f;
 
     private readonly Queue<GameObject> spawnedObstacles = new Queue<GameObject>();
     private float nextSpawnY;
+    private float elapsedTime;
+    private bool nextSpawnOnLeft = true;
 
     private void Start()
     {
@@ -28,6 +34,7 @@ public class ObstacleSpawner : MonoBehaviour
 
         float initialSpawnY = Mathf.Max(player.position.y + startOffsetY, GetTopOfViewY() + spawnPaddingAboveView);
         nextSpawnY = initialSpawnY;
+        nextSpawnOnLeft = Random.value < 0.5f;
     }
 
     private void Update()
@@ -37,6 +44,8 @@ public class ObstacleSpawner : MonoBehaviour
             return;
         }
 
+        elapsedTime += Time.deltaTime;
+
         float spawnTriggerY = Mathf.Max(player.position.y + startOffsetY, GetTopOfViewY() + spawnPaddingAboveView);
         while (spawnTriggerY >= nextSpawnY)
         {
@@ -45,6 +54,16 @@ public class ObstacleSpawner : MonoBehaviour
         }
 
         CleanupObstaclesBelowView();
+    }
+
+    private float GetDifficulty01()
+    {
+        if (difficultyRampDuration <= 0f)
+        {
+            return 1f;
+        }
+
+        return Mathf.Clamp01(elapsedTime / difficultyRampDuration);
     }
 
     private float GetTopOfViewY()
@@ -71,14 +90,20 @@ public class ObstacleSpawner : MonoBehaviour
 
     private void SpawnRow(float spawnY)
     {
-        if (Random.value >= obstacleChancePerSide)
+        float difficulty = GetDifficulty01();
+        float spawnChance = Mathf.Lerp(startSpawnChance, obstacleChancePerSide, difficulty);
+        if (Random.value >= spawnChance)
         {
             return;
         }
 
-        bool spawnLeft = Random.value < 0.5f;
+        float sideChangeChance = Mathf.Lerp(startSideChangeChance, endSideChangeChance, difficulty);
+        if (Random.value < sideChangeChance)
+        {
+            nextSpawnOnLeft = !nextSpawnOnLeft;
+        }
 
-        if (spawnLeft)
+        if (nextSpawnOnLeft)
         {
             SpawnObstacle(new Vector2(leftWallX, spawnY), true);
         }

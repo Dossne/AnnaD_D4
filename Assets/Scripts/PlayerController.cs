@@ -5,11 +5,12 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] private float upwardSpeed = 4f;
-    [SerializeField] private float switchSpeed = 14f;
+    [SerializeField] private float maxUpwardSpeed = 8f;
+    [SerializeField] private float upwardAcceleration = 0.08f;
+    [SerializeField] private float switchSpeed = 24f;
+    [SerializeField] private float wallSnapDistance = 0.12f;
     [SerializeField] private float leftWallX = -2f;
     [SerializeField] private float rightWallX = 2f;
-    [SerializeField] private float tiltAngle = 18f;
-    [SerializeField] private float tiltSpeed = 10f;
 
     [Header("State")]
     [SerializeField] private bool startOnLeftWall = true;
@@ -18,7 +19,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private bool isAlive = true;
     private bool isOnLeftWall;
-    private float currentTilt;
+    private float elapsedRunTime;
 
     public bool IsAlive => isAlive;
 
@@ -44,6 +45,7 @@ public class PlayerController : MonoBehaviour
         Vector2 startPosition = rb.position;
         startPosition.x = isOnLeftWall ? leftWallX : rightWallX;
         rb.position = startPosition;
+        visualRoot.rotation = Quaternion.identity;
     }
 
     private void Update()
@@ -67,14 +69,19 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        elapsedRunTime += Time.fixedDeltaTime;
+        float currentUpwardSpeed = Mathf.Min(upwardSpeed + elapsedRunTime * upwardAcceleration, maxUpwardSpeed);
+
         float targetX = isOnLeftWall ? leftWallX : rightWallX;
         float nextX = Mathf.MoveTowards(rb.position.x, targetX, switchSpeed * Time.fixedDeltaTime);
-        Vector2 nextPosition = new Vector2(nextX, rb.position.y + upwardSpeed * Time.fixedDeltaTime);
-        rb.MovePosition(nextPosition);
+        if (Mathf.Abs(targetX - nextX) <= wallSnapDistance)
+        {
+            nextX = targetX;
+        }
 
-        float targetTilt = isOnLeftWall ? tiltAngle : -tiltAngle;
-        currentTilt = Mathf.Lerp(currentTilt, targetTilt, tiltSpeed * Time.fixedDeltaTime);
-        visualRoot.rotation = Quaternion.Euler(0f, 0f, currentTilt);
+        Vector2 nextPosition = new Vector2(nextX, rb.position.y + currentUpwardSpeed * Time.fixedDeltaTime);
+        rb.MovePosition(nextPosition);
+        visualRoot.rotation = Quaternion.identity;
     }
 
     private void SwitchSide()
@@ -93,7 +100,16 @@ public class PlayerController : MonoBehaviour
         ScoreManager.Instance?.GameOver();
     }
 
-    public void Configure(float moveSpeed, float horizontalSwitchSpeed, float leftX, float rightX, bool startLeft, Transform visualTarget = null)
+    public void Configure(
+        float moveSpeed,
+        float horizontalSwitchSpeed,
+        float leftX,
+        float rightX,
+        bool startLeft,
+        Transform visualTarget = null,
+        float moveAcceleration = 0.08f,
+        float topSpeed = 8f,
+        float snapDistance = 0.12f)
     {
         upwardSpeed = moveSpeed;
         switchSpeed = horizontalSwitchSpeed;
@@ -102,5 +118,8 @@ public class PlayerController : MonoBehaviour
         startOnLeftWall = startLeft;
         isOnLeftWall = startOnLeftWall;
         visualRoot = visualTarget == null ? transform : visualTarget;
+        upwardAcceleration = moveAcceleration;
+        maxUpwardSpeed = topSpeed;
+        wallSnapDistance = snapDistance;
     }
 }
