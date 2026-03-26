@@ -239,11 +239,11 @@ public static class PrototypeSceneBootstrap
         CameraFollow follow = camera.GetComponent<CameraFollow>();
         follow.Configure(player.transform, 3.5f);
 
-        CreateCanvas(root, font, out Text scoreText, out GameObject gameOverPanel, out Text gameOverText, out Image flashOverlay);
-        scoreManager.Configure(player.GetComponent<PlayerController>(), scoreText, gameOverPanel, gameOverText, flashOverlay);
+        CreateCanvas(root, font, out Text scoreText, out GameObject gameOverPanel, out Text gameOverText, out Text gameOverScoreText, out Image flashOverlay);
+        scoreManager.Configure(player.GetComponent<PlayerController>(), scoreText, gameOverPanel, gameOverText, gameOverScoreText, flashOverlay);
     }
 
-    private static void CreateCanvas(Transform root, Font font, out Text scoreText, out GameObject gameOverPanel, out Text gameOverText, out Image flashOverlay)
+    private static void CreateCanvas(Transform root, Font font, out Text scoreText, out GameObject gameOverPanel, out Text gameOverText, out Text gameOverScoreText, out Image flashOverlay)
     {
         GameObject canvasObject = new GameObject("Canvas");
         canvasObject.transform.SetParent(root);
@@ -275,14 +275,17 @@ public static class PrototypeSceneBootstrap
         panelRect.anchorMin = new Vector2(0.5f, 0.5f);
         panelRect.anchorMax = new Vector2(0.5f, 0.5f);
         panelRect.pivot = new Vector2(0.5f, 0.5f);
-        panelRect.sizeDelta = new Vector2(760f, 320f);
+        panelRect.sizeDelta = new Vector2(760f, 380f);
         panelRect.anchoredPosition = new Vector2(0f, 120f);
 
-        gameOverText = CreateText(gameOverPanel.transform, font, "GameOverText", "GAME OVER", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -100f), 86, Color.white);
+        gameOverText = CreateText(gameOverPanel.transform, font, "GameOverText", "GAME OVER", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -90f), 86, Color.white);
         gameOverText.alignment = TextAnchor.MiddleCenter;
         gameOverText.fontStyle = FontStyle.Bold;
 
-        Text hintText = CreateText(gameOverPanel.transform, font, "HintText", "Tap anywhere to restart", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -205f), 34, new Color(0.8f, 0.9f, 1f, 1f));
+        gameOverScoreText = CreateText(gameOverPanel.transform, font, "GameOverScoreText", "Score: 0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -180f), 44, Color.white);
+        gameOverScoreText.alignment = TextAnchor.MiddleCenter;
+
+        Text hintText = CreateText(gameOverPanel.transform, font, "HintText", "Tap anywhere to restart", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -255f), 34, new Color(0.8f, 0.9f, 1f, 1f));
         hintText.alignment = TextAnchor.MiddleCenter;
 
         gameOverPanel.SetActive(false);

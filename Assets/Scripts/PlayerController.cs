@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float wallSnapDistance = 0.12f;
     [SerializeField] private float leftWallX = -2f;
     [SerializeField] private float rightWallX = 2f;
+    [SerializeField] private float inputBlockAfterSpawn = 0.15f;
 
     [Header("State")]
     [SerializeField] private bool startOnLeftWall = true;
@@ -20,6 +21,7 @@ public class PlayerController : MonoBehaviour
     private bool isAlive = true;
     private bool isOnLeftWall;
     private float elapsedRunTime;
+    private float inputBlockTimer;
 
     public bool IsAlive => isAlive;
 
@@ -46,10 +48,17 @@ public class PlayerController : MonoBehaviour
         startPosition.x = isOnLeftWall ? leftWallX : rightWallX;
         rb.position = startPosition;
         visualRoot.rotation = Quaternion.identity;
+        inputBlockTimer = inputBlockAfterSpawn;
     }
 
     private void Update()
     {
+        if (inputBlockTimer > 0f)
+        {
+            inputBlockTimer -= Time.deltaTime;
+            return;
+        }
+
         if (isAlive && (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)))
         {
             SwitchSide();

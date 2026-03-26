@@ -10,6 +10,7 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private Text scoreText;
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private Text gameOverText;
+    [SerializeField] private Text gameOverScoreText;
     [SerializeField] private Image flashOverlay;
 
     private float survivalTime;
@@ -79,17 +80,23 @@ public class ScoreManager : MonoBehaviour
             gameOverText.text = "GAME OVER";
         }
 
+        if (gameOverScoreText != null)
+        {
+            gameOverScoreText.text = "Score: " + Mathf.FloorToInt(survivalTime);
+        }
+
         Camera.main?.GetComponent<CameraFollow>()?.PlayHitEffect();
         PlayFlash();
         SetGameOverPanelVisible(true);
     }
 
-    public void Configure(PlayerController playerController, Text scoreLabel, GameObject panel, Text gameOverLabel, Image flashImage)
+    public void Configure(PlayerController playerController, Text scoreLabel, GameObject panel, Text gameOverLabel, Text gameOverScoreLabel, Image flashImage)
     {
         player = playerController;
         scoreText = scoreLabel;
         gameOverPanel = panel;
         gameOverText = gameOverLabel;
+        gameOverScoreText = gameOverScoreLabel;
         flashOverlay = flashImage;
         isGameOver = false;
         isRestarting = false;
@@ -97,6 +104,11 @@ public class ScoreManager : MonoBehaviour
         UpdateScoreText();
         SetGameOverPanelVisible(false);
         SetFlashAlpha(0f);
+
+        if (gameOverScoreText != null)
+        {
+            gameOverScoreText.text = "Score: 0";
+        }
     }
 
     private IEnumerator RestartPrototypeNextFrame()
