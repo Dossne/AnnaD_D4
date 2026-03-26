@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ScoreManager : MonoBehaviour
@@ -46,7 +45,7 @@ public class ScoreManager : MonoBehaviour
         {
             if (!isRestarting && Input.GetKeyDown(KeyCode.R))
             {
-                StartCoroutine(ReloadSceneNextFrame());
+                StartCoroutine(RestartPrototypeNextFrame());
             }
 
             return;
@@ -105,14 +104,14 @@ public class ScoreManager : MonoBehaviour
             return;
         }
 
-        StartCoroutine(ReloadSceneNextFrame());
+        StartCoroutine(RestartPrototypeNextFrame());
     }
 
-    private IEnumerator ReloadSceneNextFrame()
+    private IEnumerator RestartPrototypeNextFrame()
     {
         isRestarting = true;
         yield return null;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex, LoadSceneMode.Single);
+        PrototypeSceneBootstrap.RestartPrototype();
     }
 
     private void SetGameOverPanelVisible(bool visible)
