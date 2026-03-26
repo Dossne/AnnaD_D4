@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -53,11 +52,6 @@ public class PlayerController : MonoBehaviour
         if (isAlive && (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)))
         {
             SwitchSide();
-        }
-
-        if (!isAlive && (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.R)))
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
 

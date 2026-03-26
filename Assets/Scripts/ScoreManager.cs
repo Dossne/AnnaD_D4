@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ScoreManager : MonoBehaviour
@@ -35,7 +36,17 @@ public class ScoreManager : MonoBehaviour
 
     private void Update()
     {
-        if (isGameOver || player == null || !player.IsAlive)
+        if (isGameOver)
+        {
+            if (ShouldRestart())
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            }
+
+            return;
+        }
+
+        if (player == null || !player.IsAlive)
         {
             return;
         }
@@ -71,6 +82,13 @@ public class ScoreManager : MonoBehaviour
         {
             gameOverText.gameObject.SetActive(false);
         }
+    }
+
+    private bool ShouldRestart()
+    {
+        return Input.GetKeyDown(KeyCode.R)
+            || Input.GetMouseButtonDown(0)
+            || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began);
     }
 
     private void UpdateScoreText()
