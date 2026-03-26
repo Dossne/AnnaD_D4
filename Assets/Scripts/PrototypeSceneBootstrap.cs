@@ -165,7 +165,7 @@ public static class PrototypeSceneBootstrap
         main.startLifetime = 4f;
         main.startSpeed = 0.2f;
         main.startSize = 0.013f;
-        main.startColor = new ParticleSystem.MinMaxGradient(new Color(0.7f, 0.85f, 1f, 0.08f), new Color(1f, 1f, 1f, 0.28f));
+        main.startColor = new ParticleSystem.MinMaxGradient(new Color(0.7f, 0.85f, 1f, 0.04f), new Color(1f, 1f, 1f, 0.14f));
         main.maxParticles = 1;
 
         var emission = particles.emission;
