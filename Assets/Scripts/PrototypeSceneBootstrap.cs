@@ -202,11 +202,84 @@ public static class PrototypeSceneBootstrap
 
     private static void CreateWallStripe(Transform parent, Sprite sprite, string name, float x, float height, float z)
     {
-        GameObject glow = CreateSpriteObject(name + "Glow", parent, sprite, new Color(0.7f, 0.8f, 1f, 0.28f), new Vector3(0.5f, height, 1f), new Vector3(x, 0f, z + 0.2f));
-        glow.GetComponent<SpriteRenderer>().sortingOrder = 8;
+        Color outerGlow = new Color(1f, 0.2f, 0.78f, 0.18f);
+        Color midGlow = new Color(1f, 0.36f, 0.88f, 0.34f);
+        Color coreColor = new Color(1f, 0.84f, 0.97f, 0.98f);
+        Color highlightColor = new Color(1f, 0.97f, 1f, 0.85f);
 
-        GameObject core = CreateSpriteObject(name, parent, sprite, new Color(0.96f, 0.97f, 1f, 1f), new Vector3(0.16f, height, 1f), new Vector3(x, 0f, z));
-        core.GetComponent<SpriteRenderer>().sortingOrder = 9;
+        GameObject aura = CreateSpriteObject(name + "Aura", parent, sprite, outerGlow, new Vector3(0.95f, height, 1f), new Vector3(x, 0f, z + 0.45f));
+        aura.GetComponent<SpriteRenderer>().sortingOrder = 8;
+
+        GameObject glow = CreateSpriteObject(name + "Glow", parent, sprite, midGlow, new Vector3(0.5f, height, 1f), new Vector3(x, 0f, z + 0.25f));
+        glow.GetComponent<SpriteRenderer>().sortingOrder = 9;
+
+        GameObject core = CreateSpriteObject(name, parent, sprite, coreColor, new Vector3(0.18f, height, 1f), new Vector3(x, 0f, z));
+        core.GetComponent<SpriteRenderer>().sortingOrder = 10;
+
+        Texture2D shimmerTexture = CreateWallShimmerTexture(64, 256);
+        GameObject shimmer = CreateScrollingQuad(name + "Shimmer", parent, shimmerTexture, highlightColor, new Vector3(x, 0f, z - 0.2f), new Vector3(0.42f, height, 1f), new Vector2(1f, 2.5f), 0f, 0f, 0.65f, 0f, 11);
+        shimmer.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
+    }
+
+    private static Texture2D CreateWallShimmerTexture(int width, int height)
+    {
+        Texture2D texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+
+        for (int y = 0; y < height; y++)
+        {
+            float v = (float)y / (height - 1);
+            float verticalPulse = Mathf.Pow(Mathf.Clamp01(1f - Mathf.Abs(v - 0.5f) * 2f), 3f);
+            float scanlinePulse = 0.25f + 0.75f * Mathf.Abs(Mathf.Sin(v * Mathf.PI * 6f));
+
+            for (int x = 0; x < width; x++)
+            {
+                float u = (float)x / (width - 1);
+                float horizontalCore = Mathf.Pow(Mathf.Clamp01(1f - Mathf.Abs(u - 0.5f) * 2f), 5f);
+                float alpha = horizontalCore * verticalPulse * scanlinePulse;
+                texture.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
+            }
+        }
+
+        texture.Apply();
+        texture.wrapMode = TextureWrapMode.Repeat;
+        texture.filterMode = FilterMode.Bilinear;
+        return texture;
+    }
+
+    private static GameObject CreateScrollingQuad(
+        string name,
+        Transform parent,
+        Texture2D texture,
+        Color tint,
+        Vector3 localPosition,
+        Vector3 localScale,
+        Vector2 textureScale,
+        float yScrollFactor,
+        float xScrollFactor,
+        float autoScrollY,
+        float autoScrollX,
+        int sortingOrder)
+    {
+        GameObject quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        quad.name = name;
+        quad.transform.SetParent(parent);
+        quad.transform.localPosition = localPosition;
+        quad.transform.localScale = localScale;
+
+        Object.Destroy(quad.GetComponent<Collider>());
+
+        MeshRenderer renderer = quad.GetComponent<MeshRenderer>();
+        renderer.material = new Material(Shader.Find("Unlit/Transparent"));
+        renderer.material.mainTexture = texture;
+        renderer.material.mainTextureScale = textureScale;
+        renderer.material.mainTextureOffset = Vector2.zero;
+        renderer.material.color = tint;
+        renderer.sortingOrder = sortingOrder;
+
+        ParallaxMaterialScroller scroller = quad.AddComponent<ParallaxMaterialScroller>();
+        scroller.Configure(null, yScrollFactor, xScrollFactor, autoScrollY, autoScrollX);
+
+        return quad;
     }
 
     private static GameObject CreatePlayer(Transform root, Sprite sprite)
