@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ScoreManager : MonoBehaviour
@@ -11,6 +13,7 @@ public class ScoreManager : MonoBehaviour
 
     private float survivalTime;
     private bool isGameOver;
+    private bool isRestarting;
 
     private void Awake()
     {
@@ -35,7 +38,17 @@ public class ScoreManager : MonoBehaviour
 
     private void Update()
     {
-        if (isGameOver || player == null || !player.IsAlive)
+        if (isGameOver)
+        {
+            if (!isRestarting && ShouldRestart())
+            {
+                StartCoroutine(ReloadSceneNextFrame());
+            }
+
+            return;
+        }
+
+        if (player == null || !player.IsAlive)
         {
             return;
         }
@@ -56,10 +69,8 @@ public class ScoreManager : MonoBehaviour
         if (gameOverText != null)
         {
             gameOverText.gameObject.SetActive(true);
-            gameOverText.text = "Game Over";
+            gameOverText.text = "Game Over\nTap or Press R to Restart";
         }
-
-        PrototypeSceneBootstrap.RestartPrototype();
     }
 
     public void Configure(PlayerController playerController, Text scoreLabel, Text gameOverLabel)
@@ -67,12 +78,29 @@ public class ScoreManager : MonoBehaviour
         player = playerController;
         scoreText = scoreLabel;
         gameOverText = gameOverLabel;
+        isGameOver = false;
+        isRestarting = false;
+        survivalTime = 0f;
         UpdateScoreText();
 
         if (gameOverText != null)
         {
             gameOverText.gameObject.SetActive(false);
         }
+    }
+
+    private bool ShouldRestart()
+    {
+        return Input.GetKeyDown(KeyCode.R)
+            || Input.GetMouseButtonDown(0)
+            || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began);
+    }
+
+    private IEnumerator ReloadSceneNextFrame()
+    {
+        isRestarting = true;
+        yield return null;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex, LoadSceneMode.Single);
     }
 
     private void UpdateScoreText()
