@@ -14,6 +14,7 @@ public class ObstacleSpawner : MonoBehaviour
     [SerializeField] private float cleanupPaddingBelowView = 4f;
     [SerializeField] private float initialVisibleSpawnOffsetY = 7f;
     [SerializeField] private float initialVisibleEndPadding = 2f;
+    [SerializeField] private int hardMaxSameSideChain = 7;
 
     private readonly Queue<GameObject> spawnedObstacles = new Queue<GameObject>();
     private float nextSpawnY;
@@ -145,7 +146,9 @@ public class ObstacleSpawner : MonoBehaviour
             return;
         }
 
-        bool shouldChangeSide = sameSideChainCount >= phase.maxChainLength || Random.value < phase.sideChangeChance;
+        bool reachedSoftLimit = sameSideChainCount >= phase.maxChainLength;
+        bool reachedHardLimit = sameSideChainCount >= hardMaxSameSideChain;
+        bool shouldChangeSide = reachedHardLimit || reachedSoftLimit || Random.value < phase.sideChangeChance;
         if (shouldChangeSide)
         {
             nextSpawnOnLeft = !nextSpawnOnLeft;
