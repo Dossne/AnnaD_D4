@@ -9,7 +9,9 @@ public class ScoreManager : MonoBehaviour
 
     [SerializeField] private PlayerController player;
     [SerializeField] private Text scoreText;
+    [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private Text gameOverText;
+    [SerializeField] private Button restartButton;
 
     private float survivalTime;
     private bool isGameOver;
@@ -29,10 +31,12 @@ public class ScoreManager : MonoBehaviour
     private void Start()
     {
         UpdateScoreText();
+        SetGameOverPanelVisible(false);
 
-        if (gameOverText != null)
+        if (restartButton != null)
         {
-            gameOverText.gameObject.SetActive(false);
+            restartButton.onClick.RemoveListener(OnRestartPressed);
+            restartButton.onClick.AddListener(OnRestartPressed);
         }
     }
 
@@ -40,7 +44,7 @@ public class ScoreManager : MonoBehaviour
     {
         if (isGameOver)
         {
-            if (!isRestarting && ShouldRestart())
+            if (!isRestarting && Input.GetKeyDown(KeyCode.R))
             {
                 StartCoroutine(ReloadSceneNextFrame());
             }
@@ -68,32 +72,40 @@ public class ScoreManager : MonoBehaviour
 
         if (gameOverText != null)
         {
-            gameOverText.gameObject.SetActive(true);
-            gameOverText.text = "Game Over\nTap or Press R to Restart";
+            gameOverText.text = "Game Over";
         }
+
+        SetGameOverPanelVisible(true);
     }
 
-    public void Configure(PlayerController playerController, Text scoreLabel, Text gameOverLabel)
+    public void Configure(PlayerController playerController, Text scoreLabel, GameObject panel, Text gameOverLabel, Button restart)
     {
         player = playerController;
         scoreText = scoreLabel;
+        gameOverPanel = panel;
         gameOverText = gameOverLabel;
+        restartButton = restart;
         isGameOver = false;
         isRestarting = false;
         survivalTime = 0f;
         UpdateScoreText();
+        SetGameOverPanelVisible(false);
 
-        if (gameOverText != null)
+        if (restartButton != null)
         {
-            gameOverText.gameObject.SetActive(false);
+            restartButton.onClick.RemoveListener(OnRestartPressed);
+            restartButton.onClick.AddListener(OnRestartPressed);
         }
     }
 
-    private bool ShouldRestart()
+    public void OnRestartPressed()
     {
-        return Input.GetKeyDown(KeyCode.R)
-            || Input.GetMouseButtonDown(0)
-            || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began);
+        if (!isGameOver || isRestarting)
+        {
+            return;
+        }
+
+        StartCoroutine(ReloadSceneNextFrame());
     }
 
     private IEnumerator ReloadSceneNextFrame()
@@ -101,6 +113,18 @@ public class ScoreManager : MonoBehaviour
         isRestarting = true;
         yield return null;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex, LoadSceneMode.Single);
+    }
+
+    private void SetGameOverPanelVisible(bool visible)
+    {
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(visible);
+        }
+        else if (gameOverText != null)
+        {
+            gameOverText.gameObject.SetActive(visible);
+        }
     }
 
     private void UpdateScoreText()

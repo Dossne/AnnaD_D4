@@ -49,7 +49,7 @@ public static class PrototypeSceneBootstrap
 
         GameObject player = CreatePlayer(root.transform, baseSprite);
         GameObject obstacleTemplate = CreateObstacleTemplate(root.transform, baseSprite);
-        CreateManagers(root.transform, camera, player, obstacleTemplate, font);
+        CreateManagers(root.transform, camera, player, obstacleTemplate, font, baseSprite);
     }
 
     private static void ClearExistingPrototype(Camera camera)
@@ -92,10 +92,10 @@ public static class PrototypeSceneBootstrap
         Texture2D midStars = CreateStarTexture(256, 512, 90, 1, 0.25f, 0.7f);
         Texture2D nearStars = CreateStarTexture(256, 512, 170, 2, 0.45f, 1f);
 
-        CreateParallaxQuad("FarBackground", camera, farTexture, new Color(0.82f, 0.86f, 1f, 0.9f), new Vector3(0f, 0f, 26f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1f, 1f), 0.008f, 0f);
-        CreateParallaxQuad("MidGlow", camera, farTexture, new Color(0.45f, 0.55f, 0.8f, 0.22f), new Vector3(0f, 0f, 24f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1f, 1f), 0.018f, 0f);
-        CreateParallaxQuad("MidStars", camera, midStars, new Color(0.72f, 0.84f, 1f, 0.55f), new Vector3(0f, 0f, 22f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.2f, 2f), 0.045f, 0.006f);
-        CreateParallaxQuad("NearStars", camera, nearStars, new Color(0.95f, 0.98f, 1f, 0.85f), new Vector3(0f, 0f, 20f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.5f, 2.6f), 0.085f, 0.012f);
+        CreateParallaxQuad("FarBackground", camera, farTexture, new Color(0.82f, 0.86f, 1f, 0.9f), new Vector3(0f, 0f, 26f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1f, 1f), 0.008f, 0f, 0.012f, 0f);
+        CreateParallaxQuad("MidGlow", camera, farTexture, new Color(0.45f, 0.55f, 0.8f, 0.22f), new Vector3(0f, 0f, 24f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1f, 1f), 0.018f, 0f, 0.02f, 0f);
+        CreateParallaxQuad("MidStars", camera, midStars, new Color(0.72f, 0.84f, 1f, 0.55f), new Vector3(0f, 0f, 22f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.2f, 2f), 0.045f, 0.006f, 0.035f, 0f);
+        CreateParallaxQuad("NearStars", camera, nearStars, new Color(0.95f, 0.98f, 1f, 0.85f), new Vector3(0f, 0f, 20f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.5f, 2.6f), 0.085f, 0.012f, 0.06f, 0f);
 
         CreateSpaceParticles(camera, visibleWidth, visibleHeight);
     }
@@ -111,17 +111,17 @@ public static class PrototypeSceneBootstrap
         renderer.material = new Material(Shader.Find("Particles/Standard Unlit"));
         renderer.renderMode = ParticleSystemRenderMode.Billboard;
         renderer.sortMode = ParticleSystemSortMode.Distance;
-        renderer.minParticleSize = 0.02f;
-        renderer.maxParticleSize = 0.08f;
+        renderer.minParticleSize = 0.01f;
+        renderer.maxParticleSize = 0.04f;
 
         var main = particles.main;
         main.playOnAwake = true;
         main.loop = true;
         main.simulationSpace = ParticleSystemSimulationSpace.Local;
         main.startLifetime = 4f;
-        main.startSpeed = 0.25f;
-        main.startSize = 0.08f;
-        main.startColor = new ParticleSystem.MinMaxGradient(new Color(0.7f, 0.85f, 1f, 0.1f), new Color(1f, 1f, 1f, 0.45f));
+        main.startSpeed = 0.2f;
+        main.startSize = 0.04f;
+        main.startColor = new ParticleSystem.MinMaxGradient(new Color(0.7f, 0.85f, 1f, 0.08f), new Color(1f, 1f, 1f, 0.28f));
         main.maxParticles = 70;
 
         var emission = particles.emission;
@@ -135,12 +135,12 @@ public static class PrototypeSceneBootstrap
         velocityOverLifetime.enabled = true;
         velocityOverLifetime.space = ParticleSystemSimulationSpace.Local;
         velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(0f);
-        velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(-0.22f);
+        velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(-0.16f);
         velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(0f);
 
         var noise = particles.noise;
         noise.enabled = true;
-        noise.strength = 0.08f;
+        noise.strength = 0.05f;
         noise.frequency = 0.2f;
 
         particles.Play();
@@ -207,7 +207,7 @@ public static class PrototypeSceneBootstrap
         return obstacle;
     }
 
-    private static void CreateManagers(Transform root, Camera camera, GameObject player, GameObject obstacleTemplate, Font font)
+    private static void CreateManagers(Transform root, Camera camera, GameObject player, GameObject obstacleTemplate, Font font, Sprite sprite)
     {
         GameObject gameManagerObject = new GameObject("GameManager");
         gameManagerObject.transform.SetParent(root);
@@ -221,11 +221,11 @@ public static class PrototypeSceneBootstrap
         CameraFollow follow = camera.GetComponent<CameraFollow>();
         follow.Configure(player.transform, 3.5f);
 
-        CreateCanvas(root, font, out Text scoreText, out Text gameOverText);
-        scoreManager.Configure(player.GetComponent<PlayerController>(), scoreText, gameOverText);
+        CreateCanvas(root, font, sprite, out Text scoreText, out GameObject gameOverPanel, out Text gameOverText, out Button restartButton);
+        scoreManager.Configure(player.GetComponent<PlayerController>(), scoreText, gameOverPanel, gameOverText, restartButton);
     }
 
-    private static void CreateCanvas(Transform root, Font font, out Text scoreText, out Text gameOverText)
+    private static void CreateCanvas(Transform root, Font font, Sprite sprite, out Text scoreText, out GameObject gameOverPanel, out Text gameOverText, out Button restartButton)
     {
         GameObject canvasObject = new GameObject("Canvas");
         canvasObject.transform.SetParent(root);
@@ -242,8 +242,49 @@ public static class PrototypeSceneBootstrap
         canvasObject.AddComponent<GraphicRaycaster>();
 
         scoreText = CreateText(canvas.transform, font, "ScoreText", "Score: 0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -80f), 42, Color.white);
-        gameOverText = CreateText(canvas.transform, font, "GameOverText", "Game Over", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, 48, Color.white);
+
+        gameOverPanel = new GameObject("GameOverPanel");
+        gameOverPanel.transform.SetParent(canvas.transform);
+        Image panelImage = gameOverPanel.AddComponent<Image>();
+        panelImage.color = new Color(0.02f, 0.04f, 0.1f, 0.82f);
+
+        RectTransform panelRect = gameOverPanel.GetComponent<RectTransform>();
+        panelRect.anchorMin = new Vector2(0.5f, 0.5f);
+        panelRect.anchorMax = new Vector2(0.5f, 0.5f);
+        panelRect.pivot = new Vector2(0.5f, 0.5f);
+        panelRect.sizeDelta = new Vector2(720f, 360f);
+        panelRect.anchoredPosition = new Vector2(0f, 120f);
+
+        gameOverText = CreateText(gameOverPanel.transform, font, "GameOverText", "Game Over", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -90f), 56, Color.white);
         gameOverText.alignment = TextAnchor.MiddleCenter;
+
+        Text hintText = CreateText(gameOverPanel.transform, font, "HintText", "Tap button or press R", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -155f), 28, new Color(0.8f, 0.9f, 1f, 1f));
+        hintText.alignment = TextAnchor.MiddleCenter;
+
+        GameObject buttonObject = new GameObject("RestartButton");
+        buttonObject.transform.SetParent(gameOverPanel.transform);
+        Image buttonImage = buttonObject.AddComponent<Image>();
+        buttonImage.sprite = sprite;
+        buttonImage.color = new Color(0.18f, 0.75f, 1f, 1f);
+        restartButton = buttonObject.AddComponent<Button>();
+        ColorBlock colors = restartButton.colors;
+        colors.normalColor = new Color(0.18f, 0.75f, 1f, 1f);
+        colors.highlightedColor = new Color(0.28f, 0.82f, 1f, 1f);
+        colors.pressedColor = new Color(0.1f, 0.55f, 0.85f, 1f);
+        colors.selectedColor = colors.highlightedColor;
+        restartButton.colors = colors;
+
+        RectTransform buttonRect = buttonObject.GetComponent<RectTransform>();
+        buttonRect.anchorMin = new Vector2(0.5f, 0.5f);
+        buttonRect.anchorMax = new Vector2(0.5f, 0.5f);
+        buttonRect.pivot = new Vector2(0.5f, 0.5f);
+        buttonRect.sizeDelta = new Vector2(280f, 90f);
+        buttonRect.anchoredPosition = new Vector2(0f, -95f);
+
+        Text buttonText = CreateText(buttonObject.transform, font, "RestartLabel", "Restart", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, 34, Color.white);
+        buttonText.alignment = TextAnchor.MiddleCenter;
+
+        gameOverPanel.SetActive(false);
     }
 
     private static Text CreateText(Transform parent, Font font, string name, string content, Vector2 anchorMin, Vector2 anchorMax, Vector2 anchoredPosition, int fontSize, Color color)
@@ -268,7 +309,7 @@ public static class PrototypeSceneBootstrap
         return text;
     }
 
-    private static GameObject CreateParallaxQuad(string name, Camera camera, Texture2D texture, Color tint, Vector3 localPosition, Vector3 localScale, Vector2 textureScale, float yScrollFactor, float xScrollFactor)
+    private static GameObject CreateParallaxQuad(string name, Camera camera, Texture2D texture, Color tint, Vector3 localPosition, Vector3 localScale, Vector2 textureScale, float yScrollFactor, float xScrollFactor, float autoScrollY, float autoScrollX)
     {
         GameObject quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
         quad.name = name;
@@ -286,7 +327,7 @@ public static class PrototypeSceneBootstrap
         renderer.material.color = tint;
 
         ParallaxMaterialScroller scroller = quad.AddComponent<ParallaxMaterialScroller>();
-        scroller.Configure(camera.transform, yScrollFactor, xScrollFactor);
+        scroller.Configure(camera.transform, yScrollFactor, xScrollFactor, autoScrollY, autoScrollX);
 
         return quad;
     }
