@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Collections;
 
 public class ScoreManager : MonoBehaviour
 {
@@ -61,7 +60,7 @@ public class ScoreManager : MonoBehaviour
             gameOverText.text = "Game Over";
         }
 
-        StartCoroutine(ReloadSceneNextFrame());
+        ReloadCurrentScene();
     }
 
     public void Configure(PlayerController playerController, Text scoreLabel, Text gameOverLabel)
@@ -77,10 +76,23 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
-    private IEnumerator ReloadSceneNextFrame()
+    private void ReloadCurrentScene()
     {
-        yield return null;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        Scene currentScene = SceneManager.GetActiveScene();
+
+        if (!string.IsNullOrEmpty(currentScene.path))
+        {
+            SceneManager.LoadScene(currentScene.path, LoadSceneMode.Single);
+            return;
+        }
+
+        if (currentScene.buildIndex >= 0)
+        {
+            SceneManager.LoadScene(currentScene.buildIndex, LoadSceneMode.Single);
+            return;
+        }
+
+        SceneManager.LoadScene(currentScene.name, LoadSceneMode.Single);
     }
 
     private void UpdateScoreText()
