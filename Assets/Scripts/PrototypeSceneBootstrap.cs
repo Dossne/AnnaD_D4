@@ -1,5 +1,6 @@
 using System.IO;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -111,8 +112,8 @@ public static class PrototypeSceneBootstrap
         renderer.material = new Material(Shader.Find("Particles/Standard Unlit"));
         renderer.renderMode = ParticleSystemRenderMode.Billboard;
         renderer.sortMode = ParticleSystemSortMode.Distance;
-        renderer.minParticleSize = 0.01f;
-        renderer.maxParticleSize = 0.04f;
+        renderer.minParticleSize = 0.004f;
+        renderer.maxParticleSize = 0.014f;
 
         var main = particles.main;
         main.playOnAwake = true;
@@ -120,7 +121,7 @@ public static class PrototypeSceneBootstrap
         main.simulationSpace = ParticleSystemSimulationSpace.Local;
         main.startLifetime = 4f;
         main.startSpeed = 0.2f;
-        main.startSize = 0.04f;
+        main.startSize = 0.013f;
         main.startColor = new ParticleSystem.MinMaxGradient(new Color(0.7f, 0.85f, 1f, 0.08f), new Color(1f, 1f, 1f, 0.28f));
         main.maxParticles = 70;
 
@@ -241,6 +242,8 @@ public static class PrototypeSceneBootstrap
 
         canvasObject.AddComponent<GraphicRaycaster>();
 
+        EnsureEventSystem(root);
+
         scoreText = CreateText(canvas.transform, font, "ScoreText", "Score: 0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -80f), 42, Color.white);
 
         gameOverPanel = new GameObject("GameOverPanel");
@@ -285,6 +288,19 @@ public static class PrototypeSceneBootstrap
         buttonText.alignment = TextAnchor.MiddleCenter;
 
         gameOverPanel.SetActive(false);
+    }
+
+    private static void EnsureEventSystem(Transform root)
+    {
+        if (Object.FindObjectOfType<EventSystem>() != null)
+        {
+            return;
+        }
+
+        GameObject eventSystemObject = new GameObject("EventSystem");
+        eventSystemObject.transform.SetParent(root);
+        eventSystemObject.AddComponent<EventSystem>();
+        eventSystemObject.AddComponent<StandaloneInputModule>();
     }
 
     private static Text CreateText(Transform parent, Font font, string name, string content, Vector2 anchorMin, Vector2 anchorMax, Vector2 anchoredPosition, int fontSize, Color color)
@@ -407,3 +423,6 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
     }
 }
+
+
+
