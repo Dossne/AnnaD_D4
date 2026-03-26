@@ -7,15 +7,21 @@ public static class PrototypeSceneBootstrap
 {
     private const float LeftWallX = -2.35f;
     private const float RightWallX = 2.35f;
+    private const string RuntimeRootName = "PrototypeRuntime";
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-    private static void BuildPrototype()
+    private static void BuildPrototypeOnLoad()
     {
-        if (Object.FindObjectOfType<PlayerController>() != null)
-        {
-            return;
-        }
+        RebuildPrototype();
+    }
 
+    public static void RestartPrototype()
+    {
+        RebuildPrototype();
+    }
+
+    private static void RebuildPrototype()
+    {
         Scene scene = SceneManager.GetActiveScene();
         if (!scene.IsValid())
         {
@@ -31,18 +37,33 @@ public static class PrototypeSceneBootstrap
             camera.orthographic = true;
         }
 
+        ClearExistingPrototype(camera);
         SetupCamera(camera);
 
         Sprite baseSprite = CreateSolidSprite();
         Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
 
-        GameObject root = new GameObject("PrototypeRuntime");
+        GameObject root = new GameObject(RuntimeRootName);
         CreateParallaxBackdrop(camera);
         CreateWalls(camera, baseSprite);
 
         GameObject player = CreatePlayer(root.transform, baseSprite);
         GameObject obstacleTemplate = CreateObstacleTemplate(root.transform, baseSprite);
         CreateManagers(root.transform, camera, player, obstacleTemplate, font);
+    }
+
+    private static void ClearExistingPrototype(Camera camera)
+    {
+        GameObject existingRoot = GameObject.Find(RuntimeRootName);
+        if (existingRoot != null)
+        {
+            Object.DestroyImmediate(existingRoot);
+        }
+
+        for (int i = camera.transform.childCount - 1; i >= 0; i--)
+        {
+            Object.DestroyImmediate(camera.transform.GetChild(i).gameObject);
+        }
     }
 
     private static void SetupCamera(Camera camera)

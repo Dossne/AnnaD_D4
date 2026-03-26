@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ScoreManager : MonoBehaviour
@@ -60,7 +59,7 @@ public class ScoreManager : MonoBehaviour
             gameOverText.text = "Game Over";
         }
 
-        ReloadCurrentScene();
+        PrototypeSceneBootstrap.RestartPrototype();
     }
 
     public void Configure(PlayerController playerController, Text scoreLabel, Text gameOverLabel)
@@ -74,25 +73,6 @@ public class ScoreManager : MonoBehaviour
         {
             gameOverText.gameObject.SetActive(false);
         }
-    }
-
-    private void ReloadCurrentScene()
-    {
-        Scene currentScene = SceneManager.GetActiveScene();
-
-        if (!string.IsNullOrEmpty(currentScene.path))
-        {
-            SceneManager.LoadScene(currentScene.path, LoadSceneMode.Single);
-            return;
-        }
-
-        if (currentScene.buildIndex >= 0)
-        {
-            SceneManager.LoadScene(currentScene.buildIndex, LoadSceneMode.Single);
-            return;
-        }
-
-        SceneManager.LoadScene(currentScene.name, LoadSceneMode.Single);
     }
 
     private void UpdateScoreText()
