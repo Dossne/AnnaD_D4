@@ -121,7 +121,7 @@ public static class PrototypeSceneBootstrap
         body.GetComponent<SpriteRenderer>().sortingOrder = 2;
 
         PlayerController controller = player.AddComponent<PlayerController>();
-        controller.Configure(4.5f, 34f, LeftWallX, RightWallX, true, body.transform, 0.09f, 8.5f, 0.08f);
+        controller.Configure(4.5f, 34f, LeftWallX, RightWallX, true, body.transform, 6f, 7.8f, 0.08f);
 
         return player;
     }
@@ -257,4 +257,5 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
     }
 }
+
 

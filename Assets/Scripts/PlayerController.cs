@@ -4,9 +4,9 @@ using UnityEngine.SceneManagement;
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement")]
-    [SerializeField] private float upwardSpeed = 4f;
-    [SerializeField] private float maxUpwardSpeed = 8f;
-    [SerializeField] private float upwardAcceleration = 0.08f;
+    [SerializeField] private float earlyUpwardSpeed = 4.5f;
+    [SerializeField] private float midUpwardSpeed = 6f;
+    [SerializeField] private float lateUpwardSpeed = 7.8f;
     [SerializeField] private float switchSpeed = 24f;
     [SerializeField] private float wallSnapDistance = 0.12f;
     [SerializeField] private float leftWallX = -2f;
@@ -70,7 +70,7 @@ public class PlayerController : MonoBehaviour
         }
 
         elapsedRunTime += Time.fixedDeltaTime;
-        float currentUpwardSpeed = Mathf.Min(upwardSpeed + elapsedRunTime * upwardAcceleration, maxUpwardSpeed);
+        float currentUpwardSpeed = GetCurrentUpwardSpeed();
 
         float targetX = isOnLeftWall ? leftWallX : rightWallX;
         float nextX = Mathf.MoveTowards(rb.position.x, targetX, switchSpeed * Time.fixedDeltaTime);
@@ -82,6 +82,23 @@ public class PlayerController : MonoBehaviour
         Vector2 nextPosition = new Vector2(nextX, rb.position.y + currentUpwardSpeed * Time.fixedDeltaTime);
         rb.MovePosition(nextPosition);
         visualRoot.rotation = Quaternion.identity;
+    }
+
+    private float GetCurrentUpwardSpeed()
+    {
+        if (elapsedRunTime < 10f)
+        {
+            return earlyUpwardSpeed;
+        }
+
+        if (elapsedRunTime < 30f)
+        {
+            float t = Mathf.InverseLerp(10f, 30f, elapsedRunTime);
+            return Mathf.Lerp(midUpwardSpeed, midUpwardSpeed + 0.4f, t);
+        }
+
+        float lateT = Mathf.Clamp01((elapsedRunTime - 30f) / 20f);
+        return Mathf.Lerp(lateUpwardSpeed, lateUpwardSpeed + 0.6f, lateT);
     }
 
     private void SwitchSide()
@@ -107,19 +124,19 @@ public class PlayerController : MonoBehaviour
         float rightX,
         bool startLeft,
         Transform visualTarget = null,
-        float moveAcceleration = 0.08f,
-        float topSpeed = 8f,
+        float midSpeed = 6f,
+        float lateSpeed = 7.8f,
         float snapDistance = 0.12f)
     {
-        upwardSpeed = moveSpeed;
+        earlyUpwardSpeed = moveSpeed;
         switchSpeed = horizontalSwitchSpeed;
         leftWallX = leftX;
         rightWallX = rightX;
         startOnLeftWall = startLeft;
         isOnLeftWall = startOnLeftWall;
         visualRoot = visualTarget == null ? transform : visualTarget;
-        upwardAcceleration = moveAcceleration;
-        maxUpwardSpeed = topSpeed;
+        midUpwardSpeed = midSpeed;
+        lateUpwardSpeed = lateSpeed;
         wallSnapDistance = snapDistance;
     }
 }

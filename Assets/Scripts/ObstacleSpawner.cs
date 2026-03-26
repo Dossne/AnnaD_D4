@@ -9,19 +9,24 @@ public class ObstacleSpawner : MonoBehaviour
     [SerializeField] private float rightWallX = 2f;
     [SerializeField] private float startOffsetY = 8f;
     [SerializeField] private float spawnStepY = 3f;
-    [SerializeField] private float obstacleChancePerSide = 0.7f;
     [SerializeField] private int maxSpawnedObstacles = 30;
     [SerializeField] private float spawnPaddingAboveView = 2f;
     [SerializeField] private float cleanupPaddingBelowView = 4f;
-    [SerializeField] private float startSpawnChance = 0.3f;
-    [SerializeField] private float difficultyRampDuration = 45f;
-    [SerializeField] private float startSideChangeChance = 0.12f;
-    [SerializeField] private float endSideChangeChance = 0.7f;
 
     private readonly Queue<GameObject> spawnedObstacles = new Queue<GameObject>();
     private float nextSpawnY;
     private float elapsedTime;
     private bool nextSpawnOnLeft = true;
+
+    private struct DifficultyPhase
+    {
+        public float spawnChance;
+        public float sideChangeChance;
+        public int maxChainLength;
+        public bool allowDoubleRows;
+    }
+
+    private int sameSideChainCount;
 
     private void Start()
     {
@@ -35,6 +40,7 @@ public class ObstacleSpawner : MonoBehaviour
         float initialSpawnY = Mathf.Max(player.position.y + startOffsetY, GetTopOfViewY() + spawnPaddingAboveView);
         nextSpawnY = initialSpawnY;
         nextSpawnOnLeft = Random.value < 0.5f;
+        sameSideChainCount = 0;
     }
 
     private void Update()
@@ -56,14 +62,37 @@ public class ObstacleSpawner : MonoBehaviour
         CleanupObstaclesBelowView();
     }
 
-    private float GetDifficulty01()
+    private DifficultyPhase GetCurrentPhase()
     {
-        if (difficultyRampDuration <= 0f)
+        if (elapsedTime < 10f)
         {
-            return 1f;
+            return new DifficultyPhase
+            {
+                spawnChance = 0.28f,
+                sideChangeChance = 0.12f,
+                maxChainLength = 4,
+                allowDoubleRows = false
+            };
         }
 
-        return Mathf.Clamp01(elapsedTime / difficultyRampDuration);
+        if (elapsedTime < 30f)
+        {
+            return new DifficultyPhase
+            {
+                spawnChance = 0.55f,
+                sideChangeChance = 0.45f,
+                maxChainLength = 2,
+                allowDoubleRows = false
+            };
+        }
+
+        return new DifficultyPhase
+        {
+            spawnChance = 0.82f,
+            sideChangeChance = 0.65f,
+            maxChainLength = 2,
+            allowDoubleRows = true
+        };
     }
 
     private float GetTopOfViewY()
@@ -90,20 +119,32 @@ public class ObstacleSpawner : MonoBehaviour
 
     private void SpawnRow(float spawnY)
     {
-        float difficulty = GetDifficulty01();
-        float spawnChance = Mathf.Lerp(startSpawnChance, obstacleChancePerSide, difficulty);
-        if (Random.value >= spawnChance)
+        DifficultyPhase phase = GetCurrentPhase();
+        if (Random.value >= phase.spawnChance)
         {
+            sameSideChainCount = 0;
             return;
         }
 
-        float sideChangeChance = Mathf.Lerp(startSideChangeChance, endSideChangeChance, difficulty);
-        if (Random.value < sideChangeChance)
+        bool shouldChangeSide = sameSideChainCount >= phase.maxChainLength || Random.value < phase.sideChangeChance;
+        if (shouldChangeSide)
         {
             nextSpawnOnLeft = !nextSpawnOnLeft;
+            sameSideChainCount = 0;
         }
 
-        if (nextSpawnOnLeft)
+        SpawnSingle(nextSpawnOnLeft, spawnY);
+        sameSideChainCount++;
+
+        if (phase.allowDoubleRows && Random.value < 0.28f)
+        {
+            SpawnSingle(!nextSpawnOnLeft, spawnY + spawnStepY * 0.45f);
+        }
+    }
+
+    private void SpawnSingle(bool spawnLeft, float spawnY)
+    {
+        if (spawnLeft)
         {
             SpawnObstacle(new Vector2(leftWallX, spawnY), true);
         }
@@ -177,7 +218,6 @@ public class ObstacleSpawner : MonoBehaviour
         rightWallX = rightX;
         startOffsetY = offsetY;
         spawnStepY = stepY;
-        obstacleChancePerSide = chancePerSide;
         maxSpawnedObstacles = maxObstacles;
     }
 }
