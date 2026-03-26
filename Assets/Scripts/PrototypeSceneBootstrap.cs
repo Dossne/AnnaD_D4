@@ -79,14 +79,15 @@ public static class PrototypeSceneBootstrap
     {
         float visibleHeight = camera.orthographicSize * 2f;
         float wallHeight = visibleHeight + 2f;
+        float wallZ = 14f;
 
         GameObject leftWall = CreateSpriteObject(
             "LeftWall",
             camera.transform,
             sprite,
-            new Color(0.8f, 0.8f, 0.85f, 1f),
-            new Vector3(0.2f, wallHeight, 1f),
-            new Vector3(LeftWallX - 0.75f, 0f, 0f));
+            new Color(0.92f, 0.92f, 0.98f, 1f),
+            new Vector3(0.28f, wallHeight, 1f),
+            new Vector3(LeftWallX - 0.75f, 0f, wallZ));
 
         leftWall.GetComponent<SpriteRenderer>().sortingOrder = -2;
 
@@ -94,9 +95,9 @@ public static class PrototypeSceneBootstrap
             "RightWall",
             camera.transform,
             sprite,
-            new Color(0.8f, 0.8f, 0.85f, 1f),
-            new Vector3(0.2f, wallHeight, 1f),
-            new Vector3(RightWallX + 0.75f, 0f, 0f));
+            new Color(0.92f, 0.92f, 0.98f, 1f),
+            new Vector3(0.28f, wallHeight, 1f),
+            new Vector3(RightWallX + 0.75f, 0f, wallZ));
 
         rightWall.GetComponent<SpriteRenderer>().sortingOrder = -2;
     }
