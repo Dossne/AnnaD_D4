@@ -11,6 +11,7 @@ public class ObstacleSpawner : MonoBehaviour
     [SerializeField] private float spawnStepY = 3f;
     [SerializeField] private float obstacleChancePerSide = 0.6f;
     [SerializeField] private int maxSpawnedObstacles = 30;
+    [SerializeField] private float spawnPaddingAboveView = 2f;
 
     private readonly Queue<GameObject> spawnedObstacles = new Queue<GameObject>();
     private float nextSpawnY;
@@ -24,7 +25,8 @@ public class ObstacleSpawner : MonoBehaviour
             return;
         }
 
-        nextSpawnY = player.position.y + startOffsetY;
+        float initialSpawnY = Mathf.Max(player.position.y + startOffsetY, GetTopOfViewY() + spawnPaddingAboveView);
+        nextSpawnY = initialSpawnY;
     }
 
     private void Update()
@@ -34,11 +36,23 @@ public class ObstacleSpawner : MonoBehaviour
             return;
         }
 
-        while (player.position.y + startOffsetY >= nextSpawnY)
+        float spawnTriggerY = Mathf.Max(player.position.y + startOffsetY, GetTopOfViewY() + spawnPaddingAboveView);
+        while (spawnTriggerY >= nextSpawnY)
         {
             SpawnRow(nextSpawnY);
             nextSpawnY += spawnStepY;
         }
+    }
+
+    private float GetTopOfViewY()
+    {
+        Camera mainCamera = Camera.main;
+        if (mainCamera == null || !mainCamera.orthographic)
+        {
+            return player.position.y;
+        }
+
+        return mainCamera.transform.position.y + mainCamera.orthographicSize;
     }
 
     private void SpawnRow(float spawnY)
