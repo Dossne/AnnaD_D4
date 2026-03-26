@@ -71,8 +71,8 @@ public static class PrototypeSceneBootstrap
         Texture2D midStars = CreateStarTexture(256, 512, 90, 1, 0.25f, 0.7f);
         Texture2D nearStars = CreateStarTexture(256, 512, 170, 2, 0.45f, 1f);
 
-        CreateParallaxQuad("FarBackground", camera, farTexture, new Color(0.82f, 0.86f, 1f, 0.9f), new Vector3(0f, 0f, 26f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1f, 1f), 0.008f, 0.0015f);
-        CreateParallaxQuad("MidGlow", camera, farTexture, new Color(0.45f, 0.55f, 0.8f, 0.22f), new Vector3(0f, 0f, 24f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.6f, 2.4f), 0.018f, 0.003f);
+        CreateParallaxQuad("FarBackground", camera, farTexture, new Color(0.82f, 0.86f, 1f, 0.9f), new Vector3(0f, 0f, 26f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1f, 1f), 0.008f, 0f);
+        CreateParallaxQuad("MidGlow", camera, farTexture, new Color(0.45f, 0.55f, 0.8f, 0.22f), new Vector3(0f, 0f, 24f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1f, 1f), 0.018f, 0f);
         CreateParallaxQuad("MidStars", camera, midStars, new Color(0.72f, 0.84f, 1f, 0.55f), new Vector3(0f, 0f, 22f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.2f, 2f), 0.045f, 0.006f);
         CreateParallaxQuad("NearStars", camera, nearStars, new Color(0.95f, 0.98f, 1f, 0.85f), new Vector3(0f, 0f, 20f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.5f, 2.6f), 0.085f, 0.012f);
 
@@ -112,8 +112,10 @@ public static class PrototypeSceneBootstrap
 
         var velocityOverLifetime = particles.velocityOverLifetime;
         velocityOverLifetime.enabled = true;
-        velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(-0.02f, 0.02f);
-        velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(-0.35f, -0.15f);
+        velocityOverLifetime.space = ParticleSystemSimulationSpace.Local;
+        velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(0f);
+        velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(-0.22f);
+        velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(0f);
 
         var noise = particles.noise;
         noise.enabled = true;
@@ -135,22 +137,10 @@ public static class PrototypeSceneBootstrap
 
     private static void CreateWallStripe(Transform parent, Sprite sprite, string name, float x, float height, float z)
     {
-        GameObject glow = CreateSpriteObject(
-            name + "Glow",
-            parent,
-            sprite,
-            new Color(0.7f, 0.8f, 1f, 0.28f),
-            new Vector3(0.5f, height, 1f),
-            new Vector3(x, 0f, z + 0.2f));
+        GameObject glow = CreateSpriteObject(name + "Glow", parent, sprite, new Color(0.7f, 0.8f, 1f, 0.28f), new Vector3(0.5f, height, 1f), new Vector3(x, 0f, z + 0.2f));
         glow.GetComponent<SpriteRenderer>().sortingOrder = 8;
 
-        GameObject core = CreateSpriteObject(
-            name,
-            parent,
-            sprite,
-            new Color(0.96f, 0.97f, 1f, 1f),
-            new Vector3(0.16f, height, 1f),
-            new Vector3(x, 0f, z));
+        GameObject core = CreateSpriteObject(name, parent, sprite, new Color(0.96f, 0.97f, 1f, 1f), new Vector3(0.16f, height, 1f), new Vector3(x, 0f, z));
         core.GetComponent<SpriteRenderer>().sortingOrder = 9;
     }
 
@@ -231,7 +221,7 @@ public static class PrototypeSceneBootstrap
         canvasObject.AddComponent<GraphicRaycaster>();
 
         scoreText = CreateText(canvas.transform, font, "ScoreText", "Score: 0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -80f), 42, Color.white);
-        gameOverText = CreateText(canvas.transform, font, "GameOverText", "Game Over\nTap or Press R to Restart", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, 48, Color.white);
+        gameOverText = CreateText(canvas.transform, font, "GameOverText", "Game Over", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, 48, Color.white);
         gameOverText.alignment = TextAnchor.MiddleCenter;
     }
 
@@ -271,6 +261,7 @@ public static class PrototypeSceneBootstrap
         renderer.material = new Material(Shader.Find("Unlit/Transparent"));
         renderer.material.mainTexture = texture;
         renderer.material.mainTextureScale = textureScale;
+        renderer.material.mainTextureOffset = Vector2.zero;
         renderer.material.color = tint;
 
         ParallaxMaterialScroller scroller = quad.AddComponent<ParallaxMaterialScroller>();
@@ -354,4 +345,3 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
     }
 }
-
