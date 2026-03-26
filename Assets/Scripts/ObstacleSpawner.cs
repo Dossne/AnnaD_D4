@@ -12,6 +12,7 @@ public class ObstacleSpawner : MonoBehaviour
     [SerializeField] private float obstacleChancePerSide = 0.6f;
     [SerializeField] private int maxSpawnedObstacles = 30;
     [SerializeField] private float spawnPaddingAboveView = 2f;
+    [SerializeField] private float cleanupPaddingBelowView = 4f;
 
     private readonly Queue<GameObject> spawnedObstacles = new Queue<GameObject>();
     private float nextSpawnY;
@@ -42,6 +43,8 @@ public class ObstacleSpawner : MonoBehaviour
             SpawnRow(nextSpawnY);
             nextSpawnY += spawnStepY;
         }
+
+        CleanupObstaclesBelowView();
     }
 
     private float GetTopOfViewY()
@@ -53,6 +56,17 @@ public class ObstacleSpawner : MonoBehaviour
         }
 
         return mainCamera.transform.position.y + mainCamera.orthographicSize;
+    }
+
+    private float GetBottomOfViewY()
+    {
+        Camera mainCamera = Camera.main;
+        if (mainCamera == null || !mainCamera.orthographic)
+        {
+            return player.position.y;
+        }
+
+        return mainCamera.transform.position.y - mainCamera.orthographicSize;
     }
 
     private void SpawnRow(float spawnY)
@@ -87,11 +101,38 @@ public class ObstacleSpawner : MonoBehaviour
 
         while (spawnedObstacles.Count > maxSpawnedObstacles)
         {
-            GameObject oldestObstacle = spawnedObstacles.Dequeue();
-            if (oldestObstacle != null)
+            DestroyOldestObstacle();
+        }
+    }
+
+    private void CleanupObstaclesBelowView()
+    {
+        float cleanupY = GetBottomOfViewY() - cleanupPaddingBelowView;
+
+        while (spawnedObstacles.Count > 0)
+        {
+            GameObject oldestObstacle = spawnedObstacles.Peek();
+            if (oldestObstacle == null)
             {
-                Destroy(oldestObstacle);
+                spawnedObstacles.Dequeue();
+                continue;
             }
+
+            if (oldestObstacle.transform.position.y >= cleanupY)
+            {
+                break;
+            }
+
+            DestroyOldestObstacle();
+        }
+    }
+
+    private void DestroyOldestObstacle()
+    {
+        GameObject oldestObstacle = spawnedObstacles.Dequeue();
+        if (oldestObstacle != null)
+        {
+            Destroy(oldestObstacle);
         }
     }
 
