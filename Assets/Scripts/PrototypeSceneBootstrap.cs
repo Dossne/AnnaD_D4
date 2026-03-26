@@ -285,9 +285,9 @@ public static class PrototypeSceneBootstrap
     private static Material CreateTransparentMaterial()
     {
         Shader shader = FindFirstAvailableShader(
-            "Sprites/Default",
-            "Universal Render Pipeline/Unlit",
             "Unlit/Texture",
+            "Universal Render Pipeline/Unlit",
+            "Sprites/Default",
             "Unlit/Transparent",
             "Legacy Shaders/Transparent/Diffuse");
 
@@ -386,7 +386,7 @@ public static class PrototypeSceneBootstrap
         Color neonCyan = new Color(0.55f, 0.98f, 1f, 1f);
         Color neonBlue = new Color(0.18f, 0.82f, 1f, 1f);
         Color neonBorder = new Color(0.36f, 0.92f, 1f, 0.78f);
-        Color panelColor = new Color(0.02f, 0.05f, 0.11f, 0.9f);
+        Color panelColor = new Color(0f, 0f, 0f, 0.72f);
         Color mutedText = new Color(0.77f, 0.9f, 1f, 0.95f);
 
         GameObject canvasObject = new GameObject("Canvas");
