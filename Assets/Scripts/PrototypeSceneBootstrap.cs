@@ -229,7 +229,7 @@ public static class PrototypeSceneBootstrap
         body.GetComponent<SpriteRenderer>().sortingOrder = 2;
 
         PlayerController controller = player.AddComponent<PlayerController>();
-        controller.Configure(4.5f, 34f, LeftWallX, RightWallX, true, body.transform, 6f, 8.8f, 0.08f, 0.1f);
+        controller.Configure(4.5f, 34f, LeftWallX, RightWallX, true, body.transform, 6.8f, 10.5f, 0.08f, 0.18f);
 
         return player;
     }

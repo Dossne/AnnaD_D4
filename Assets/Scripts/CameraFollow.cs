@@ -5,7 +5,7 @@ public class CameraFollow : MonoBehaviour
     [SerializeField] private Transform target;
     [SerializeField] private float yOffset = 3f;
     [SerializeField] private float hitShakeDuration = 0.14f;
-    [SerializeField] private Vector3 hitOffset = new Vector3(0.12f, -0.2f, 0f);
+    [SerializeField] private Vector3 hitOffset = new Vector3(0f, -0.16f, 0f);
 
     private float hitShakeTimer;
 
