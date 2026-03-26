@@ -36,7 +36,7 @@ public static class PrototypeSceneBootstrap
         Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
 
         GameObject root = new GameObject("PrototypeRuntime");
-        CreateBackdrop(root.transform, camera.transform, baseSprite);
+        CreateBackdrop(root.transform, baseSprite);
         CreateWalls(root.transform, baseSprite);
 
         GameObject player = CreatePlayer(root.transform, baseSprite);
@@ -49,7 +49,7 @@ public static class PrototypeSceneBootstrap
         camera.orthographic = true;
         camera.orthographicSize = 8.8f;
         camera.clearFlags = CameraClearFlags.SolidColor;
-        camera.backgroundColor = new Color(0.03f, 0.02f, 0.12f, 1f);
+        camera.backgroundColor = new Color(0.12f, 0.12f, 0.14f, 1f);
         camera.transform.position = new Vector3(0f, 0f, -10f);
 
         CameraFollow follow = camera.GetComponent<CameraFollow>();
@@ -59,50 +59,40 @@ public static class PrototypeSceneBootstrap
         }
     }
 
-    private static void CreateBackdrop(Transform root, Transform cameraTransform, Sprite sprite)
+    private static void CreateBackdrop(Transform root, Sprite sprite)
     {
-        GameObject backdrop = new GameObject("Backdrop");
-        backdrop.transform.SetParent(root);
+        GameObject background = CreateSpriteObject(
+            "Background",
+            root,
+            sprite,
+            new Color(0.16f, 0.16f, 0.18f, 1f),
+            new Vector3(8f, 500f, 1f),
+            new Vector3(0f, 250f, 15f));
 
-        GameObject deepSpace = CreateSpriteObject("DeepSpace", backdrop.transform, sprite, new Color(0.05f, 0.04f, 0.16f, 1f), new Vector3(8f, 500f, 1f), Vector3.zero);
-        deepSpace.transform.position = new Vector3(0f, 250f, 15f);
-
-        GameObject centerGlow = CreateSpriteObject("CenterGlow", backdrop.transform, sprite, new Color(0.1f, 0.22f, 0.45f, 0.18f), new Vector3(3.6f, 500f, 1f), Vector3.zero);
-        centerGlow.transform.position = new Vector3(0f, 250f, 14f);
-
-        GameObject leftGlow = CreateSpriteObject("LeftGlow", backdrop.transform, sprite, new Color(0.9f, 0.15f, 1f, 0.14f), new Vector3(2.5f, 500f, 1f), Vector3.zero);
-        leftGlow.transform.position = new Vector3(-4.6f, 250f, 14f);
-
-        GameObject rightGlow = CreateSpriteObject("RightGlow", backdrop.transform, sprite, new Color(0.9f, 0.15f, 1f, 0.14f), new Vector3(2.5f, 500f, 1f), Vector3.zero);
-        rightGlow.transform.position = new Vector3(4.6f, 250f, 14f);
-
-        GameObject starRoot = new GameObject("Stars");
-        starRoot.transform.SetParent(cameraTransform);
-        starRoot.transform.localPosition = new Vector3(0f, 0f, 12f);
-
-        for (int i = 0; i < 90; i++)
-        {
-            float x = Random.Range(-3.2f, 3.2f);
-            float y = Random.Range(-9f, 9f);
-            float size = Random.Range(0.035f, 0.09f);
-            Color color = Color.Lerp(new Color(0.3f, 0.7f, 1f, 0.5f), new Color(1f, 1f, 1f, 0.9f), Random.value);
-            CreateSpriteObject("Star", starRoot.transform, sprite, color, new Vector3(size, size, 1f), new Vector3(x, y, 0f));
-        }
+        background.GetComponent<SpriteRenderer>().sortingOrder = -10;
     }
 
     private static void CreateWalls(Transform root, Sprite sprite)
     {
-        CreateNeonWall(root, sprite, "LeftWall", LeftWallX - 0.75f, new Color(0.72f, 0.3f, 1f, 0.95f), new Color(0.85f, 0.4f, 1f, 0.25f));
-        CreateNeonWall(root, sprite, "RightWall", RightWallX + 0.75f, new Color(1f, 0.36f, 0.76f, 0.95f), new Color(1f, 0.25f, 0.8f, 0.25f));
-    }
+        GameObject leftWall = CreateSpriteObject(
+            "LeftWall",
+            root,
+            sprite,
+            new Color(0.8f, 0.8f, 0.85f, 1f),
+            new Vector3(0.2f, 500f, 1f),
+            new Vector3(LeftWallX - 0.75f, 250f, 0f));
 
-    private static void CreateNeonWall(Transform root, Sprite sprite, string name, float x, Color coreColor, Color glowColor)
-    {
-        GameObject glow = CreateSpriteObject(name + "Glow", root, sprite, glowColor, new Vector3(0.48f, 500f, 1f), new Vector3(x, 250f, 0f));
-        glow.GetComponent<SpriteRenderer>().sortingOrder = -4;
+        leftWall.GetComponent<SpriteRenderer>().sortingOrder = -2;
 
-        GameObject core = CreateSpriteObject(name, root, sprite, coreColor, new Vector3(0.12f, 500f, 1f), new Vector3(x, 250f, 0f));
-        core.GetComponent<SpriteRenderer>().sortingOrder = -3;
+        GameObject rightWall = CreateSpriteObject(
+            "RightWall",
+            root,
+            sprite,
+            new Color(0.8f, 0.8f, 0.85f, 1f),
+            new Vector3(0.2f, 500f, 1f),
+            new Vector3(RightWallX + 0.75f, 250f, 0f));
+
+        rightWall.GetComponent<SpriteRenderer>().sortingOrder = -2;
     }
 
     private static GameObject CreatePlayer(Transform root, Sprite sprite)
@@ -118,42 +108,20 @@ public static class PrototypeSceneBootstrap
 
         BoxCollider2D collider = player.AddComponent<BoxCollider2D>();
         collider.isTrigger = true;
-        collider.size = new Vector2(0.72f, 0.72f);
+        collider.size = new Vector2(0.7f, 0.7f);
 
-        GameObject glow = CreateSpriteObject("Glow", player.transform, sprite, new Color(0.2f, 1f, 0.95f, 0.22f), new Vector3(1.2f, 1.2f, 1f), Vector3.zero);
-        glow.GetComponent<SpriteRenderer>().sortingOrder = 3;
+        GameObject body = CreateSpriteObject(
+            "Body",
+            player.transform,
+            sprite,
+            new Color(0.2f, 0.9f, 1f, 1f),
+            new Vector3(0.7f, 0.7f, 1f),
+            Vector3.zero);
 
-        GameObject outline = new GameObject("Outline");
-        outline.transform.SetParent(player.transform);
-        outline.transform.localPosition = Vector3.zero;
-        LineRenderer square = outline.AddComponent<LineRenderer>();
-        square.useWorldSpace = false;
-        square.loop = true;
-        square.positionCount = 4;
-        square.widthMultiplier = 0.08f;
-        square.material = new Material(Shader.Find("Sprites/Default"));
-        square.startColor = new Color(0.35f, 1f, 0.95f, 1f);
-        square.endColor = new Color(0.35f, 1f, 0.95f, 1f);
-        square.sortingOrder = 4;
-        square.SetPositions(new[]
-        {
-            new Vector3(-0.34f, -0.34f, 0f),
-            new Vector3(-0.34f, 0.34f, 0f),
-            new Vector3(0.34f, 0.34f, 0f),
-            new Vector3(0.34f, -0.34f, 0f)
-        });
-
-        TrailRenderer trail = player.AddComponent<TrailRenderer>();
-        trail.time = 0.35f;
-        trail.startWidth = 0.12f;
-        trail.endWidth = 0f;
-        trail.material = new Material(Shader.Find("Sprites/Default"));
-        trail.startColor = new Color(0.35f, 1f, 0.95f, 0.75f);
-        trail.endColor = new Color(0.35f, 1f, 0.95f, 0f);
-        trail.sortingOrder = 2;
+        body.GetComponent<SpriteRenderer>().sortingOrder = 2;
 
         PlayerController controller = player.AddComponent<PlayerController>();
-        controller.Configure(5f, 18f, LeftWallX, RightWallX, true, outline.transform);
+        controller.Configure(5f, 18f, LeftWallX, RightWallX, true, body.transform);
 
         return player;
     }
@@ -166,28 +134,19 @@ public static class PrototypeSceneBootstrap
 
         BoxCollider2D collider = obstacle.AddComponent<BoxCollider2D>();
         collider.isTrigger = true;
-        collider.size = new Vector2(0.95f, 0.95f);
+        collider.size = new Vector2(0.9f, 0.9f);
 
         obstacle.AddComponent<ObstacleMarker>();
 
-        LineRenderer triangle = obstacle.AddComponent<LineRenderer>();
-        triangle.useWorldSpace = false;
-        triangle.loop = true;
-        triangle.positionCount = 3;
-        triangle.widthMultiplier = 0.08f;
-        triangle.material = new Material(Shader.Find("Sprites/Default"));
-        triangle.startColor = new Color(1f, 0.3f, 0.8f, 1f);
-        triangle.endColor = new Color(1f, 0.3f, 0.8f, 1f);
-        triangle.sortingOrder = 4;
-        triangle.SetPositions(new[]
-        {
-            new Vector3(0f, 0.46f, 0f),
-            new Vector3(0.78f, 0f, 0f),
-            new Vector3(0f, -0.46f, 0f)
-        });
+        GameObject body = CreateSpriteObject(
+            "Body",
+            obstacle.transform,
+            sprite,
+            new Color(1f, 0.35f, 0.35f, 1f),
+            new Vector3(0.9f, 0.9f, 1f),
+            Vector3.zero);
 
-        GameObject glow = CreateSpriteObject("Glow", obstacle.transform, sprite, new Color(1f, 0.2f, 0.8f, 0.18f), new Vector3(1.15f, 1.15f, 1f), new Vector3(0.18f, 0f, 0f));
-        glow.GetComponent<SpriteRenderer>().sortingOrder = 3;
+        body.GetComponent<SpriteRenderer>().sortingOrder = 2;
 
         return obstacle;
     }
@@ -201,35 +160,54 @@ public static class PrototypeSceneBootstrap
         GameObject spawnerObject = new GameObject("ObstacleSpawner");
         spawnerObject.transform.SetParent(root);
         ObstacleSpawner spawner = spawnerObject.AddComponent<ObstacleSpawner>();
-        spawner.Configure(obstacleTemplate, player.transform, LeftWallX, RightWallX, 10f, 2.8f, 0.75f, 36);
+        spawner.Configure(obstacleTemplate, player.transform, LeftWallX, RightWallX, 10f, 3f, 0.7f, 36);
 
         CameraFollow follow = camera.GetComponent<CameraFollow>();
         follow.Configure(player.transform, 3.5f);
 
-        Canvas canvas = CreateCanvas(root, font, out Text scoreText, out Text gameOverText);
+        CreateCanvas(root, font, out Text scoreText, out Text gameOverText);
         scoreManager.Configure(player.GetComponent<PlayerController>(), scoreText, gameOverText);
     }
 
-    private static Canvas CreateCanvas(Transform root, Font font, out Text scoreText, out Text gameOverText)
+    private static void CreateCanvas(Transform root, Font font, out Text scoreText, out Text gameOverText)
     {
         GameObject canvasObject = new GameObject("Canvas");
         canvasObject.transform.SetParent(root);
 
         Canvas canvas = canvasObject.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvasObject.AddComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        canvasObject.GetComponent<CanvasScaler>().referenceResolution = new Vector2(1080f, 1920f);
-        canvasObject.GetComponent<CanvasScaler>().screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-        canvasObject.GetComponent<CanvasScaler>().matchWidthOrHeight = 1f;
+
+        CanvasScaler scaler = canvasObject.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1080f, 1920f);
+        scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+        scaler.matchWidthOrHeight = 1f;
+
         canvasObject.AddComponent<GraphicRaycaster>();
 
-        CreateText(canvas.transform, font, "Title", "Gravity Shaft", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -90f), 64, new Color(0.83f, 1f, 1f, 1f));
-        scoreText = CreateText(canvas.transform, font, "ScoreText", "Score: 0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -170f), 56, new Color(0.55f, 1f, 1f, 1f));
-        CreateText(canvas.transform, font, "Hint", "TAP TO FLIP SIDES", new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 120f), 56, new Color(0.72f, 1f, 1f, 1f));
-        gameOverText = CreateText(canvas.transform, font, "GameOverText", "Game Over", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 0f), 64, new Color(1f, 0.6f, 0.85f, 1f));
-        gameOverText.alignment = TextAnchor.MiddleCenter;
+        scoreText = CreateText(
+            canvas.transform,
+            font,
+            "ScoreText",
+            "Score: 0",
+            new Vector2(0.5f, 1f),
+            new Vector2(0.5f, 1f),
+            new Vector2(0f, -80f),
+            42,
+            Color.white);
 
-        return canvas;
+        gameOverText = CreateText(
+            canvas.transform,
+            font,
+            "GameOverText",
+            "Game Over\nTap or Press R to Restart",
+            new Vector2(0.5f, 0.5f),
+            new Vector2(0.5f, 0.5f),
+            Vector2.zero,
+            48,
+            Color.white);
+
+        gameOverText.alignment = TextAnchor.MiddleCenter;
     }
 
     private static Text CreateText(Transform parent, Font font, string name, string content, Vector2 anchorMin, Vector2 anchorMax, Vector2 anchoredPosition, int fontSize, Color color)
@@ -274,10 +252,8 @@ public static class PrototypeSceneBootstrap
         texture.SetPixel(0, 0, Color.white);
         texture.Apply();
         texture.wrapMode = TextureWrapMode.Clamp;
-        texture.filterMode = FilterMode.Bilinear;
+        texture.filterMode = FilterMode.Point;
 
         return Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
     }
 }
-
-
