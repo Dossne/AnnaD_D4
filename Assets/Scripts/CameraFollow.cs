@@ -16,4 +16,10 @@ public class CameraFollow : MonoBehaviour
         nextPosition.y = target.position.y + yOffset;
         transform.position = nextPosition;
     }
+
+    public void Configure(Transform followTarget, float offset)
+    {
+        target = followTarget;
+        yOffset = offset;
+    }
 }

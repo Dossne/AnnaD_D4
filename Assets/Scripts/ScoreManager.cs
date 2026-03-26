@@ -60,6 +60,19 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
+    public void Configure(PlayerController playerController, Text scoreLabel, Text gameOverLabel)
+    {
+        player = playerController;
+        scoreText = scoreLabel;
+        gameOverText = gameOverLabel;
+        UpdateScoreText();
+
+        if (gameOverText != null)
+        {
+            gameOverText.gameObject.SetActive(false);
+        }
+    }
+
     private void UpdateScoreText()
     {
         if (scoreText != null)
