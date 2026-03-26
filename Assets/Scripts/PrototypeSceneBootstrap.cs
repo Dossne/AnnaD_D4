@@ -123,10 +123,10 @@ public static class PrototypeSceneBootstrap
         main.startSpeed = 0.2f;
         main.startSize = 0.013f;
         main.startColor = new ParticleSystem.MinMaxGradient(new Color(0.7f, 0.85f, 1f, 0.08f), new Color(1f, 1f, 1f, 0.28f));
-        main.maxParticles = 70;
+        main.maxParticles = 24;
 
         var emission = particles.emission;
-        emission.rateOverTime = 10f;
+        emission.rateOverTime = 3f;
 
         var shape = particles.shape;
         shape.shapeType = ParticleSystemShapeType.Box;
@@ -423,6 +423,7 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
     }
 }
+
 
 
 
