@@ -110,12 +110,39 @@ public static class PrototypeSceneBootstrap
         Texture2D midStars = CreateStarTexture(256, 512, 90, 1, 0.25f, 0.7f);
         Texture2D nearStars = CreateStarTexture(256, 512, 170, 2, 0.45f, 1f);
 
-        CreateParallaxQuad("FarBackground", camera, farTexture, new Color(0.82f, 0.86f, 1f, 0.9f), new Vector3(0f, 0f, 26f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(0.5f, 0.5f), 0.008f, 0f, 0.012f, 0f);
-        CreateParallaxQuad("MidGlow", camera, farTexture, new Color(0.45f, 0.55f, 0.8f, 0.22f), new Vector3(0f, 0f, 24f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(0.5f, 0.5f), 0.018f, 0f, 0.02f, 0f);
-        CreateParallaxQuad("MidStars", camera, midStars, new Color(0.72f, 0.84f, 1f, 0.55f), new Vector3(0f, 0f, 22f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.2f, 2f), 0.045f, 0.006f, 0.035f, 0f);
-        CreateParallaxQuad("NearStars", camera, nearStars, new Color(0.95f, 0.98f, 1f, 0.85f), new Vector3(0f, 0f, 20f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.5f, 2.6f), 0.085f, 0.012f, 0.06f, 0f);
+        Vector3 farLayerScale = GetAspectPreservingScale(farTexture, visibleWidth, visibleHeight, 2f);
+
+        CreateParallaxQuad("FarBackground", camera, farTexture, new Color(0.82f, 0.86f, 1f, 0.9f), new Vector3(0f, 0f, 26f), farLayerScale, new Vector2(0.5f, 0.5f), 0.003f, 0f, 0.004f, 0f);
+        CreateParallaxQuad("MidGlow", camera, farTexture, new Color(0.45f, 0.55f, 0.8f, 0.22f), new Vector3(0f, 0f, 24f), farLayerScale, new Vector2(0.5f, 0.5f), 0.007f, 0f, 0.008f, 0f);
+        CreateParallaxQuad("MidStars", camera, midStars, new Color(0.72f, 0.84f, 1f, 0.55f), new Vector3(0f, 0f, 22f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.2f, 2f), 0.02f, 0.003f, 0.015f, 0f);
+        CreateParallaxQuad("NearStars", camera, nearStars, new Color(0.95f, 0.98f, 1f, 0.85f), new Vector3(0f, 0f, 20f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.5f, 2.6f), 0.04f, 0.006f, 0.025f, 0f);
 
         CreateSpaceParticles(camera, visibleWidth, visibleHeight);
+    }
+
+    private static Vector3 GetAspectPreservingScale(Texture2D texture, float visibleWidth, float visibleHeight, float padding)
+    {
+        float width = visibleWidth + padding;
+        float height = visibleHeight + padding;
+
+        if (texture == null || texture.width <= 0 || texture.height <= 0)
+        {
+            return new Vector3(width, height, 1f);
+        }
+
+        float screenAspect = width / height;
+        float textureAspect = (float)texture.width / texture.height;
+
+        if (textureAspect > screenAspect)
+        {
+            width = height * textureAspect;
+        }
+        else
+        {
+            height = width / textureAspect;
+        }
+
+        return new Vector3(width, height, 1f);
     }
 
     private static void CreateSpaceParticles(Camera camera, float visibleWidth, float visibleHeight)
