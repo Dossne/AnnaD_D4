@@ -141,7 +141,6 @@ public class ObstacleSpawner : MonoBehaviour
         bool shouldSpawn = forceSpawn || Random.value < phase.spawnChance || consecutiveEmptyRows >= phase.maxEmptyRows;
         if (!shouldSpawn)
         {
-            sameSideChainCount = 0;
             consecutiveEmptyRows++;
             return;
         }
