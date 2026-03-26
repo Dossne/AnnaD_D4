@@ -71,7 +71,7 @@ public static class PrototypeSceneBootstrap
         Texture2D midStars = CreateStarTexture(256, 512, 90, 1, 0.25f, 0.7f);
         Texture2D nearStars = CreateStarTexture(256, 512, 170, 2, 0.45f, 1f);
 
-        CreateParallaxQuad("FarBackground", camera, farTexture, new Color(0.82f, 0.86f, 1f, 0.9f), new Vector3(0f, 0f, 26f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.2f, 1.8f), 0.008f, 0.0015f);
+        CreateParallaxQuad("FarBackground", camera, farTexture, new Color(0.82f, 0.86f, 1f, 0.9f), new Vector3(0f, 0f, 26f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1f, 1f), 0.008f, 0.0015f);
         CreateParallaxQuad("MidGlow", camera, farTexture, new Color(0.45f, 0.55f, 0.8f, 0.22f), new Vector3(0f, 0f, 24f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.6f, 2.4f), 0.018f, 0.003f);
         CreateParallaxQuad("MidStars", camera, midStars, new Color(0.72f, 0.84f, 1f, 0.55f), new Vector3(0f, 0f, 22f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.2f, 2f), 0.045f, 0.006f);
         CreateParallaxQuad("NearStars", camera, nearStars, new Color(0.95f, 0.98f, 1f, 0.85f), new Vector3(0f, 0f, 20f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.5f, 2.6f), 0.085f, 0.012f);
@@ -354,3 +354,4 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
     }
 }
+
