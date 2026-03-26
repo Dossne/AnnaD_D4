@@ -36,8 +36,8 @@ public static class PrototypeSceneBootstrap
         Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
 
         GameObject root = new GameObject("PrototypeRuntime");
-        CreateBackdrop(root.transform, baseSprite);
-        CreateWalls(root.transform, baseSprite);
+        CreateBackdrop(camera.transform, baseSprite);
+        CreateWalls(camera.transform, baseSprite);
 
         GameObject player = CreatePlayer(root.transform, baseSprite);
         GameObject obstacleTemplate = CreateObstacleTemplate(root.transform, baseSprite);
@@ -59,38 +59,38 @@ public static class PrototypeSceneBootstrap
         }
     }
 
-    private static void CreateBackdrop(Transform root, Sprite sprite)
+    private static void CreateBackdrop(Transform cameraTransform, Sprite sprite)
     {
         GameObject background = CreateSpriteObject(
             "Background",
-            root,
+            cameraTransform,
             sprite,
             new Color(0.16f, 0.16f, 0.18f, 1f),
-            new Vector3(8f, 500f, 1f),
-            new Vector3(0f, 250f, 15f));
+            new Vector3(8f, 24f, 1f),
+            new Vector3(0f, 0f, 15f));
 
         background.GetComponent<SpriteRenderer>().sortingOrder = -10;
     }
 
-    private static void CreateWalls(Transform root, Sprite sprite)
+    private static void CreateWalls(Transform cameraTransform, Sprite sprite)
     {
         GameObject leftWall = CreateSpriteObject(
             "LeftWall",
-            root,
+            cameraTransform,
             sprite,
             new Color(0.8f, 0.8f, 0.85f, 1f),
-            new Vector3(0.2f, 500f, 1f),
-            new Vector3(LeftWallX - 0.75f, 250f, 0f));
+            new Vector3(0.2f, 24f, 1f),
+            new Vector3(LeftWallX - 0.75f, 0f, 0f));
 
         leftWall.GetComponent<SpriteRenderer>().sortingOrder = -2;
 
         GameObject rightWall = CreateSpriteObject(
             "RightWall",
-            root,
+            cameraTransform,
             sprite,
             new Color(0.8f, 0.8f, 0.85f, 1f),
-            new Vector3(0.2f, 500f, 1f),
-            new Vector3(RightWallX + 0.75f, 250f, 0f));
+            new Vector3(0.2f, 24f, 1f),
+            new Vector3(RightWallX + 0.75f, 0f, 0f));
 
         rightWall.GetComponent<SpriteRenderer>().sortingOrder = -2;
     }
@@ -257,5 +257,3 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
     }
 }
-
-
