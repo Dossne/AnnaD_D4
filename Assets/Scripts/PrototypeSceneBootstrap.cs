@@ -204,22 +204,22 @@ public static class PrototypeSceneBootstrap
 
     private static void CreateWallStripe(Transform parent, Sprite sprite, string name, float x, float height, float z)
     {
-        Color outerGlow = new Color(1f, 0.14f, 0.7f, 0.28f);
-        Color midGlow = new Color(1f, 0.24f, 0.8f, 0.46f);
-        Color coreColor = new Color(1f, 0.68f, 0.9f, 0.98f);
-        Color highlightColor = new Color(1f, 0.92f, 0.98f, 0.75f);
+        Color outerGlow = new Color(0.58f, 0.88f, 1f, 0.14f);
+        Color midGlow = new Color(0.72f, 0.94f, 1f, 0.22f);
+        Color coreColor = new Color(0.96f, 0.98f, 1f, 0.98f);
+        Color highlightColor = new Color(0.9f, 0.98f, 1f, 0.28f);
 
-        GameObject aura = CreateSpriteObject(name + "Aura", parent, sprite, outerGlow, new Vector3(1.15f, height, 1f), new Vector3(x, 0f, z + 0.45f));
+        GameObject aura = CreateSpriteObject(name + "Aura", parent, sprite, outerGlow, new Vector3(0.58f, height, 1f), new Vector3(x, 0f, z + 0.45f));
         aura.GetComponent<SpriteRenderer>().sortingOrder = 8;
 
-        GameObject glow = CreateSpriteObject(name + "Glow", parent, sprite, midGlow, new Vector3(0.62f, height, 1f), new Vector3(x, 0f, z + 0.25f));
+        GameObject glow = CreateSpriteObject(name + "Glow", parent, sprite, midGlow, new Vector3(0.32f, height, 1f), new Vector3(x, 0f, z + 0.25f));
         glow.GetComponent<SpriteRenderer>().sortingOrder = 9;
 
-        GameObject core = CreateSpriteObject(name, parent, sprite, coreColor, new Vector3(0.22f, height, 1f), new Vector3(x, 0f, z));
+        GameObject core = CreateSpriteObject(name, parent, sprite, coreColor, new Vector3(0.11f, height, 1f), new Vector3(x, 0f, z));
         core.GetComponent<SpriteRenderer>().sortingOrder = 10;
 
         Texture2D shimmerTexture = CreateWallShimmerTexture(64, 256);
-        GameObject shimmer = CreateScrollingQuad(name + "Shimmer", parent, shimmerTexture, highlightColor, new Vector3(x, 0f, z - 0.2f), new Vector3(0.5f, height, 1f), new Vector2(1f, 2.5f), 0f, 0f, 0.65f, 0f, 11);
+        GameObject shimmer = CreateScrollingQuad(name + "Shimmer", parent, shimmerTexture, highlightColor, new Vector3(x, 0f, z - 0.2f), new Vector3(0.22f, height, 1f), new Vector2(1f, 2.5f), 0f, 0f, 0.65f, 0f, 11);
         shimmer.transform.localEulerAngles = Vector3.zero;
     }
 
@@ -360,7 +360,7 @@ public static class PrototypeSceneBootstrap
         obstacle.AddComponent<ObstacleMarker>();
         Sprite spikeSprite = CreateTriangleSpikeSprite();
 
-        GameObject body = CreateSpriteObject("Body", obstacle.transform, spikeSprite, new Color(1f, 0.28f, 0.56f, 1f), new Vector3(1f, 1f, 1f), Vector3.zero);
+        GameObject body = CreateSpriteObject("Body", obstacle.transform, spikeSprite, new Color(1f, 0.3f, 0.58f, 1f), new Vector3(1f, 1f, 1f), Vector3.zero);
         body.GetComponent<SpriteRenderer>().sortingOrder = 2;
 
         return obstacle;
@@ -375,7 +375,7 @@ public static class PrototypeSceneBootstrap
         GameObject spawnerObject = new GameObject("ObstacleSpawner");
         spawnerObject.transform.SetParent(root);
         ObstacleSpawner spawner = spawnerObject.AddComponent<ObstacleSpawner>();
-        spawner.Configure(obstacleTemplate, player.transform, LeftWallX, RightWallX, 10f, 3f, 0.7f, 36);
+        spawner.Configure(obstacleTemplate, player.transform, LeftWallX - 0.75f, RightWallX + 0.75f, 10f, 3f, 0.7f, 36);
 
         CameraFollow follow = camera.GetComponent<CameraFollow>();
         follow.Configure(player.transform, 3.5f);
