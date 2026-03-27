@@ -100,6 +100,7 @@ public class PlayerController : MonoBehaviour
     private void SwitchSide()
     {
         isOnLeftWall = !isOnLeftWall;
+        GameAudio.PlaySwitch();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -138,4 +139,3 @@ public class PlayerController : MonoBehaviour
         speedIncreasePerSecond = accelerationPerSecond;
     }
 }
-

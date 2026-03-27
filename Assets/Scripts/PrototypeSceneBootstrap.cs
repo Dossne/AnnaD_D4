@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -718,37 +718,37 @@ public static class PrototypeSceneBootstrap
     {
         GameObject trailParticlesObject = new GameObject("TrailParticles");
         trailParticlesObject.transform.SetParent(player, false);
-        trailParticlesObject.transform.localPosition = new Vector3(0f, -0.52f, 0.02f);
+        trailParticlesObject.transform.localPosition = new Vector3(0f, -0.5f, 0.02f);
 
         ParticleSystem particles = trailParticlesObject.AddComponent<ParticleSystem>();
         ParticleSystemRenderer renderer = trailParticlesObject.GetComponent<ParticleSystemRenderer>();
         renderer.material = CreateAdditiveTrailMaterial();
-        renderer.material.mainTexture = CreateCircleTexture(48);
+        renderer.material.mainTexture = CreateCircleTexture(64);
         renderer.renderMode = ParticleSystemRenderMode.Billboard;
         renderer.sortMode = ParticleSystemSortMode.Distance;
-        renderer.minParticleSize = 0.008f;
-        renderer.maxParticleSize = 0.04f;
+        renderer.minParticleSize = 0.02f;
+        renderer.maxParticleSize = 0.12f;
         renderer.sortingOrder = 1;
 
         var main = particles.main;
         main.playOnAwake = true;
         main.loop = true;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
-        main.startLifetime = 0.58f;
+        main.startLifetime = 0.62f;
         main.startSpeed = 0.12f;
-        main.startSize = 0.055f;
-        main.maxParticles = 18;
+        main.startSize = 0.16f;
+        main.maxParticles = 42;
         main.startColor = new ParticleSystem.MinMaxGradient(
-            new Color(0.82f, 1f, 1f, 0.72f),
-            new Color(0.5f, 0.92f, 1f, 0.56f));
+            new Color(0.82f, 1f, 1f, 0.88f),
+            new Color(0.5f, 0.92f, 1f, 0.72f));
 
         var emission = particles.emission;
-        emission.rateOverTime = 18f;
+        emission.rateOverTime = 96f;
 
         var shape = particles.shape;
         shape.enabled = true;
         shape.shapeType = ParticleSystemShapeType.Box;
-        shape.scale = new Vector3(0.86f, 0.03f, 0.01f);
+        shape.scale = new Vector3(0.96f, 0.05f, 0.01f);
 
         var velocityOverLifetime = particles.velocityOverLifetime;
         velocityOverLifetime.enabled = true;
@@ -768,8 +768,8 @@ public static class PrototypeSceneBootstrap
             },
             new[]
             {
-                new GradientAlphaKey(0.52f, 0f),
-                new GradientAlphaKey(0.22f, 0.35f),
+                new GradientAlphaKey(0.72f, 0f),
+                new GradientAlphaKey(0.32f, 0.35f),
                 new GradientAlphaKey(0f, 1f)
             });
         colorOverLifetime.color = new ParticleSystem.MinMaxGradient(colorGradient);
@@ -778,8 +778,8 @@ public static class PrototypeSceneBootstrap
         sizeOverLifetime.enabled = true;
         AnimationCurve sizeCurve = new AnimationCurve(
             new Keyframe(0f, 1f),
-            new Keyframe(0.35f, 0.72f),
-            new Keyframe(1f, 0.12f));
+            new Keyframe(0.3f, 0.78f),
+            new Keyframe(1f, 0.1f));
         sizeOverLifetime.size = new ParticleSystem.MinMaxCurve(1f, sizeCurve);
 
         particles.Play();
@@ -1043,6 +1043,7 @@ public static class PrototypeSceneBootstrap
     {
         GameObject gameManagerObject = new GameObject("GameManager");
         gameManagerObject.transform.SetParent(root);
+        gameManagerObject.AddComponent<GameAudio>();
         ScoreManager scoreManager = gameManagerObject.AddComponent<ScoreManager>();
 
         GameObject spawnerObject = new GameObject("ObstacleSpawner");
@@ -1236,6 +1237,3 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
     }
 }
-
-
-

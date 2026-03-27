@@ -102,6 +102,7 @@ public class ScoreManager : MonoBehaviour
         }
 
         Camera.main?.GetComponent<CameraFollow>()?.PlayHitEffect();
+        GameAudio.PlayGameOver();
         PlayFlash();
         SetGameOverPanelVisible(true);
     }
@@ -155,6 +156,7 @@ public class ScoreManager : MonoBehaviour
     private IEnumerator RestartPrototypeNextFrame()
     {
         isRestarting = true;
+        GameAudio.PlayRestart();
         Instance = null;
         yield return null;
         PrototypeSceneBootstrap.RestartPrototype();
