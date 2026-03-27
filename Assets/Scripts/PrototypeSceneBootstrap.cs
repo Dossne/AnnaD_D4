@@ -623,12 +623,13 @@ public static class PrototypeSceneBootstrap
         Sprite lineSprite = LoadLineSprite();
         Texture2D lineTexture = lineSprite != null ? lineSprite.texture : null;
 
-        CreateJetTrail(player, lineTexture, "LeftJet", new Vector3(-0.19f, -0.5f, 0.04f), 0.2f, 0.016f, 0.002f, 2, false);
-        CreateJetTrail(player, lineTexture, "LeftJetGlow", new Vector3(-0.19f, -0.5f, 0.03f), 0.24f, 0.036f, 0.005f, 1, true);
-        CreateJetTrail(player, lineTexture, "CenterJet", new Vector3(0f, -0.56f, 0.04f), 0.26f, 0.02f, 0.0026f, 3, false);
-        CreateJetTrail(player, lineTexture, "CenterJetGlow", new Vector3(0f, -0.56f, 0.03f), 0.3f, 0.044f, 0.006f, 1, true);
-        CreateJetTrail(player, lineTexture, "RightJet", new Vector3(0.19f, -0.5f, 0.04f), 0.2f, 0.016f, 0.002f, 2, false);
-        CreateJetTrail(player, lineTexture, "RightJetGlow", new Vector3(0.19f, -0.5f, 0.03f), 0.24f, 0.036f, 0.005f, 1, true);
+        CreateJetTrail(player, lineTexture, "LeftJet", new Vector3(-0.19f, -0.5f, 0.04f), 0.11f, 0.016f, 0.002f, 2, false);
+        CreateJetTrail(player, lineTexture, "LeftJetGlow", new Vector3(-0.19f, -0.5f, 0.03f), 0.14f, 0.028f, 0.004f, 1, true);
+        CreateJetTrail(player, lineTexture, "CenterJet", new Vector3(0f, -0.56f, 0.04f), 0.14f, 0.02f, 0.0026f, 3, false);
+        CreateJetTrail(player, lineTexture, "CenterJetGlow", new Vector3(0f, -0.56f, 0.03f), 0.17f, 0.034f, 0.0048f, 1, true);
+        CreateJetTrail(player, lineTexture, "RightJet", new Vector3(0.19f, -0.5f, 0.04f), 0.11f, 0.016f, 0.002f, 2, false);
+        CreateJetTrail(player, lineTexture, "RightJetGlow", new Vector3(0.19f, -0.5f, 0.03f), 0.14f, 0.028f, 0.004f, 1, true);
+        CreatePlayerTrailParticles(player);
     }
 
     private static void CreateJetTrail(Transform player, Texture2D trailTexture, string name, Vector3 localOffset, float trailTime, float startWidth, float endWidth, int sortingOrder, bool isGlowLayer)
@@ -711,6 +712,92 @@ public static class PrototypeSceneBootstrap
         }
 
         trail.colorGradient = trailGradient;
+    }
+
+    private static void CreatePlayerTrailParticles(Transform player)
+    {
+        GameObject trailParticlesObject = new GameObject("TrailParticles");
+        trailParticlesObject.transform.SetParent(player, false);
+        trailParticlesObject.transform.localPosition = new Vector3(0f, -0.52f, 0.02f);
+
+        ParticleSystem particles = trailParticlesObject.AddComponent<ParticleSystem>();
+        ParticleSystemRenderer renderer = trailParticlesObject.GetComponent<ParticleSystemRenderer>();
+        renderer.material = CreateParticleMaterial();
+        renderer.material.mainTexture = CreateCircleTexture(32);
+        renderer.renderMode = ParticleSystemRenderMode.Billboard;
+        renderer.sortMode = ParticleSystemSortMode.Distance;
+        renderer.minParticleSize = 0.003f;
+        renderer.maxParticleSize = 0.018f;
+        renderer.sortingOrder = 1;
+
+        var main = particles.main;
+        main.playOnAwake = true;
+        main.loop = true;
+        main.simulationSpace = ParticleSystemSimulationSpace.World;
+        main.startLifetime = 0.42f;
+        main.startSpeed = 0.12f;
+        main.startSize = 0.028f;
+        main.maxParticles = 18;
+        main.startColor = new ParticleSystem.MinMaxGradient(
+            new Color(0.75f, 1f, 1f, 0.55f),
+            new Color(0.44f, 0.9f, 1f, 0.38f));
+
+        var emission = particles.emission;
+        emission.rateOverTime = 18f;
+
+        var shape = particles.shape;
+        shape.enabled = true;
+        shape.shapeType = ParticleSystemShapeType.Box;
+        shape.scale = new Vector3(0.18f, 0.02f, 0.01f);
+
+        var velocityOverLifetime = particles.velocityOverLifetime;
+        velocityOverLifetime.enabled = true;
+        velocityOverLifetime.space = ParticleSystemSimulationSpace.World;
+        velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(-0.03f, 0.03f);
+        velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(-0.7f, -1.2f);
+        velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(0f);
+
+        var colorOverLifetime = particles.colorOverLifetime;
+        colorOverLifetime.enabled = true;
+        Gradient colorGradient = new Gradient();
+        colorGradient.SetKeys(
+            new[]
+            {
+                new GradientColorKey(new Color(0.78f, 1f, 1f), 0f),
+                new GradientColorKey(new Color(0.4f, 0.88f, 1f), 1f)
+            },
+            new[]
+            {
+                new GradientAlphaKey(0.42f, 0f),
+                new GradientAlphaKey(0.16f, 0.4f),
+                new GradientAlphaKey(0f, 1f)
+            });
+        colorOverLifetime.color = new ParticleSystem.MinMaxGradient(colorGradient);
+
+        particles.Play();
+    }
+
+    private static Texture2D CreateCircleTexture(int size)
+    {
+        Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        texture.wrapMode = TextureWrapMode.Clamp;
+        texture.filterMode = FilterMode.Bilinear;
+        Vector2 center = new Vector2((size - 1) * 0.5f, (size - 1) * 0.5f);
+        float radius = size * 0.5f;
+
+        for (int y = 0; y < size; y++)
+        {
+            for (int x = 0; x < size; x++)
+            {
+                float distance = Vector2.Distance(new Vector2(x, y), center);
+                float alpha = Mathf.Clamp01(1f - (distance / radius));
+                alpha *= alpha;
+                texture.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
+            }
+        }
+
+        texture.Apply();
+        return texture;
     }
 
     private static void CreateJetSparks(Transform player, Vector3 localOffset)
