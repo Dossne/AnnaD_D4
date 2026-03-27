@@ -366,8 +366,8 @@ public static class PrototypeSceneBootstrap
         scoreText = CreateText(canvas.transform, font, "ScoreText", "0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -148f), 56, Color.white);
         scoreText.fontStyle = FontStyle.Normal;
         scoreText.alignment = TextAnchor.MiddleCenter;
-        AddOutline(scoreText.gameObject, new Color(0.12f, 0.85f, 1f, 0.72f), new Vector2(1f, -1f));
-        AddShadow(scoreText.gameObject, new Color(0f, 0.65f, 0.82f, 0.22f), new Vector2(0f, 0f));
+        AddOutline(scoreText.gameObject, new Color(0.12f, 0.85f, 1f, 0.14f), new Vector2(0.5f, -0.5f));
+        AddShadow(scoreText.gameObject, new Color(0.1f, 0.85f, 1f, 0.36f), new Vector2(0f, 0f));
 
         gameOverPanel = new GameObject("GameOverPanel");
         gameOverPanel.transform.SetParent(canvas.transform);
@@ -655,12 +655,12 @@ public static class PrototypeSceneBootstrap
         trail.textureMode = LineTextureMode.Stretch;
         trail.widthCurve = isGlowLayer
             ? new AnimationCurve(
-                new Keyframe(0f, 1f),
+                new Keyframe(0f, 0.2f),
                 new Keyframe(0.18f, 0.9f),
                 new Keyframe(0.72f, 0.34f),
                 new Keyframe(1f, 0f))
             : new AnimationCurve(
-                new Keyframe(0f, 1f),
+                new Keyframe(0f, 0.2f),
                 new Keyframe(0.14f, 0.92f),
                 new Keyframe(0.68f, 0.28f),
                 new Keyframe(1f, 0f));
