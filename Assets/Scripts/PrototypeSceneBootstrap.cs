@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -121,7 +121,7 @@ public static class PrototypeSceneBootstrap
         Vector3 farLayerScale = GetAspectPreservingScale(farTexture, visibleWidth, visibleHeight, 2f);
 
         CreateParallaxQuad("FarBackground", camera, farTexture, Color.white, new Vector3(0f, 0f, 26f), farLayerScale, new Vector2(1f, 1f), 0.000125f, 0f, 0.00015f, 0f);
-        CreateOverlayQuad("CenterGlow", camera.transform, centerGlow, new Color(1f, 1f, 1f, 0.24f), new Vector3(0f, 0f, 24f), new Vector3(layerWidth * 2.08f, layerHeight, 1f), 7);
+        CreateOverlayQuad("CenterGlow", camera.transform, centerGlow, new Color(1f, 1f, 1f, 0.24f), new Vector3(0f, 0f, 24f), new Vector3(14f, layerHeight, 1f), 7);
         CreateParallaxQuad("MidStars", camera, midStars, new Color(0.72f, 0.84f, 1f, 0.55f), new Vector3(0f, 0f, 22f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.2f, 2f), 0.004f, 0.00075f, 0.003f, 0f);
         CreateParallaxQuad("NearStars", camera, nearStars, new Color(0.95f, 0.98f, 1f, 0.6f), new Vector3(0f, 0f, 20f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.5f, 2.6f), 0.054f, 0.009f, 0.03f, 0f);
 
@@ -188,8 +188,8 @@ public static class PrototypeSceneBootstrap
         velocityOverLifetime.enabled = true;
         velocityOverLifetime.space = ParticleSystemSimulationSpace.Local;
         velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(0f);
-        velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(-0.16f);
-        velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(0f);
+        velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(-0.16f, -0.16f);
+        velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(0f, 0f);
 
         var noise = particles.noise;
         noise.enabled = true;
@@ -623,12 +623,12 @@ public static class PrototypeSceneBootstrap
         Sprite lineSprite = LoadLineSprite();
         Texture2D lineTexture = lineSprite != null ? lineSprite.texture : null;
 
-        CreateJetTrail(player, lineTexture, "LeftJet", new Vector3(-0.19f, -0.5f, 0.04f), 0.11f, 0.016f, 0.002f, 2, false);
-        CreateJetTrail(player, lineTexture, "LeftJetGlow", new Vector3(-0.19f, -0.5f, 0.03f), 0.14f, 0.028f, 0.004f, 1, true);
-        CreateJetTrail(player, lineTexture, "CenterJet", new Vector3(0f, -0.56f, 0.04f), 0.14f, 0.02f, 0.0026f, 3, false);
-        CreateJetTrail(player, lineTexture, "CenterJetGlow", new Vector3(0f, -0.56f, 0.03f), 0.17f, 0.034f, 0.0048f, 1, true);
-        CreateJetTrail(player, lineTexture, "RightJet", new Vector3(0.19f, -0.5f, 0.04f), 0.11f, 0.016f, 0.002f, 2, false);
-        CreateJetTrail(player, lineTexture, "RightJetGlow", new Vector3(0.19f, -0.5f, 0.03f), 0.14f, 0.028f, 0.004f, 1, true);
+        CreateJetTrail(player, lineTexture, "LeftJet", new Vector3(-0.19f, -0.5f, 0.04f), 0.22f, 0.016f, 0.002f, 2, false);
+        CreateJetTrail(player, lineTexture, "LeftJetGlow", new Vector3(-0.19f, -0.5f, 0.03f), 0.28f, 0.028f, 0.004f, 1, true);
+        CreateJetTrail(player, lineTexture, "CenterJet", new Vector3(0f, -0.56f, 0.04f), 0.28f, 0.02f, 0.0026f, 3, false);
+        CreateJetTrail(player, lineTexture, "CenterJetGlow", new Vector3(0f, -0.56f, 0.03f), 0.34f, 0.034f, 0.0048f, 1, true);
+        CreateJetTrail(player, lineTexture, "RightJet", new Vector3(0.19f, -0.5f, 0.04f), 0.22f, 0.016f, 0.002f, 2, false);
+        CreateJetTrail(player, lineTexture, "RightJetGlow", new Vector3(0.19f, -0.5f, 0.03f), 0.28f, 0.028f, 0.004f, 1, true);
         CreatePlayerTrailParticles(player);
     }
 
@@ -722,25 +722,25 @@ public static class PrototypeSceneBootstrap
 
         ParticleSystem particles = trailParticlesObject.AddComponent<ParticleSystem>();
         ParticleSystemRenderer renderer = trailParticlesObject.GetComponent<ParticleSystemRenderer>();
-        renderer.material = CreateParticleMaterial();
-        renderer.material.mainTexture = CreateCircleTexture(32);
+        renderer.material = CreateAdditiveTrailMaterial();
+        renderer.material.mainTexture = CreateCircleTexture(48);
         renderer.renderMode = ParticleSystemRenderMode.Billboard;
         renderer.sortMode = ParticleSystemSortMode.Distance;
-        renderer.minParticleSize = 0.003f;
-        renderer.maxParticleSize = 0.018f;
+        renderer.minParticleSize = 0.008f;
+        renderer.maxParticleSize = 0.04f;
         renderer.sortingOrder = 1;
 
         var main = particles.main;
         main.playOnAwake = true;
         main.loop = true;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
-        main.startLifetime = 0.42f;
+        main.startLifetime = 0.58f;
         main.startSpeed = 0.12f;
-        main.startSize = 0.028f;
+        main.startSize = 0.055f;
         main.maxParticles = 18;
         main.startColor = new ParticleSystem.MinMaxGradient(
-            new Color(0.75f, 1f, 1f, 0.55f),
-            new Color(0.44f, 0.9f, 1f, 0.38f));
+            new Color(0.82f, 1f, 1f, 0.72f),
+            new Color(0.5f, 0.92f, 1f, 0.56f));
 
         var emission = particles.emission;
         emission.rateOverTime = 18f;
@@ -748,14 +748,14 @@ public static class PrototypeSceneBootstrap
         var shape = particles.shape;
         shape.enabled = true;
         shape.shapeType = ParticleSystemShapeType.Box;
-        shape.scale = new Vector3(0.18f, 0.02f, 0.01f);
+        shape.scale = new Vector3(0.86f, 0.03f, 0.01f);
 
         var velocityOverLifetime = particles.velocityOverLifetime;
         velocityOverLifetime.enabled = true;
         velocityOverLifetime.space = ParticleSystemSimulationSpace.World;
         velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(-0.03f, 0.03f);
         velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(-0.7f, -1.2f);
-        velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(0f);
+        velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(0f, 0f);
 
         var colorOverLifetime = particles.colorOverLifetime;
         colorOverLifetime.enabled = true;
@@ -763,16 +763,24 @@ public static class PrototypeSceneBootstrap
         colorGradient.SetKeys(
             new[]
             {
-                new GradientColorKey(new Color(0.78f, 1f, 1f), 0f),
+                new GradientColorKey(new Color(0.86f, 1f, 1f), 0f),
                 new GradientColorKey(new Color(0.4f, 0.88f, 1f), 1f)
             },
             new[]
             {
-                new GradientAlphaKey(0.42f, 0f),
-                new GradientAlphaKey(0.16f, 0.4f),
+                new GradientAlphaKey(0.52f, 0f),
+                new GradientAlphaKey(0.22f, 0.35f),
                 new GradientAlphaKey(0f, 1f)
             });
         colorOverLifetime.color = new ParticleSystem.MinMaxGradient(colorGradient);
+
+        var sizeOverLifetime = particles.sizeOverLifetime;
+        sizeOverLifetime.enabled = true;
+        AnimationCurve sizeCurve = new AnimationCurve(
+            new Keyframe(0f, 1f),
+            new Keyframe(0.35f, 0.72f),
+            new Keyframe(1f, 0.12f));
+        sizeOverLifetime.size = new ParticleSystem.MinMaxCurve(1f, sizeCurve);
 
         particles.Play();
     }
@@ -839,7 +847,7 @@ public static class PrototypeSceneBootstrap
         velocityOverLifetime.space = ParticleSystemSimulationSpace.Local;
         velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(-0.22f, 0.22f);
         velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(-5.4f, -3.8f);
-        velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(0f);
+        velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(0f, 0f);
 
         var noise = sparks.noise;
         noise.enabled = true;
@@ -1228,4 +1236,6 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
     }
 }
+
+
 
