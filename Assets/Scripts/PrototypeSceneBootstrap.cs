@@ -418,8 +418,8 @@ public static class PrototypeSceneBootstrap
         gameOverPanel.transform.SetParent(canvas.transform);
         Image panelImage = gameOverPanel.AddComponent<Image>();
         panelImage.color = new Color(0f, 0f, 0f, 0f);
-        AddOutline(gameOverPanel, neonBorder, new Vector2(2f, -2f));
-        AddShadow(gameOverPanel, new Color(0f, 0.08f, 0.14f, 0.45f), new Vector2(0f, -6f));
+        AddOutline(gameOverPanel, new Color(0.28f, 0.88f, 1f, 0.28f), new Vector2(1f, -1f));
+        AddShadow(gameOverPanel, new Color(0f, 0.72f, 0.9f, 0.1f), new Vector2(0f, 0f));
 
         RectTransform panelRect = gameOverPanel.GetComponent<RectTransform>();
         panelRect.anchorMin = new Vector2(0.5f, 0.5f);
@@ -441,9 +441,9 @@ public static class PrototypeSceneBootstrap
 
         gameOverText = CreateText(gameOverPanel.transform, font, "GameOverText", "GAME OVER", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -92f), 84, new Color(0.92f, 1f, 1f, 1f));
         gameOverText.alignment = TextAnchor.MiddleCenter;
-        gameOverText.fontStyle = FontStyle.Bold;
-        AddOutline(gameOverText.gameObject, new Color(0.18f, 0.9f, 1f, 1f), new Vector2(2.5f, -2.5f));
-        AddShadow(gameOverText.gameObject, new Color(0f, 0.7f, 0.85f, 0.45f), new Vector2(0f, 0f));
+        gameOverText.fontStyle = FontStyle.Normal;
+        AddOutline(gameOverText.gameObject, new Color(0.18f, 0.9f, 1f, 0.72f), new Vector2(1.5f, -1.5f));
+        AddShadow(gameOverText.gameObject, new Color(0f, 0.7f, 0.85f, 0.18f), new Vector2(0f, 0f));
 
         gameOverScoreText = CreateText(gameOverPanel.transform, font, "GameOverScoreText", "SCORE 0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -182f), 42, neonCyan);
         gameOverScoreText.alignment = TextAnchor.MiddleCenter;
