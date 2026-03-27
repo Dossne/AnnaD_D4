@@ -394,18 +394,18 @@ public static class PrototypeSceneBootstrap
         panelBackdropRect.offsetMax = new Vector2(-8f, -8f);
         panelBackdropRect.SetAsFirstSibling();
 
-        gameOverText = CreateText(gameOverPanel.transform, font, "GameOverText", "GAME OVER", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -92f), 84, new Color(0.92f, 1f, 1f, 1f));
+        gameOverText = CreateText(gameOverPanel.transform, font, "GameOverText", "GAME OVER", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -132f), 84, new Color(0.92f, 1f, 1f, 1f));
         gameOverText.alignment = TextAnchor.MiddleCenter;
         gameOverText.fontStyle = FontStyle.Normal;
         AddOutline(gameOverText.gameObject, new Color(0.18f, 0.9f, 1f, 0.72f), new Vector2(1.5f, -1.5f));
         AddShadow(gameOverText.gameObject, new Color(0f, 0.7f, 0.85f, 0.18f), new Vector2(0f, 0f));
 
-        gameOverScoreText = CreateText(gameOverPanel.transform, font, "GameOverScoreText", "SCORE 0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -212f), 50, neonCyan);
+        gameOverScoreText = CreateText(gameOverPanel.transform, font, "GameOverScoreText", "SCORE 0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -272f), 50, neonCyan);
         gameOverScoreText.alignment = TextAnchor.MiddleCenter;
         gameOverScoreText.fontStyle = FontStyle.Normal;
         AddOutline(gameOverScoreText.gameObject, new Color(0.14f, 0.84f, 1f, 0.92f), new Vector2(2f, -2f));
 
-        Text hintText = CreateText(gameOverPanel.transform, font, "HintText", "Tap anywhere", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -318f), 28, mutedText);
+        Text hintText = CreateText(gameOverPanel.transform, font, "HintText", "Tap anywhere", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -388f), 28, mutedText);
         hintText.alignment = TextAnchor.MiddleCenter;
         AddOutline(hintText.gameObject, new Color(0.08f, 0.35f, 0.45f, 0.65f), new Vector2(1f, -1f));
 
@@ -734,21 +734,21 @@ public static class PrototypeSceneBootstrap
         main.playOnAwake = true;
         main.loop = true;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
-        main.startLifetime = 0.62f;
+        main.startLifetime = 0.46f;
         main.startSpeed = 0.12f;
         main.startSize = 0.16f;
-        main.maxParticles = 42;
+        main.maxParticles = 14;
         main.startColor = new ParticleSystem.MinMaxGradient(
             new Color(0.82f, 1f, 1f, 0.88f),
             new Color(0.5f, 0.92f, 1f, 0.72f));
 
         var emission = particles.emission;
-        emission.rateOverTime = 96f;
+        emission.rateOverTime = 32f;
 
         var shape = particles.shape;
         shape.enabled = true;
-        shape.shapeType = ParticleSystemShapeType.Box;
-        shape.scale = new Vector3(0.96f, 0.05f, 0.01f);
+        shape.shapeType = ParticleSystemShapeType.Edge;
+        shape.scale = new Vector3(0.96f, 0f, 0.01f);
 
         var velocityOverLifetime = particles.velocityOverLifetime;
         velocityOverLifetime.enabled = true;
