@@ -313,7 +313,7 @@ public static class PrototypeSceneBootstrap
         flashOverlay.raycastTarget = false;
 
         scoreText = CreateText(canvas.transform, font, "ScoreText", "0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -96f), 56, neonCyan);
-        scoreText.fontStyle = FontStyle.Bold;
+        scoreText.fontStyle = FontStyle.Normal;
         scoreText.alignment = TextAnchor.MiddleCenter;
         AddOutline(scoreText.gameObject, new Color(0.12f, 0.85f, 1f, 0.9f), new Vector2(2f, -2f));
         AddShadow(scoreText.gameObject, new Color(0f, 0.65f, 0.82f, 0.28f), new Vector2(0f, 0f));
@@ -608,6 +608,22 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), texture.width);
     }
 
+    private static Sprite LoadTriangleSprite()
+    {
+        string spritePath = Path.Combine(Application.dataPath, "Art", "Sprites", "triangle.png");
+        if (!File.Exists(spritePath))
+        {
+            return null;
+        }
+
+        byte[] fileBytes = File.ReadAllBytes(spritePath);
+        Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+        texture.LoadImage(fileBytes, false);
+        texture.wrapMode = TextureWrapMode.Clamp;
+        texture.filterMode = FilterMode.Bilinear;
+        return Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0f, 0.5f), texture.width);
+    }
+
     private static Sprite LoadPlayerSprite()
     {
         string spritePath = Path.Combine(Application.dataPath, "Art", "Sprites", "player.png");
@@ -635,9 +651,10 @@ public static class PrototypeSceneBootstrap
         collider.offset = new Vector2(0.45f, 0f);
 
         obstacle.AddComponent<ObstacleMarker>();
-        Sprite spikeSprite = CreateTriangleSpikeSprite();
+        Sprite triangleSprite = LoadTriangleSprite() ?? sprite;
 
-        GameObject body = CreateSpriteObject("Body", obstacle.transform, spikeSprite, new Color(1f, 0.3f, 0.58f, 1f), new Vector3(1f, 1f, 1f), Vector3.zero);
+        GameObject body = CreateSpriteObject("Body", obstacle.transform, triangleSprite, new Color(1f, 0.3f, 0.58f, 1f), new Vector3(1f, 1f, 1f), Vector3.zero);
+        body.transform.localEulerAngles = new Vector3(0f, 0f, -90f);
         body.GetComponent<SpriteRenderer>().sortingOrder = 2;
 
         return obstacle;
