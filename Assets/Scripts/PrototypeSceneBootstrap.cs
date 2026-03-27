@@ -428,17 +428,20 @@ public static class PrototypeSceneBootstrap
         panelRect.sizeDelta = new Vector2(760f, 470f);
         panelRect.anchoredPosition = new Vector2(0f, 90f);
 
-        gameOverText = CreateText(gameOverPanel.transform, font, "GameOverText", "GAME OVER", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -92f), 84, Color.white);
+        gameOverText = CreateText(gameOverPanel.transform, font, "GameOverText", "GAME OVER", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -92f), 84, new Color(0.92f, 1f, 1f, 1f));
         gameOverText.alignment = TextAnchor.MiddleCenter;
         gameOverText.fontStyle = FontStyle.Bold;
-        AddOutline(gameOverText.gameObject, new Color(0.13f, 0.62f, 0.76f, 1f), new Vector2(2f, -2f));
+        AddOutline(gameOverText.gameObject, new Color(0.18f, 0.9f, 1f, 1f), new Vector2(2.5f, -2.5f));
+        AddShadow(gameOverText.gameObject, new Color(0f, 0.7f, 0.85f, 0.45f), new Vector2(0f, 0f));
 
         gameOverScoreText = CreateText(gameOverPanel.transform, font, "GameOverScoreText", "Score: 0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -182f), 44, neonCyan);
         gameOverScoreText.alignment = TextAnchor.MiddleCenter;
         gameOverScoreText.fontStyle = FontStyle.Bold;
+        AddOutline(gameOverScoreText.gameObject, new Color(0.12f, 0.7f, 0.9f, 0.9f), new Vector2(1.5f, -1.5f));
 
         Text hintText = CreateText(gameOverPanel.transform, font, "HintText", "Tap anywhere to restart", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -260f), 28, mutedText);
         hintText.alignment = TextAnchor.MiddleCenter;
+        AddOutline(hintText.gameObject, new Color(0.08f, 0.35f, 0.45f, 0.65f), new Vector2(1f, -1f));
 
         GameObject buttonObject = new GameObject("RestartButton");
         buttonObject.transform.SetParent(gameOverPanel.transform);
@@ -642,3 +645,4 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
     }
 }
+
