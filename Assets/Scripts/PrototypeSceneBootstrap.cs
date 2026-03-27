@@ -232,32 +232,6 @@ public static class PrototypeSceneBootstrap
         GameObject shimmer = CreateScrollingQuad(name + "Shimmer", parent, shimmerTexture, highlightColor, new Vector3(x, 0f, z + 0.1f), new Vector3(0.3f, height, 1f), new Vector2(1f, 2.5f), 0f, 0f, 0.65f, 0f, 9);
         shimmer.transform.localEulerAngles = Vector3.zero;
 
-        CreateWallTriangleEffects(parent, triangleSprite, gradientSprite, name, x, z, pointRight);
-    }
-
-    private static void CreateWallTriangleEffects(Transform parent, Sprite triangleSprite, Sprite gradientSprite, string wallName, float wallX, float wallZ, bool pointRight)
-    {
-        float[] yPositions = { -4.8f, 0.15f, 5.1f };
-        float direction = pointRight ? 1f : -1f;
-        float rotationZ = pointRight ? -90f : 90f;
-        float triangleX = wallX + (0.16f * direction);
-
-        for (int i = 0; i < yPositions.Length; i++)
-        {
-            GameObject effectRoot = new GameObject(wallName + "TriangleEffect" + i);
-            effectRoot.transform.SetParent(parent);
-            effectRoot.transform.localPosition = new Vector3(triangleX, yPositions[i], wallZ - 0.2f);
-            effectRoot.transform.localRotation = Quaternion.Euler(0f, 0f, rotationZ);
-
-            GameObject aura = CreateSpriteObject("Aura", effectRoot.transform, gradientSprite, new Color(0.88f, 0.18f, 1f, 0.11f), new Vector3(0.95f, 1.35f, 1f), Vector3.zero);
-            aura.GetComponent<SpriteRenderer>().sortingOrder = 6;
-
-            GameObject glow = CreateSpriteObject("Glow", effectRoot.transform, triangleSprite, new Color(1f, 0.28f, 0.78f, 0.26f), new Vector3(0.8f, 0.8f, 1f), Vector3.zero);
-            glow.GetComponent<SpriteRenderer>().sortingOrder = 7;
-
-            GameObject core = CreateSpriteObject("Core", effectRoot.transform, triangleSprite, new Color(1f, 0.36f, 0.74f, 0.92f), new Vector3(0.62f, 0.62f, 1f), Vector3.zero);
-            core.GetComponent<SpriteRenderer>().sortingOrder = 8;
-        }
     }
 
     private static Texture2D CreateWallShimmerTexture(int width, int height)
@@ -689,6 +663,15 @@ public static class PrototypeSceneBootstrap
         obstacle.SetActive(false);
 
         Sprite triangleSprite = LoadTriangleSprite() ?? sprite;
+        Sprite gradientSprite = LoadGradientSprite() ?? triangleSprite;
+
+        GameObject aura = CreateSpriteObject("Aura", obstacle.transform, gradientSprite, new Color(0.9f, 0.2f, 1f, 0.12f), new Vector3(1.35f, 1.75f, 1f), new Vector3(0.48f, 0f, 0f));
+        aura.transform.localEulerAngles = new Vector3(0f, 0f, -90f);
+        aura.GetComponent<SpriteRenderer>().sortingOrder = 0;
+
+        GameObject glow = CreateSpriteObject("Glow", obstacle.transform, triangleSprite, new Color(1f, 0.22f, 0.72f, 0.28f), new Vector3(1.16f, 1.16f, 1f), new Vector3(0.48f, 0f, 0f));
+        glow.transform.localEulerAngles = new Vector3(0f, 0f, -90f);
+        glow.GetComponent<SpriteRenderer>().sortingOrder = 1;
 
         GameObject body = CreateSpriteObject("Body", obstacle.transform, triangleSprite, new Color(1f, 0.3f, 0.58f, 1f), new Vector3(1f, 1f, 1f), new Vector3(0.48f, 0f, 0f));
         body.transform.localEulerAngles = new Vector3(0f, 0f, -90f);
@@ -874,6 +857,7 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
     }
 }
+
 
 
 
