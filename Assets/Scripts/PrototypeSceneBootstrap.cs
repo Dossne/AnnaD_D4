@@ -12,6 +12,8 @@ public static class PrototypeSceneBootstrap
     private const float PlayerWallContactOffset = 0.68f;
     private const string RuntimeRootName = "PrototypeRuntime";
 
+    private static PrototypeEffectsTuning effectsTuning;
+
     private static float LeftWallVisualX => LeftWallX - WallVisualOffset;
     private static float RightWallVisualX => RightWallX + WallVisualOffset;
     private static float LeftRideX => LeftWallVisualX + PlayerWallContactOffset;
@@ -47,6 +49,7 @@ public static class PrototypeSceneBootstrap
 
         ClearExistingPrototype(camera);
         SetupCamera(camera);
+        effectsTuning = camera.GetComponent<PrototypeEffectsTuning>();
 
         Sprite baseSprite = CreateSolidSprite();
         Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
@@ -121,7 +124,8 @@ public static class PrototypeSceneBootstrap
         Vector3 farLayerScale = GetAspectPreservingScale(farTexture, visibleWidth, visibleHeight, 2f);
 
         CreateParallaxQuad("FarBackground", camera, farTexture, Color.white, new Vector3(0f, 0f, 26f), farLayerScale, new Vector2(1f, 1f), 0.000125f, 0f, 0.00015f, 0f);
-        CreateOverlayQuad("CenterGlow", camera.transform, centerGlow, new Color(1f, 1f, 1f, 0.24f), new Vector3(0f, 0f, 24f), new Vector3(14f, layerHeight, 1f), 7);
+        float centerGlowWidth = effectsTuning != null ? effectsTuning.centerGlowWidth : 14f;
+        CreateOverlayQuad("CenterGlow", camera.transform, centerGlow, new Color(1f, 1f, 1f, 0.24f), new Vector3(0f, 0f, 24f), new Vector3(centerGlowWidth, layerHeight, 1f), 7);
         CreateParallaxQuad("MidStars", camera, midStars, new Color(0.72f, 0.84f, 1f, 0.55f), new Vector3(0f, 0f, 22f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.2f, 2f), 0.004f, 0.00075f, 0.003f, 0f);
         CreateParallaxQuad("NearStars", camera, nearStars, new Color(0.95f, 0.98f, 1f, 0.6f), new Vector3(0f, 0f, 20f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.5f, 2.6f), 0.054f, 0.009f, 0.03f, 0f);
 
@@ -229,15 +233,22 @@ public static class PrototypeSceneBootstrap
         core.GetComponent<SpriteRenderer>().sortingOrder = 10;
 
         Texture2D shimmerTexture = CreateWallShimmerTexture(64, 256);
-        float shadowPulseSpeed = pointRight ? 1.38f : 1.22f;
-        float pulseSpeed = pointRight ? 1.86f : 1.68f;
+        float shadowPulseSpeed = pointRight
+            ? (effectsTuning != null ? effectsTuning.rightShadowPulseSpeed : 1.38f)
+            : (effectsTuning != null ? effectsTuning.leftShadowPulseSpeed : 1.22f);
+        float pulseSpeed = pointRight
+            ? (effectsTuning != null ? effectsTuning.rightPulseSpeed : 1.86f)
+            : (effectsTuning != null ? effectsTuning.leftPulseSpeed : 1.68f);
         Vector2 pulseTextureScale = new Vector2(1f, 0.034f);
 
-        GameObject shadowPulse = CreateScrollingQuad(name + "ShadowPulse", parent, shimmerTexture, new Color(0.12f, 0f, 0.08f, 0.06f), new Vector3(x, 0f, z + 0.09f), new Vector3(0.66f, height, 1f), pulseTextureScale, 0f, 0f, shadowPulseSpeed, 0f, 8);
+        float shadowPulseAlpha = effectsTuning != null ? effectsTuning.wallShadowPulseAlpha : 0.06f;
+        float pulseAlpha = effectsTuning != null ? effectsTuning.wallPulseAlpha : 0.16f;
+
+        GameObject shadowPulse = CreateScrollingQuad(name + "ShadowPulse", parent, shimmerTexture, new Color(0.12f, 0f, 0.08f, shadowPulseAlpha), new Vector3(x, 0f, z + 0.09f), new Vector3(0.66f, height, 1f), pulseTextureScale, 0f, 0f, shadowPulseSpeed, 0f, 8);
         shadowPulse.transform.localEulerAngles = Vector3.zero;
         shadowPulse.GetComponent<MeshRenderer>().material.mainTextureOffset = new Vector2(0f, pointRight ? 0.12f : 0.58f);
 
-        GameObject pulse = CreateScrollingQuad(name + "Pulse", parent, shimmerTexture, new Color(1f, 0.45f, 0.78f, 0.16f), new Vector3(x, 0f, z + 0.12f), new Vector3(0.66f, height, 1f), pulseTextureScale, 0f, 0f, pulseSpeed, 0f, 9);
+        GameObject pulse = CreateScrollingQuad(name + "Pulse", parent, shimmerTexture, new Color(1f, 0.45f, 0.78f, pulseAlpha), new Vector3(x, 0f, z + 0.12f), new Vector3(0.66f, height, 1f), pulseTextureScale, 0f, 0f, pulseSpeed, 0f, 9);
         pulse.transform.localEulerAngles = Vector3.zero;
         pulse.GetComponent<MeshRenderer>().material.mainTextureOffset = new Vector2(0f, pointRight ? 0.67f : 0.21f);
 
@@ -623,12 +634,17 @@ public static class PrototypeSceneBootstrap
         Sprite lineSprite = LoadLineSprite();
         Texture2D lineTexture = lineSprite != null ? lineSprite.texture : null;
 
-        CreateJetTrail(player, lineTexture, "LeftJet", new Vector3(-0.19f, -0.5f, 0.04f), 0.22f, 0.016f, 0.002f, 2, false);
-        CreateJetTrail(player, lineTexture, "LeftJetGlow", new Vector3(-0.19f, -0.5f, 0.03f), 0.28f, 0.028f, 0.004f, 1, true);
-        CreateJetTrail(player, lineTexture, "CenterJet", new Vector3(0f, -0.56f, 0.04f), 0.28f, 0.02f, 0.0026f, 3, false);
-        CreateJetTrail(player, lineTexture, "CenterJetGlow", new Vector3(0f, -0.56f, 0.03f), 0.34f, 0.034f, 0.0048f, 1, true);
-        CreateJetTrail(player, lineTexture, "RightJet", new Vector3(0.19f, -0.5f, 0.04f), 0.22f, 0.016f, 0.002f, 2, false);
-        CreateJetTrail(player, lineTexture, "RightJetGlow", new Vector3(0.19f, -0.5f, 0.03f), 0.28f, 0.028f, 0.004f, 1, true);
+        float sideTrailTime = effectsTuning != null ? effectsTuning.sideTrailTime : 0.22f;
+        float sideTrailGlowTime = effectsTuning != null ? effectsTuning.sideTrailGlowTime : 0.28f;
+        float centerTrailTime = effectsTuning != null ? effectsTuning.centerTrailTime : 0.28f;
+        float centerTrailGlowTime = effectsTuning != null ? effectsTuning.centerTrailGlowTime : 0.34f;
+
+        CreateJetTrail(player, lineTexture, "LeftJet", new Vector3(-0.19f, -0.5f, 0.04f), sideTrailTime, 0.016f, 0.002f, 2, false);
+        CreateJetTrail(player, lineTexture, "LeftJetGlow", new Vector3(-0.19f, -0.5f, 0.03f), sideTrailGlowTime, 0.028f, 0.004f, 1, true);
+        CreateJetTrail(player, lineTexture, "CenterJet", new Vector3(0f, -0.56f, 0.04f), centerTrailTime, 0.02f, 0.0026f, 3, false);
+        CreateJetTrail(player, lineTexture, "CenterJetGlow", new Vector3(0f, -0.56f, 0.03f), centerTrailGlowTime, 0.034f, 0.0048f, 1, true);
+        CreateJetTrail(player, lineTexture, "RightJet", new Vector3(0.19f, -0.5f, 0.04f), sideTrailTime, 0.016f, 0.002f, 2, false);
+        CreateJetTrail(player, lineTexture, "RightJetGlow", new Vector3(0.19f, -0.5f, 0.03f), sideTrailGlowTime, 0.028f, 0.004f, 1, true);
         CreatePlayerTrailParticles(player);
     }
 
@@ -734,21 +750,25 @@ public static class PrototypeSceneBootstrap
         main.playOnAwake = true;
         main.loop = true;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
-        main.startLifetime = 0.46f;
+        float particleLifetime = effectsTuning != null ? effectsTuning.particleLifetime : 0.46f;
+        float particleStartSize = effectsTuning != null ? effectsTuning.particleStartSize : 0.16f;
+        int particleMaxCount = effectsTuning != null ? effectsTuning.particleMaxCount : 14;
+        main.startLifetime = particleLifetime;
         main.startSpeed = 0.12f;
-        main.startSize = 0.16f;
-        main.maxParticles = 14;
+        main.startSize = particleStartSize;
+        main.maxParticles = particleMaxCount;
         main.startColor = new ParticleSystem.MinMaxGradient(
             new Color(0.82f, 1f, 1f, 0.88f),
             new Color(0.5f, 0.92f, 1f, 0.72f));
 
         var emission = particles.emission;
-        emission.rateOverTime = 32f;
+        emission.rateOverTime = effectsTuning != null ? effectsTuning.particleRateOverTime : 32f;
 
         var shape = particles.shape;
         shape.enabled = true;
         shape.shapeType = ParticleSystemShapeType.Edge;
-        shape.scale = new Vector3(0.96f, 0f, 0.01f);
+        float particleSpawnWidth = effectsTuning != null ? effectsTuning.particleSpawnWidth : 0.96f;
+        shape.scale = new Vector3(particleSpawnWidth, 0f, 0.01f);
 
         var velocityOverLifetime = particles.velocityOverLifetime;
         velocityOverLifetime.enabled = true;
