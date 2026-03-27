@@ -564,10 +564,10 @@ public static class PrototypeSceneBootstrap
             return;
         }
 
-        CreateJetTrail(player, "LeftJet", new Vector3(-0.2f, -0.72f, 0f), 0.34f, 0.05f, 0.006f, 0);
-        CreateJetTrail(player, "CenterJet", new Vector3(0f, -0.82f, 0f), 0.46f, 0.065f, 0.008f, 1);
-        CreateJetTrail(player, "RightJet", new Vector3(0.2f, -0.72f, 0f), 0.38f, 0.05f, 0.006f, 0);
-        CreateJetSparks(player, new Vector3(0f, -0.8f, 0f));
+        CreateJetTrail(player, "LeftJet", new Vector3(-0.2f, -0.62f, 0f), 0.34f, 0.05f, 0.006f, 0);
+        CreateJetTrail(player, "CenterJet", new Vector3(0f, -0.7f, 0f), 0.46f, 0.065f, 0.008f, 1);
+        CreateJetTrail(player, "RightJet", new Vector3(0.2f, -0.62f, 0f), 0.38f, 0.05f, 0.006f, 0);
+        CreateJetSparks(player, new Vector3(0f, -0.68f, 0f));
     }
 
     private static void CreateJetTrail(Transform player, string name, Vector3 localOffset, float trailTime, float startWidth, float endWidth, int sortingOrder)
@@ -629,8 +629,8 @@ public static class PrototypeSceneBootstrap
         main.playOnAwake = true;
         main.loop = true;
         main.simulationSpace = ParticleSystemSimulationSpace.Local;
-        main.startLifetime = 0.22f;
-        main.startSpeed = 1.8f;
+        main.startLifetime = 0.34f;
+        main.startSpeed = 2.8f;
         main.startSize = 0.04f;
         main.startColor = new ParticleSystem.MinMaxGradient(
             new Color(0.8f, 1f, 1f, 0.85f),
@@ -638,7 +638,7 @@ public static class PrototypeSceneBootstrap
         main.maxParticles = 36;
 
         var emission = sparks.emission;
-        emission.rateOverTime = 22f;
+        emission.rateOverTime = 28f;
 
         var shape = sparks.shape;
         shape.shapeType = ParticleSystemShapeType.Box;
@@ -647,13 +647,13 @@ public static class PrototypeSceneBootstrap
         var velocityOverLifetime = sparks.velocityOverLifetime;
         velocityOverLifetime.enabled = true;
         velocityOverLifetime.space = ParticleSystemSimulationSpace.Local;
-        velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(-0.18f, 0.18f);
-        velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(-3.2f, -2.1f);
+        velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(-0.22f, 0.22f);
+        velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(-5.4f, -3.8f);
         velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(0f);
 
         var noise = sparks.noise;
         noise.enabled = true;
-        noise.strength = 0.12f;
+        noise.strength = 0.16f;
         noise.frequency = 0.55f;
 
         sparks.Play();
@@ -918,6 +918,7 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
     }
 }
+
 
 
 
