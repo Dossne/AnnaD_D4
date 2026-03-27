@@ -44,6 +44,8 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        isOnLeftWall = Random.value < 0.5f;
+
         Vector2 startPosition = rb.position;
         startPosition.x = isOnLeftWall ? leftWallX : rightWallX;
         rb.position = startPosition;

@@ -114,7 +114,7 @@ public static class PrototypeSceneBootstrap
         Vector3 farLayerScale = GetAspectPreservingScale(farTexture, visibleWidth, visibleHeight, 2f);
 
         CreateParallaxQuad("FarBackground", camera, farTexture, Color.white, new Vector3(0f, 0f, 26f), farLayerScale, new Vector2(1f, 1f), 0.000125f, 0f, 0.00015f, 0f);
-        CreateOverlayQuad("CenterGlow", camera.transform, centerGlow, new Color(1f, 1f, 1f, 0.2f), new Vector3(0f, 0f, 24f), new Vector3(layerWidth * 0.96f, layerHeight, 1f), 7);
+        CreateOverlayQuad("CenterGlow", camera.transform, centerGlow, new Color(1f, 1f, 1f, 0.2f), new Vector3(0f, 0f, 24f), new Vector3(layerWidth * 1.248f, layerHeight, 1f), 7);
         CreateParallaxQuad("MidStars", camera, midStars, new Color(0.72f, 0.84f, 1f, 0.55f), new Vector3(0f, 0f, 22f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.2f, 2f), 0.004f, 0.00075f, 0.003f, 0f);
         CreateParallaxQuad("NearStars", camera, nearStars, new Color(0.95f, 0.98f, 1f, 0.85f), new Vector3(0f, 0f, 20f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.5f, 2.6f), 0.01f, 0.0015f, 0.006f, 0f);
 
@@ -647,8 +647,8 @@ public static class PrototypeSceneBootstrap
 
         BoxCollider2D collider = obstacle.AddComponent<BoxCollider2D>();
         collider.isTrigger = true;
-        collider.size = new Vector2(0.9f, 0.78f);
-        collider.offset = new Vector2(0.45f, 0f);
+        collider.size = new Vector2(0.68f, 0.72f);
+        collider.offset = new Vector2(0.18f, 0f);
 
         obstacle.AddComponent<ObstacleMarker>();
         Sprite triangleSprite = LoadTriangleSprite() ?? sprite;
