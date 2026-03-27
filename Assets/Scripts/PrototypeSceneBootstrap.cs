@@ -333,11 +333,25 @@ public static class PrototypeSceneBootstrap
         flashOverlay = CreateFullscreenImage(canvas.transform, "FlashOverlay", new Color(1f, 1f, 1f, 0f));
         flashOverlay.raycastTarget = false;
 
-        scoreText = CreateText(canvas.transform, font, "ScoreText", "0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -148f), 56, neonCyan);
+        GameObject scoreBackdrop = new GameObject("ScoreBackdrop");
+        scoreBackdrop.transform.SetParent(canvas.transform);
+        Image scoreBackdropImage = scoreBackdrop.AddComponent<Image>();
+        scoreBackdropImage.color = new Color(0f, 0f, 0f, 0.32f);
+        RectTransform scoreBackdropRect = scoreBackdrop.GetComponent<RectTransform>();
+        scoreBackdropRect.anchorMin = new Vector2(0.5f, 1f);
+        scoreBackdropRect.anchorMax = new Vector2(0.5f, 1f);
+        scoreBackdropRect.pivot = new Vector2(0.5f, 0.5f);
+        scoreBackdropRect.anchoredPosition = new Vector2(0f, -148f);
+        scoreBackdropRect.sizeDelta = new Vector2(240f, 82f);
+        AddOutline(scoreBackdrop, new Color(0f, 0f, 0f, 0.08f), new Vector2(18f, 10f));
+        AddShadow(scoreBackdrop, new Color(0f, 0f, 0f, 0.2f), new Vector2(0f, 0f));
+        scoreBackdropRect.SetAsFirstSibling();
+
+        scoreText = CreateText(canvas.transform, font, "ScoreText", "0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -148f), 56, Color.white);
         scoreText.fontStyle = FontStyle.Normal;
         scoreText.alignment = TextAnchor.MiddleCenter;
-        AddOutline(scoreText.gameObject, new Color(0.12f, 0.85f, 1f, 0.6f), new Vector2(1f, -1f));
-        AddShadow(scoreText.gameObject, new Color(0f, 0.65f, 0.82f, 0.16f), new Vector2(0f, 0f));
+        AddOutline(scoreText.gameObject, new Color(0.12f, 0.85f, 1f, 0.72f), new Vector2(1f, -1f));
+        AddShadow(scoreText.gameObject, new Color(0f, 0.65f, 0.82f, 0.22f), new Vector2(0f, 0f));
 
         gameOverPanel = new GameObject("GameOverPanel");
         gameOverPanel.transform.SetParent(canvas.transform);
