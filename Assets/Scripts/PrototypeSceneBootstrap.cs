@@ -417,7 +417,7 @@ public static class PrototypeSceneBootstrap
         gameOverPanel = new GameObject("GameOverPanel");
         gameOverPanel.transform.SetParent(canvas.transform);
         Image panelImage = gameOverPanel.AddComponent<Image>();
-        panelImage.color = panelColor;
+        panelImage.color = new Color(0f, 0f, 0f, 0f);
         AddOutline(gameOverPanel, neonBorder, new Vector2(2f, -2f));
         AddShadow(gameOverPanel, new Color(0f, 0.08f, 0.14f, 0.45f), new Vector2(0f, -6f));
 
@@ -427,6 +427,17 @@ public static class PrototypeSceneBootstrap
         panelRect.pivot = new Vector2(0.5f, 0.5f);
         panelRect.sizeDelta = new Vector2(760f, 470f);
         panelRect.anchoredPosition = new Vector2(0f, 90f);
+
+        GameObject panelBackdrop = new GameObject("PanelBackdrop");
+        panelBackdrop.transform.SetParent(gameOverPanel.transform, false);
+        Image panelBackdropImage = panelBackdrop.AddComponent<Image>();
+        panelBackdropImage.color = panelColor;
+        RectTransform panelBackdropRect = panelBackdrop.GetComponent<RectTransform>();
+        panelBackdropRect.anchorMin = Vector2.zero;
+        panelBackdropRect.anchorMax = Vector2.one;
+        panelBackdropRect.offsetMin = new Vector2(8f, 8f);
+        panelBackdropRect.offsetMax = new Vector2(-8f, -8f);
+        panelBackdropRect.SetAsFirstSibling();
 
         gameOverText = CreateText(gameOverPanel.transform, font, "GameOverText", "GAME OVER", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -92f), 84, new Color(0.92f, 1f, 1f, 1f));
         gameOverText.alignment = TextAnchor.MiddleCenter;
@@ -645,4 +656,5 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
     }
 }
+
 
