@@ -206,15 +206,15 @@ public static class PrototypeSceneBootstrap
 
     private static void CreateWallStripe(Transform parent, Sprite sprite, Sprite gradientSprite, string name, float x, float height, float z)
     {
-        Color outerGlow = new Color(0.58f, 0.88f, 1f, 0.14f);
-        Color midGlow = new Color(0.72f, 0.94f, 1f, 0.22f);
+        Color outerGlow = new Color32(0xCB, 0x00, 0xFF, 10);
+        Color midGlow = new Color32(0xD5, 0x11, 0xFF, 15);
         Color coreColor = new Color(0.96f, 0.98f, 1f, 0.98f);
         Color highlightColor = new Color(0.9f, 0.98f, 1f, 0.28f);
 
         GameObject aura = CreateSpriteObject(name + "Aura", parent, gradientSprite, outerGlow, new Vector3(2.4f, height, 1f), new Vector3(x, 0f, z + 0.45f));
         aura.GetComponent<SpriteRenderer>().sortingOrder = 8;
 
-        GameObject glow = CreateSpriteObject(name + "Glow", parent, gradientSprite, midGlow, new Vector3(1.44f, height, 1f), new Vector3(x, 0f, z + 0.25f));
+        GameObject glow = CreateSpriteObject(name + "Glow", parent, gradientSprite, midGlow, new Vector3(1f, height, 1f), new Vector3(x, 0f, z + 0.25f));
         glow.GetComponent<SpriteRenderer>().sortingOrder = 9;
 
         GameObject core = CreateSpriteObject(name, parent, sprite, coreColor, new Vector3(0.44f, height, 1f), new Vector3(x, 0f, z));
