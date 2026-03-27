@@ -459,11 +459,11 @@ public static class PrototypeSceneBootstrap
     private static Material CreateTransparentMaterial()
     {
         Shader shader = FindFirstAvailableShader(
-            "Unlit/Texture",
-            "Universal Render Pipeline/Unlit",
             "Sprites/Default",
             "Unlit/Transparent",
-            "Legacy Shaders/Transparent/Diffuse");
+            "Legacy Shaders/Transparent/Diffuse",
+            "Unlit/Texture",
+            "Universal Render Pipeline/Unlit");
 
         return new Material(shader);
     }
@@ -611,7 +611,8 @@ public static class PrototypeSceneBootstrap
 
         BoxCollider2D collider = obstacle.AddComponent<BoxCollider2D>();
         collider.isTrigger = true;
-        collider.size = new Vector2(0.95f, 0.85f);
+        collider.size = new Vector2(0.9f, 0.78f);
+        collider.offset = new Vector2(0.45f, 0f);
 
         obstacle.AddComponent<ObstacleMarker>();
         Sprite spikeSprite = CreateTriangleSpikeSprite();
