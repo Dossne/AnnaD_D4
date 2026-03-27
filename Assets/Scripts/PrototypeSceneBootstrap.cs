@@ -210,17 +210,17 @@ public static class PrototypeSceneBootstrap
         Color coreColor = new Color(0.96f, 0.98f, 1f, 0.98f);
         Color highlightColor = new Color(0.9f, 0.98f, 1f, 0.28f);
 
-        GameObject aura = CreateSpriteObject(name + "Aura", parent, sprite, outerGlow, new Vector3(0.58f, height, 1f), new Vector3(x, 0f, z + 0.45f));
+        GameObject aura = CreateSpriteObject(name + "Aura", parent, sprite, outerGlow, new Vector3(1.2f, height, 1f), new Vector3(x, 0f, z + 0.45f));
         aura.GetComponent<SpriteRenderer>().sortingOrder = 8;
 
-        GameObject glow = CreateSpriteObject(name + "Glow", parent, sprite, midGlow, new Vector3(0.32f, height, 1f), new Vector3(x, 0f, z + 0.25f));
+        GameObject glow = CreateSpriteObject(name + "Glow", parent, sprite, midGlow, new Vector3(0.72f, height, 1f), new Vector3(x, 0f, z + 0.25f));
         glow.GetComponent<SpriteRenderer>().sortingOrder = 9;
 
-        GameObject core = CreateSpriteObject(name, parent, sprite, coreColor, new Vector3(0.11f, height, 1f), new Vector3(x, 0f, z));
+        GameObject core = CreateSpriteObject(name, parent, sprite, coreColor, new Vector3(0.44f, height, 1f), new Vector3(x, 0f, z));
         core.GetComponent<SpriteRenderer>().sortingOrder = 10;
 
         Texture2D shimmerTexture = CreateWallShimmerTexture(64, 256);
-        GameObject shimmer = CreateScrollingQuad(name + "Shimmer", parent, shimmerTexture, highlightColor, new Vector3(x, 0f, z - 0.2f), new Vector3(0.22f, height, 1f), new Vector2(1f, 2.5f), 0f, 0f, 0.65f, 0f, 11);
+        GameObject shimmer = CreateScrollingQuad(name + "Shimmer", parent, shimmerTexture, highlightColor, new Vector3(x, 0f, z + 0.1f), new Vector3(0.3f, height, 1f), new Vector2(1f, 2.5f), 0f, 0f, 0.65f, 0f, 9);
         shimmer.transform.localEulerAngles = Vector3.zero;
     }
 
@@ -522,7 +522,7 @@ public static class PrototypeSceneBootstrap
         collider.size = new Vector2(0.7f, 0.7f);
 
         Sprite playerSprite = LoadPlayerSprite() ?? sprite;
-        GameObject body = CreateSpriteObject("Body", player.transform, playerSprite, Color.white, new Vector3(1.15f, 1.15f, 1f), Vector3.zero);
+        GameObject body = CreateSpriteObject("Body", player.transform, playerSprite, Color.white, new Vector3(0.805f, 0.805f, 1f), Vector3.zero);
         body.GetComponent<SpriteRenderer>().sortingOrder = 2;
 
         CreatePlayerTrail(player.transform);
@@ -540,38 +540,41 @@ public static class PrototypeSceneBootstrap
             return;
         }
 
-        TrailRenderer mainTrail = player.gameObject.AddComponent<TrailRenderer>();
-        Material mainTrailMaterial = CreateOverlayMaterial() ?? CreateTransparentMaterial();
-        if (mainTrailMaterial != null)
+        GameObject trailAnchor = new GameObject("TrailAnchor");
+        trailAnchor.transform.SetParent(player, false);
+        trailAnchor.transform.localPosition = new Vector3(0f, -0.38f, 0f);
+
+        TrailRenderer trail = trailAnchor.AddComponent<TrailRenderer>();
+        Material trailMaterial = CreateOverlayMaterial() ?? CreateTransparentMaterial();
+        if (trailMaterial != null)
         {
-            mainTrailMaterial.color = new Color(0.55f, 0.98f, 1f, 0.9f);
-            mainTrail.sharedMaterial = mainTrailMaterial;
+            trailMaterial.color = new Color(0.55f, 0.98f, 1f, 0.75f);
+            trail.sharedMaterial = trailMaterial;
         }
-        mainTrail.time = 0.28f;
-        mainTrail.minVertexDistance = 0.03f;
-        mainTrail.startWidth = 0.12f;
-        mainTrail.endWidth = 0.02f;
-        mainTrail.numCapVertices = 6;
-        mainTrail.sortingOrder = 1;
+
+        trail.time = 0.34f;
+        trail.minVertexDistance = 0.025f;
+        trail.startWidth = 0.18f;
+        trail.endWidth = 0.015f;
+        trail.numCapVertices = 8;
+        trail.sortingOrder = 1;
 
         Gradient trailGradient = new Gradient();
         trailGradient.SetKeys(
             new[]
             {
-                new GradientColorKey(new Color(0.6f, 1f, 1f), 0f),
-                new GradientColorKey(new Color(0.5f, 0.92f, 1f), 0.45f),
-                new GradientColorKey(new Color(0.35f, 0.7f, 1f), 1f)
+                new GradientColorKey(new Color(0.72f, 1f, 1f), 0f),
+                new GradientColorKey(new Color(0.5f, 0.92f, 1f), 0.38f),
+                new GradientColorKey(new Color(0.28f, 0.74f, 1f), 1f)
             },
             new[]
             {
-                new GradientAlphaKey(0.55f, 0f),
-                new GradientAlphaKey(0.28f, 0.45f),
+                new GradientAlphaKey(0.42f, 0f),
+                new GradientAlphaKey(0.18f, 0.45f),
                 new GradientAlphaKey(0f, 1f)
             });
-        mainTrail.colorGradient = trailGradient;
-
+        trail.colorGradient = trailGradient;
     }
-
     private static Sprite LoadWallSprite()
     {
         string spritePath = Path.Combine(Application.dataPath, "Art", "Sprites", "wall.png");
