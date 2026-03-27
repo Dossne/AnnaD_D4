@@ -8,7 +8,14 @@ public static class PrototypeSceneBootstrap
 {
     private const float LeftWallX = -2.35f;
     private const float RightWallX = 2.35f;
+    private const float WallVisualOffset = 0.75f;
+    private const float PlayerWallContactOffset = 0.56f;
     private const string RuntimeRootName = "PrototypeRuntime";
+
+    private static float LeftWallVisualX => LeftWallX - WallVisualOffset;
+    private static float RightWallVisualX => RightWallX + WallVisualOffset;
+    private static float LeftRideX => LeftWallVisualX + PlayerWallContactOffset;
+    private static float RightRideX => RightWallVisualX - PlayerWallContactOffset;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void BuildPrototypeOnLoad()
@@ -199,12 +206,13 @@ public static class PrototypeSceneBootstrap
         float wallZ = 14f;
         Sprite wallSprite = LoadWallSprite() ?? sprite;
         Sprite gradientSprite = LoadGradientSprite() ?? wallSprite;
+        Sprite triangleSprite = LoadTriangleSprite() ?? sprite;
 
-        CreateWallStripe(camera.transform, wallSprite, gradientSprite, "LeftWall", LeftWallX - 0.75f, wallHeight, wallZ);
-        CreateWallStripe(camera.transform, wallSprite, gradientSprite, "RightWall", RightWallX + 0.75f, wallHeight, wallZ);
+        CreateWallStripe(camera.transform, wallSprite, gradientSprite, triangleSprite, "LeftWall", LeftWallVisualX, wallHeight, wallZ, true);
+        CreateWallStripe(camera.transform, wallSprite, gradientSprite, triangleSprite, "RightWall", RightWallVisualX, wallHeight, wallZ, false);
     }
 
-    private static void CreateWallStripe(Transform parent, Sprite sprite, Sprite gradientSprite, string name, float x, float height, float z)
+    private static void CreateWallStripe(Transform parent, Sprite sprite, Sprite gradientSprite, Sprite triangleSprite, string name, float x, float height, float z, bool pointRight)
     {
         Color outerGlow = new Color32(0xCB, 0x00, 0xFF, 10);
         Color midGlow = new Color32(0xD5, 0x11, 0xFF, 15);
@@ -223,6 +231,33 @@ public static class PrototypeSceneBootstrap
         Texture2D shimmerTexture = CreateWallShimmerTexture(64, 256);
         GameObject shimmer = CreateScrollingQuad(name + "Shimmer", parent, shimmerTexture, highlightColor, new Vector3(x, 0f, z + 0.1f), new Vector3(0.3f, height, 1f), new Vector2(1f, 2.5f), 0f, 0f, 0.65f, 0f, 9);
         shimmer.transform.localEulerAngles = Vector3.zero;
+
+        CreateWallTriangleEffects(parent, triangleSprite, gradientSprite, name, x, z, pointRight);
+    }
+
+    private static void CreateWallTriangleEffects(Transform parent, Sprite triangleSprite, Sprite gradientSprite, string wallName, float wallX, float wallZ, bool pointRight)
+    {
+        float[] yPositions = { -4.8f, 0.15f, 5.1f };
+        float direction = pointRight ? 1f : -1f;
+        float rotationZ = pointRight ? -90f : 90f;
+        float triangleX = wallX + (0.16f * direction);
+
+        for (int i = 0; i < yPositions.Length; i++)
+        {
+            GameObject effectRoot = new GameObject(wallName + "TriangleEffect" + i);
+            effectRoot.transform.SetParent(parent);
+            effectRoot.transform.localPosition = new Vector3(triangleX, yPositions[i], wallZ - 0.2f);
+            effectRoot.transform.localRotation = Quaternion.Euler(0f, 0f, rotationZ);
+
+            GameObject aura = CreateSpriteObject("Aura", effectRoot.transform, gradientSprite, new Color(0.88f, 0.18f, 1f, 0.11f), new Vector3(0.95f, 1.35f, 1f), Vector3.zero);
+            aura.GetComponent<SpriteRenderer>().sortingOrder = 6;
+
+            GameObject glow = CreateSpriteObject("Glow", effectRoot.transform, triangleSprite, new Color(1f, 0.28f, 0.78f, 0.26f), new Vector3(0.8f, 0.8f, 1f), Vector3.zero);
+            glow.GetComponent<SpriteRenderer>().sortingOrder = 7;
+
+            GameObject core = CreateSpriteObject("Core", effectRoot.transform, triangleSprite, new Color(1f, 0.36f, 0.74f, 0.92f), new Vector3(0.62f, 0.62f, 1f), Vector3.zero);
+            core.GetComponent<SpriteRenderer>().sortingOrder = 8;
+        }
     }
 
     private static Texture2D CreateWallShimmerTexture(int width, int height)
@@ -511,7 +546,7 @@ public static class PrototypeSceneBootstrap
     {
         GameObject player = new GameObject("Player");
         player.transform.SetParent(root);
-        player.transform.position = new Vector3(LeftWallX - 0.75f, -4f, 0f);
+        player.transform.position = new Vector3(LeftRideX, -4f, 0f);
 
         Rigidbody2D rb = player.AddComponent<Rigidbody2D>();
         rb.gravityScale = 0f;
@@ -529,7 +564,7 @@ public static class PrototypeSceneBootstrap
         CreatePlayerTrail(player.transform);
 
         PlayerController controller = player.AddComponent<PlayerController>();
-        controller.Configure(4.5f, 34f, LeftWallX - 0.75f, RightWallX + 0.75f, true, body.transform, 6.8f, 10.5f, 0.08f, 0.18f);
+        controller.Configure(4.5f, 34f, LeftRideX, RightRideX, true, body.transform, 6.8f, 10.5f, 0.08f, 0.18f);
 
         return player;
     }
@@ -675,7 +710,7 @@ public static class PrototypeSceneBootstrap
         GameObject spawnerObject = new GameObject("ObstacleSpawner");
         spawnerObject.transform.SetParent(root);
         ObstacleSpawner spawner = spawnerObject.AddComponent<ObstacleSpawner>();
-        spawner.Configure(obstacleTemplate, player.transform, LeftWallX - 0.75f, RightWallX + 0.75f, 10f, 3f, 0.7f, 36);
+        spawner.Configure(obstacleTemplate, player.transform, LeftWallVisualX, RightWallVisualX, 10f, 3f, 0.7f, 36);
 
         CameraFollow follow = camera.GetComponent<CameraFollow>();
         follow.Configure(player.transform, 3.5f);
@@ -839,5 +874,6 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
     }
 }
+
 
 
