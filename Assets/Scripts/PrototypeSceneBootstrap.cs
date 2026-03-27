@@ -333,7 +333,7 @@ public static class PrototypeSceneBootstrap
         flashOverlay = CreateFullscreenImage(canvas.transform, "FlashOverlay", new Color(1f, 1f, 1f, 0f));
         flashOverlay.raycastTarget = false;
 
-        Sprite blurSprite = LoadGradientSprite() ?? sprite;
+        Sprite blurSprite = LoadBackSprite() ?? LoadGradientSprite() ?? sprite;
 
         GameObject scoreBackdropBlur = new GameObject("ScoreBackdropBlur");
         scoreBackdropBlur.transform.SetParent(canvas.transform);
@@ -620,15 +620,18 @@ public static class PrototypeSceneBootstrap
             return;
         }
 
-        CreateJetTrail(player, "LeftJet", new Vector3(-0.19f, -0.5f, 0.04f), 0.2f, 0.016f, 0.002f, 2, false);
-        CreateJetTrail(player, "LeftJetGlow", new Vector3(-0.19f, -0.5f, 0.03f), 0.24f, 0.036f, 0.005f, 1, true);
-        CreateJetTrail(player, "CenterJet", new Vector3(0f, -0.56f, 0.04f), 0.26f, 0.02f, 0.0026f, 3, false);
-        CreateJetTrail(player, "CenterJetGlow", new Vector3(0f, -0.56f, 0.03f), 0.3f, 0.044f, 0.006f, 1, true);
-        CreateJetTrail(player, "RightJet", new Vector3(0.19f, -0.5f, 0.04f), 0.2f, 0.016f, 0.002f, 2, false);
-        CreateJetTrail(player, "RightJetGlow", new Vector3(0.19f, -0.5f, 0.03f), 0.24f, 0.036f, 0.005f, 1, true);
+        Sprite lineSprite = LoadLineSprite();
+        Texture2D lineTexture = lineSprite != null ? lineSprite.texture : null;
+
+        CreateJetTrail(player, lineTexture, "LeftJet", new Vector3(-0.19f, -0.5f, 0.04f), 0.2f, 0.016f, 0.002f, 2, false);
+        CreateJetTrail(player, lineTexture, "LeftJetGlow", new Vector3(-0.19f, -0.5f, 0.03f), 0.24f, 0.036f, 0.005f, 1, true);
+        CreateJetTrail(player, lineTexture, "CenterJet", new Vector3(0f, -0.56f, 0.04f), 0.26f, 0.02f, 0.0026f, 3, false);
+        CreateJetTrail(player, lineTexture, "CenterJetGlow", new Vector3(0f, -0.56f, 0.03f), 0.3f, 0.044f, 0.006f, 1, true);
+        CreateJetTrail(player, lineTexture, "RightJet", new Vector3(0.19f, -0.5f, 0.04f), 0.2f, 0.016f, 0.002f, 2, false);
+        CreateJetTrail(player, lineTexture, "RightJetGlow", new Vector3(0.19f, -0.5f, 0.03f), 0.24f, 0.036f, 0.005f, 1, true);
     }
 
-    private static void CreateJetTrail(Transform player, string name, Vector3 localOffset, float trailTime, float startWidth, float endWidth, int sortingOrder, bool isGlowLayer)
+    private static void CreateJetTrail(Transform player, Texture2D trailTexture, string name, Vector3 localOffset, float trailTime, float startWidth, float endWidth, int sortingOrder, bool isGlowLayer)
     {
         GameObject trailAnchor = new GameObject(name);
         trailAnchor.transform.SetParent(player, false);
@@ -642,6 +645,10 @@ public static class PrototypeSceneBootstrap
                 ? new Color(0.32f, 0.95f, 1f, 0.42f)
                 : new Color(0.82f, 1f, 1f, 0.98f);
             trail.sharedMaterial = trailMaterial;
+            if (trailTexture != null)
+            {
+                trail.sharedMaterial.mainTexture = trailTexture;
+            }
         }
 
         trail.time = trailTime;
