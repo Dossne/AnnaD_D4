@@ -113,8 +113,8 @@ public static class PrototypeSceneBootstrap
 
         Vector3 farLayerScale = GetAspectPreservingScale(farTexture, visibleWidth, visibleHeight, 2f);
 
-        CreateParallaxQuad("FarBackground", camera, farTexture, new Color(0.82f, 0.86f, 1f, 0.9f), new Vector3(0f, 0f, 26f), farLayerScale, new Vector2(1f, 1f), 0.000125f, 0f, 0.00015f, 0f);
-        CreateOverlayQuad("CenterGlow", camera.transform, centerGlow, new Color(1f, 1f, 1f, 0.82f), new Vector3(0f, 0f, 24f), new Vector3(layerWidth * 0.62f, layerHeight, 1f), 7);
+        CreateParallaxQuad("FarBackground", camera, farTexture, Color.white, new Vector3(0f, 0f, 26f), farLayerScale, new Vector2(1f, 1f), 0.000125f, 0f, 0.00015f, 0f);
+        CreateOverlayQuad("CenterGlow", camera.transform, centerGlow, new Color(1f, 1f, 1f, 0.2f), new Vector3(0f, 0f, 24f), new Vector3(layerWidth * 0.48f, layerHeight, 1f), 7);
         CreateParallaxQuad("MidStars", camera, midStars, new Color(0.72f, 0.84f, 1f, 0.55f), new Vector3(0f, 0f, 22f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.2f, 2f), 0.004f, 0.00075f, 0.003f, 0f);
         CreateParallaxQuad("NearStars", camera, nearStars, new Color(0.95f, 0.98f, 1f, 0.85f), new Vector3(0f, 0f, 20f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.5f, 2.6f), 0.01f, 0.0015f, 0.006f, 0f);
 
@@ -520,8 +520,11 @@ public static class PrototypeSceneBootstrap
         collider.isTrigger = true;
         collider.size = new Vector2(0.7f, 0.7f);
 
-        GameObject body = CreateSpriteObject("Body", player.transform, sprite, new Color(0.2f, 0.9f, 1f, 1f), new Vector3(0.7f, 0.7f, 1f), Vector3.zero);
+        Sprite playerSprite = LoadPlayerSprite() ?? sprite;
+        GameObject body = CreateSpriteObject("Body", player.transform, playerSprite, Color.white, new Vector3(1.15f, 1.15f, 1f), Vector3.zero);
         body.GetComponent<SpriteRenderer>().sortingOrder = 2;
+
+        CreatePlayerTrail(player.transform);
 
         PlayerController controller = player.AddComponent<PlayerController>();
         controller.Configure(4.5f, 34f, LeftWallX, RightWallX, true, body.transform, 6.8f, 10.5f, 0.08f, 0.18f);
@@ -529,6 +532,79 @@ public static class PrototypeSceneBootstrap
         return player;
     }
 
+    private static void CreatePlayerTrail(Transform player)
+    {
+        TrailRenderer mainTrail = player.gameObject.AddComponent<TrailRenderer>();
+        mainTrail.material = CreateOverlayMaterial();
+        mainTrail.material.color = new Color(0.55f, 0.98f, 1f, 0.9f);
+        mainTrail.time = 0.28f;
+        mainTrail.minVertexDistance = 0.03f;
+        mainTrail.startWidth = 0.12f;
+        mainTrail.endWidth = 0.02f;
+        mainTrail.numCapVertices = 6;
+        mainTrail.sortingOrder = 1;
+        mainTrail.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        mainTrail.receiveShadows = false;
+
+        Gradient trailGradient = new Gradient();
+        trailGradient.SetKeys(
+            new[]
+            {
+                new GradientColorKey(new Color(0.6f, 1f, 1f), 0f),
+                new GradientColorKey(new Color(0.5f, 0.92f, 1f), 0.45f),
+                new GradientColorKey(new Color(0.35f, 0.7f, 1f), 1f)
+            },
+            new[]
+            {
+                new GradientAlphaKey(0.55f, 0f),
+                new GradientAlphaKey(0.28f, 0.45f),
+                new GradientAlphaKey(0f, 1f)
+            });
+        mainTrail.colorGradient = trailGradient;
+
+        TrailRenderer glowTrail = player.gameObject.AddComponent<TrailRenderer>();
+        glowTrail.material = CreateOverlayMaterial();
+        glowTrail.material.color = new Color(0.7f, 1f, 1f, 0.35f);
+        glowTrail.time = 0.36f;
+        glowTrail.minVertexDistance = 0.03f;
+        glowTrail.startWidth = 0.22f;
+        glowTrail.endWidth = 0.04f;
+        glowTrail.numCapVertices = 6;
+        glowTrail.sortingOrder = 0;
+        glowTrail.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        glowTrail.receiveShadows = false;
+
+        Gradient glowGradient = new Gradient();
+        glowGradient.SetKeys(
+            new[]
+            {
+                new GradientColorKey(new Color(0.55f, 0.98f, 1f), 0f),
+                new GradientColorKey(new Color(0.35f, 0.75f, 1f), 1f)
+            },
+            new[]
+            {
+                new GradientAlphaKey(0.22f, 0f),
+                new GradientAlphaKey(0.08f, 0.45f),
+                new GradientAlphaKey(0f, 1f)
+            });
+        glowTrail.colorGradient = glowGradient;
+    }
+
+    private static Sprite LoadPlayerSprite()
+    {
+        string spritePath = Path.Combine(Application.dataPath, "Art", "Sprites", "player.png");
+        if (!File.Exists(spritePath))
+        {
+            return null;
+        }
+
+        byte[] fileBytes = File.ReadAllBytes(spritePath);
+        Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+        texture.LoadImage(fileBytes, false);
+        texture.wrapMode = TextureWrapMode.Clamp;
+        texture.filterMode = FilterMode.Bilinear;
+        return Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), texture.width * 0.75f);
+    }
     private static GameObject CreateObstacleTemplate(Transform root, Sprite sprite)
     {
         GameObject obstacle = new GameObject("ObstacleTemplate");
