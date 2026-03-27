@@ -9,7 +9,7 @@ public static class PrototypeSceneBootstrap
     private const float LeftWallX = -2.35f;
     private const float RightWallX = 2.35f;
     private const float WallVisualOffset = 0.75f;
-    private const float PlayerWallContactOffset = 0.6f;
+    private const float PlayerWallContactOffset = 0.68f;
     private const string RuntimeRootName = "PrototypeRuntime";
 
     private static float LeftWallVisualX => LeftWallX - WallVisualOffset;
@@ -123,7 +123,7 @@ public static class PrototypeSceneBootstrap
         CreateParallaxQuad("FarBackground", camera, farTexture, Color.white, new Vector3(0f, 0f, 26f), farLayerScale, new Vector2(1f, 1f), 0.000125f, 0f, 0.00015f, 0f);
         CreateOverlayQuad("CenterGlow", camera.transform, centerGlow, new Color(1f, 1f, 1f, 0.24f), new Vector3(0f, 0f, 24f), new Vector3(layerWidth * 2.08f, layerHeight, 1f), 7);
         CreateParallaxQuad("MidStars", camera, midStars, new Color(0.72f, 0.84f, 1f, 0.55f), new Vector3(0f, 0f, 22f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.2f, 2f), 0.004f, 0.00075f, 0.003f, 0f);
-        CreateParallaxQuad("NearStars", camera, nearStars, new Color(0.95f, 0.98f, 1f, 0.85f), new Vector3(0f, 0f, 20f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.5f, 2.6f), 0.018f, 0.003f, 0.01f, 0f);
+        CreateParallaxQuad("NearStars", camera, nearStars, new Color(0.95f, 0.98f, 1f, 0.85f), new Vector3(0f, 0f, 20f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.5f, 2.6f), 0.054f, 0.009f, 0.03f, 0f);
 
         CreateSpaceParticles(camera, visibleWidth, visibleHeight);
     }
@@ -482,14 +482,15 @@ public static class PrototypeSceneBootstrap
     private static Material CreateScrollingMaterial()
     {
         Shader shader = FindFirstAvailableShader(
-            "Unlit/Texture",
             "Unlit/Transparent",
             "Legacy Shaders/Transparent/Diffuse",
             "Sprites/Default",
+            "Unlit/Texture",
             "Universal Render Pipeline/Unlit");
 
         return new Material(shader);
     }
+
     private static Material CreateOverlayMaterial()
     {
         Shader shader = FindFirstAvailableShader(
@@ -567,7 +568,6 @@ public static class PrototypeSceneBootstrap
         CreateJetTrail(player, "LeftJet", new Vector3(-0.2f, -0.62f, 0f), 0.34f, 0.05f, 0.006f, 0);
         CreateJetTrail(player, "CenterJet", new Vector3(0f, -0.7f, 0f), 0.46f, 0.065f, 0.008f, 1);
         CreateJetTrail(player, "RightJet", new Vector3(0.2f, -0.62f, 0f), 0.38f, 0.05f, 0.006f, 0);
-        CreateJetSparks(player, new Vector3(0f, -0.68f, 0f));
     }
 
     private static void CreateJetTrail(Transform player, string name, Vector3 localOffset, float trailTime, float startWidth, float endWidth, int sortingOrder)
@@ -918,6 +918,7 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
     }
 }
+
 
 
 
