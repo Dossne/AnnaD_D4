@@ -534,9 +534,18 @@ public static class PrototypeSceneBootstrap
 
     private static void CreatePlayerTrail(Transform player)
     {
+        if (player == null)
+        {
+            return;
+        }
+
         TrailRenderer mainTrail = player.gameObject.AddComponent<TrailRenderer>();
-        mainTrail.material = CreateOverlayMaterial();
-        mainTrail.material.color = new Color(0.55f, 0.98f, 1f, 0.9f);
+        Material mainTrailMaterial = CreateOverlayMaterial() ?? CreateTransparentMaterial();
+        if (mainTrailMaterial != null)
+        {
+            mainTrailMaterial.color = new Color(0.55f, 0.98f, 1f, 0.9f);
+            mainTrail.sharedMaterial = mainTrailMaterial;
+        }
         mainTrail.time = 0.28f;
         mainTrail.minVertexDistance = 0.03f;
         mainTrail.startWidth = 0.12f;
@@ -563,8 +572,12 @@ public static class PrototypeSceneBootstrap
         mainTrail.colorGradient = trailGradient;
 
         TrailRenderer glowTrail = player.gameObject.AddComponent<TrailRenderer>();
-        glowTrail.material = CreateOverlayMaterial();
-        glowTrail.material.color = new Color(0.7f, 1f, 1f, 0.35f);
+        Material glowTrailMaterial = CreateOverlayMaterial() ?? CreateTransparentMaterial();
+        if (glowTrailMaterial != null)
+        {
+            glowTrailMaterial.color = new Color(0.7f, 1f, 1f, 0.35f);
+            glowTrail.sharedMaterial = glowTrailMaterial;
+        }
         glowTrail.time = 0.36f;
         glowTrail.minVertexDistance = 0.03f;
         glowTrail.startWidth = 0.22f;
