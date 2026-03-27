@@ -107,12 +107,14 @@ public static class PrototypeSceneBootstrap
         float layerHeight = visibleHeight + 2f;
 
         Texture2D farTexture = LoadSpaceBackgroundTexture();
+        Texture2D centerGlow = CreateCenterGlowTexture(128, 512);
         Texture2D midStars = CreateStarTexture(256, 512, 90, 1, 0.25f, 0.7f);
         Texture2D nearStars = CreateStarTexture(256, 512, 170, 2, 0.45f, 1f);
 
         Vector3 farLayerScale = GetAspectPreservingScale(farTexture, visibleWidth, visibleHeight, 2f);
 
         CreateParallaxQuad("FarBackground", camera, farTexture, new Color(0.82f, 0.86f, 1f, 0.9f), new Vector3(0f, 0f, 26f), farLayerScale, new Vector2(1f, 1f), 0.000125f, 0f, 0.00015f, 0f);
+        CreateParallaxQuad("CenterGlow", camera, centerGlow, Color.white, new Vector3(0f, 0f, 24f), new Vector3(layerWidth * 0.62f, layerHeight, 1f), new Vector2(1f, 1f), 0.0012f, 0f, 0.0006f, 0f);
         CreateParallaxQuad("MidStars", camera, midStars, new Color(0.72f, 0.84f, 1f, 0.55f), new Vector3(0f, 0f, 22f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.2f, 2f), 0.004f, 0.00075f, 0.003f, 0f);
         CreateParallaxQuad("NearStars", camera, nearStars, new Color(0.95f, 0.98f, 1f, 0.85f), new Vector3(0f, 0f, 20f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.5f, 2.6f), 0.01f, 0.0015f, 0.006f, 0f);
 
@@ -202,22 +204,22 @@ public static class PrototypeSceneBootstrap
 
     private static void CreateWallStripe(Transform parent, Sprite sprite, string name, float x, float height, float z)
     {
-        Color outerGlow = new Color(1f, 0.2f, 0.78f, 0.18f);
-        Color midGlow = new Color(1f, 0.36f, 0.88f, 0.34f);
-        Color coreColor = new Color(1f, 0.84f, 0.97f, 0.98f);
-        Color highlightColor = new Color(1f, 0.97f, 1f, 0.85f);
+        Color outerGlow = new Color(1f, 0.14f, 0.7f, 0.28f);
+        Color midGlow = new Color(1f, 0.24f, 0.8f, 0.46f);
+        Color coreColor = new Color(1f, 0.68f, 0.9f, 0.98f);
+        Color highlightColor = new Color(1f, 0.92f, 0.98f, 0.75f);
 
-        GameObject aura = CreateSpriteObject(name + "Aura", parent, sprite, outerGlow, new Vector3(0.95f, height, 1f), new Vector3(x, 0f, z + 0.45f));
+        GameObject aura = CreateSpriteObject(name + "Aura", parent, sprite, outerGlow, new Vector3(1.15f, height, 1f), new Vector3(x, 0f, z + 0.45f));
         aura.GetComponent<SpriteRenderer>().sortingOrder = 8;
 
-        GameObject glow = CreateSpriteObject(name + "Glow", parent, sprite, midGlow, new Vector3(0.5f, height, 1f), new Vector3(x, 0f, z + 0.25f));
+        GameObject glow = CreateSpriteObject(name + "Glow", parent, sprite, midGlow, new Vector3(0.62f, height, 1f), new Vector3(x, 0f, z + 0.25f));
         glow.GetComponent<SpriteRenderer>().sortingOrder = 9;
 
-        GameObject core = CreateSpriteObject(name, parent, sprite, coreColor, new Vector3(0.18f, height, 1f), new Vector3(x, 0f, z));
+        GameObject core = CreateSpriteObject(name, parent, sprite, coreColor, new Vector3(0.22f, height, 1f), new Vector3(x, 0f, z));
         core.GetComponent<SpriteRenderer>().sortingOrder = 10;
 
         Texture2D shimmerTexture = CreateWallShimmerTexture(64, 256);
-        GameObject shimmer = CreateScrollingQuad(name + "Shimmer", parent, shimmerTexture, highlightColor, new Vector3(x, 0f, z - 0.2f), new Vector3(0.42f, height, 1f), new Vector2(1f, 2.5f), 0f, 0f, 0.65f, 0f, 11);
+        GameObject shimmer = CreateScrollingQuad(name + "Shimmer", parent, shimmerTexture, highlightColor, new Vector3(x, 0f, z - 0.2f), new Vector3(0.5f, height, 1f), new Vector2(1f, 2.5f), 0f, 0f, 0.65f, 0f, 11);
         shimmer.transform.localEulerAngles = Vector3.zero;
     }
 
@@ -353,11 +355,12 @@ public static class PrototypeSceneBootstrap
 
         BoxCollider2D collider = obstacle.AddComponent<BoxCollider2D>();
         collider.isTrigger = true;
-        collider.size = new Vector2(0.9f, 0.9f);
+        collider.size = new Vector2(0.95f, 0.85f);
 
         obstacle.AddComponent<ObstacleMarker>();
+        Sprite spikeSprite = CreateTriangleSpikeSprite();
 
-        GameObject body = CreateSpriteObject("Body", obstacle.transform, sprite, new Color(1f, 0.35f, 0.35f, 1f), new Vector3(0.9f, 0.9f, 1f), Vector3.zero);
+        GameObject body = CreateSpriteObject("Body", obstacle.transform, spikeSprite, new Color(1f, 0.28f, 0.56f, 1f), new Vector3(1f, 1f, 1f), Vector3.zero);
         body.GetComponent<SpriteRenderer>().sortingOrder = 2;
 
         return obstacle;
@@ -582,6 +585,67 @@ public static class PrototypeSceneBootstrap
         texture.wrapMode = TextureWrapMode.Repeat;
         texture.filterMode = FilterMode.Bilinear;
         return texture;
+    }
+
+
+    private static Texture2D CreateCenterGlowTexture(int width, int height)
+    {
+        Texture2D texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+
+        for (int y = 0; y < height; y++)
+        {
+            float v = (float)y / (height - 1);
+            float verticalFade = 0.55f + 0.45f * Mathf.Sin(v * Mathf.PI);
+
+            for (int x = 0; x < width; x++)
+            {
+                float u = (float)x / (width - 1);
+                float centered = 1f - Mathf.Abs(u - 0.5f) * 2f;
+                float alpha = Mathf.Pow(Mathf.Clamp01(centered), 1.8f) * verticalFade * 0.42f;
+                Color purple = new Color(0.34f, 0.18f, 0.7f, alpha * 0.9f);
+                Color blue = new Color(0.14f, 0.48f, 0.95f, alpha * 0.75f);
+                texture.SetPixel(x, y, Color.Lerp(purple, blue, Mathf.Clamp01(u * 1.1f)));
+            }
+        }
+
+        texture.Apply();
+        texture.wrapMode = TextureWrapMode.Clamp;
+        texture.filterMode = FilterMode.Bilinear;
+        return texture;
+    }
+
+    private static Sprite CreateTriangleSpikeSprite()
+    {
+        const int size = 64;
+        Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        Color clear = new Color(0f, 0f, 0f, 0f);
+
+        for (int x = 0; x < size; x++)
+        {
+            float normalizedX = (float)x / (size - 1);
+            float halfHeight = Mathf.Lerp(size * 0.42f, 1f, normalizedX);
+            float center = (size - 1) * 0.5f;
+
+            for (int y = 0; y < size; y++)
+            {
+                float distanceFromCenter = Mathf.Abs(y - center);
+                if (distanceFromCenter <= halfHeight)
+                {
+                    float edge = Mathf.Clamp01(1f - distanceFromCenter / Mathf.Max(halfHeight, 0.001f));
+                    float glow = 0.72f + edge * 0.28f;
+                    texture.SetPixel(x, y, new Color(glow, glow, glow, 1f));
+                }
+                else
+                {
+                    texture.SetPixel(x, y, clear);
+                }
+            }
+        }
+
+        texture.Apply();
+        texture.wrapMode = TextureWrapMode.Clamp;
+        texture.filterMode = FilterMode.Bilinear;
+        return Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0f, 0.5f), size);
     }
 
     private static Texture2D CreateStarTexture(int width, int height, int starCount, int starSize, float minAlpha, float maxAlpha)
