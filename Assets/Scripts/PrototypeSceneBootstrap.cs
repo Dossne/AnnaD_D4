@@ -577,88 +577,28 @@ public static class PrototypeSceneBootstrap
             return;
         }
 
-        CreateJetTrail(player, "LeftJet", new Vector3(-0.19f, -0.48f, 0f), 0.11f, 0.0022f, 0.0004f, 2, false);
-        CreateJetTrail(player, "LeftJetGlow", new Vector3(-0.19f, -0.48f, 0.02f), 0.12f, 0.0036f, 0.0009f, 1, true);
-        CreateJetTrail(player, "CenterJet", new Vector3(0f, -0.54f, 0f), 0.13f, 0.0028f, 0.00045f, 3, false);
-        CreateJetTrail(player, "CenterJetGlow", new Vector3(0f, -0.54f, 0.02f), 0.13f, 0.0044f, 0.001f, 1, true);
-        CreateJetTrail(player, "RightJet", new Vector3(0.19f, -0.48f, 0f), 0.11f, 0.0022f, 0.0004f, 2, false);
-        CreateJetTrail(player, "RightJetGlow", new Vector3(0.19f, -0.48f, 0.02f), 0.12f, 0.0036f, 0.0009f, 1, true);
+        Sprite trailSprite = LoadGradientSprite();
+        if (trailSprite == null)
+        {
+            return;
+        }
+
+        CreateJetBeam(player, trailSprite, "LeftJet", new Vector3(-0.19f, -0.67f, 0.03f), 0.024f, 0.54f, 0.05f, 0.66f, 2);
+        CreateJetBeam(player, trailSprite, "CenterJet", new Vector3(0f, -0.72f, 0.03f), 0.03f, 0.68f, 0.064f, 0.82f, 3);
+        CreateJetBeam(player, trailSprite, "RightJet", new Vector3(0.19f, -0.67f, 0.03f), 0.024f, 0.54f, 0.05f, 0.66f, 2);
     }
 
-    private static void CreateJetTrail(Transform player, string name, Vector3 localOffset, float trailTime, float startWidth, float endWidth, int sortingOrder, bool isGlowLayer)
+    private static void CreateJetBeam(Transform player, Sprite trailSprite, string name, Vector3 localPosition, float coreWidth, float coreHeight, float glowWidth, float glowHeight, int sortingOrder)
     {
-        GameObject trailAnchor = new GameObject(name);
-        trailAnchor.transform.SetParent(player, false);
-        trailAnchor.transform.localPosition = localOffset;
+        GameObject beamRoot = new GameObject(name);
+        beamRoot.transform.SetParent(player, false);
+        beamRoot.transform.localPosition = localPosition;
 
-        TrailRenderer trail = trailAnchor.AddComponent<TrailRenderer>();
-        Material trailMaterial = CreateOverlayMaterial() ?? CreateTransparentMaterial();
-        if (trailMaterial != null)
-        {
-            trailMaterial.color = isGlowLayer
-                ? new Color(0.3f, 0.94f, 1f, 0.18f)
-                : new Color(0.7f, 1f, 1f, 0.98f);
-            trail.sharedMaterial = trailMaterial;
-        }
+        GameObject glow = CreateSpriteObject("Glow", beamRoot.transform, trailSprite, new Color(0.3f, 0.95f, 1f, 0.18f), new Vector3(glowWidth, glowHeight, 1f), Vector3.zero);
+        glow.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder - 1;
 
-        trail.time = trailTime;
-        trail.minVertexDistance = 0.012f;
-        trail.startWidth = startWidth;
-        trail.endWidth = endWidth;
-        trail.numCapVertices = 4;
-        trail.numCornerVertices = 0;
-        trail.alignment = LineAlignment.View;
-        trail.sortingOrder = sortingOrder;
-        trail.textureMode = LineTextureMode.Stretch;
-        trail.widthCurve = isGlowLayer
-            ? new AnimationCurve(
-                new Keyframe(0f, 1f),
-                new Keyframe(0.72f, 0.92f),
-                new Keyframe(1f, 0f))
-            : new AnimationCurve(
-                new Keyframe(0f, 1f),
-                new Keyframe(0.76f, 0.94f),
-                new Keyframe(1f, 0f));
-
-        Gradient trailGradient = new Gradient();
-        if (isGlowLayer)
-        {
-            trailGradient.SetKeys(
-                new[]
-                {
-                    new GradientColorKey(new Color(0.46f, 0.98f, 1f), 0f),
-                    new GradientColorKey(new Color(0.24f, 0.78f, 1f), 0.38f),
-                    new GradientColorKey(new Color(0.1f, 0.42f, 0.86f), 1f)
-                },
-                new[]
-                {
-                    new GradientAlphaKey(0.08f, 0f),
-                    new GradientAlphaKey(0.05f, 0.22f),
-                    new GradientAlphaKey(0.02f, 0.5f),
-                    new GradientAlphaKey(0.01f, 0.82f),
-                    new GradientAlphaKey(0f, 1f)
-                });
-        }
-        else
-        {
-            trailGradient.SetKeys(
-                new[]
-                {
-                    new GradientColorKey(new Color(1f, 1f, 1f), 0f),
-                    new GradientColorKey(new Color(0.62f, 0.98f, 1f), 0.22f),
-                    new GradientColorKey(new Color(0.18f, 0.78f, 1f), 1f)
-                },
-                new[]
-                {
-                    new GradientAlphaKey(0.78f, 0f),
-                    new GradientAlphaKey(0.44f, 0.16f),
-                    new GradientAlphaKey(0.08f, 0.54f),
-                    new GradientAlphaKey(0.01f, 0.82f),
-                    new GradientAlphaKey(0f, 1f)
-                });
-        }
-
-        trail.colorGradient = trailGradient;
+        GameObject core = CreateSpriteObject("Core", beamRoot.transform, trailSprite, new Color(0.82f, 1f, 1f, 0.92f), new Vector3(coreWidth, coreHeight, 1f), Vector3.zero);
+        core.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder;
     }
 
     private static void CreateJetSparks(Transform player, Vector3 localOffset)
