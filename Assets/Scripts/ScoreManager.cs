@@ -84,7 +84,7 @@ public class ScoreManager : MonoBehaviour
 
         if (gameOverScoreText != null)
         {
-            gameOverScoreText.text = "Score: " + Mathf.FloorToInt(survivalTime);
+            gameOverScoreText.text = "SCORE " + Mathf.FloorToInt(survivalTime);
         }
 
         Camera.main?.GetComponent<CameraFollow>()?.PlayHitEffect();
@@ -110,7 +110,7 @@ public class ScoreManager : MonoBehaviour
 
         if (gameOverScoreText != null)
         {
-            gameOverScoreText.text = "Score: 0";
+            gameOverScoreText.text = "SCORE 0";
         }
 
         BindRestartButton();
@@ -203,7 +203,7 @@ public class ScoreManager : MonoBehaviour
     {
         if (scoreText != null)
         {
-            scoreText.text = "Score: " + Mathf.FloorToInt(survivalTime);
+            scoreText.text = Mathf.FloorToInt(survivalTime).ToString();
         }
     }
 }
