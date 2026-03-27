@@ -114,7 +114,7 @@ public static class PrototypeSceneBootstrap
         Vector3 farLayerScale = GetAspectPreservingScale(farTexture, visibleWidth, visibleHeight, 2f);
 
         CreateParallaxQuad("FarBackground", camera, farTexture, Color.white, new Vector3(0f, 0f, 26f), farLayerScale, new Vector2(1f, 1f), 0.000125f, 0f, 0.00015f, 0f);
-        CreateOverlayQuad("CenterGlow", camera.transform, centerGlow, new Color(1f, 1f, 1f, 0.2f), new Vector3(0f, 0f, 24f), new Vector3(layerWidth * 0.48f, layerHeight, 1f), 7);
+        CreateOverlayQuad("CenterGlow", camera.transform, centerGlow, new Color(1f, 1f, 1f, 0.2f), new Vector3(0f, 0f, 24f), new Vector3(layerWidth * 0.96f, layerHeight, 1f), 7);
         CreateParallaxQuad("MidStars", camera, midStars, new Color(0.72f, 0.84f, 1f, 0.55f), new Vector3(0f, 0f, 22f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.2f, 2f), 0.004f, 0.00075f, 0.003f, 0f);
         CreateParallaxQuad("NearStars", camera, nearStars, new Color(0.95f, 0.98f, 1f, 0.85f), new Vector3(0f, 0f, 20f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.5f, 2.6f), 0.01f, 0.0015f, 0.006f, 0f);
 
@@ -210,10 +210,10 @@ public static class PrototypeSceneBootstrap
         Color coreColor = new Color(0.96f, 0.98f, 1f, 0.98f);
         Color highlightColor = new Color(0.9f, 0.98f, 1f, 0.28f);
 
-        GameObject aura = CreateSpriteObject(name + "Aura", parent, sprite, outerGlow, new Vector3(1.2f, height, 1f), new Vector3(x, 0f, z + 0.45f));
+        GameObject aura = CreateSpriteObject(name + "Aura", parent, sprite, outerGlow, new Vector3(2.4f, height, 1f), new Vector3(x, 0f, z + 0.45f));
         aura.GetComponent<SpriteRenderer>().sortingOrder = 8;
 
-        GameObject glow = CreateSpriteObject(name + "Glow", parent, sprite, midGlow, new Vector3(0.72f, height, 1f), new Vector3(x, 0f, z + 0.25f));
+        GameObject glow = CreateSpriteObject(name + "Glow", parent, sprite, midGlow, new Vector3(1.44f, height, 1f), new Vector3(x, 0f, z + 0.25f));
         glow.GetComponent<SpriteRenderer>().sortingOrder = 9;
 
         GameObject core = CreateSpriteObject(name, parent, sprite, coreColor, new Vector3(0.44f, height, 1f), new Vector3(x, 0f, z));
