@@ -577,12 +577,12 @@ public static class PrototypeSceneBootstrap
             return;
         }
 
-        CreateJetTrail(player, "LeftJet", new Vector3(-0.19f, -0.48f, 0f), 0.14f, 0.0065f, 0.0009f, 2, false);
-        CreateJetTrail(player, "LeftJetGlow", new Vector3(-0.19f, -0.48f, 0.02f), 0.16f, 0.009f, 0.0022f, 1, true);
-        CreateJetTrail(player, "CenterJet", new Vector3(0f, -0.54f, 0f), 0.18f, 0.008f, 0.0011f, 3, false);
-        CreateJetTrail(player, "CenterJetGlow", new Vector3(0f, -0.54f, 0.02f), 0.18f, 0.011f, 0.0026f, 1, true);
-        CreateJetTrail(player, "RightJet", new Vector3(0.19f, -0.48f, 0f), 0.14f, 0.0065f, 0.0009f, 2, false);
-        CreateJetTrail(player, "RightJetGlow", new Vector3(0.19f, -0.48f, 0.02f), 0.16f, 0.009f, 0.0022f, 1, true);
+        CreateJetTrail(player, "LeftJet", new Vector3(-0.19f, -0.48f, 0f), 0.12f, 0.0032f, 0.0005f, 2, false);
+        CreateJetTrail(player, "LeftJetGlow", new Vector3(-0.19f, -0.48f, 0.02f), 0.14f, 0.0058f, 0.0014f, 1, true);
+        CreateJetTrail(player, "CenterJet", new Vector3(0f, -0.54f, 0f), 0.15f, 0.0042f, 0.0006f, 3, false);
+        CreateJetTrail(player, "CenterJetGlow", new Vector3(0f, -0.54f, 0.02f), 0.15f, 0.0072f, 0.0017f, 1, true);
+        CreateJetTrail(player, "RightJet", new Vector3(0.19f, -0.48f, 0f), 0.12f, 0.0032f, 0.0005f, 2, false);
+        CreateJetTrail(player, "RightJetGlow", new Vector3(0.19f, -0.48f, 0.02f), 0.14f, 0.0058f, 0.0014f, 1, true);
     }
 
     private static void CreateJetTrail(Transform player, string name, Vector3 localOffset, float trailTime, float startWidth, float endWidth, int sortingOrder, bool isGlowLayer)
@@ -596,30 +596,30 @@ public static class PrototypeSceneBootstrap
         if (trailMaterial != null)
         {
             trailMaterial.color = isGlowLayer
-                ? new Color(0.3f, 0.94f, 1f, 0.42f)
+                ? new Color(0.3f, 0.94f, 1f, 0.18f)
                 : new Color(0.7f, 1f, 1f, 0.98f);
             trail.sharedMaterial = trailMaterial;
         }
 
         trail.time = trailTime;
-        trail.minVertexDistance = 0.008f;
+        trail.minVertexDistance = 0.012f;
         trail.startWidth = startWidth;
         trail.endWidth = endWidth;
-        trail.numCapVertices = 12;
-        trail.numCornerVertices = 3;
+        trail.numCapVertices = 4;
+        trail.numCornerVertices = 0;
         trail.alignment = LineAlignment.View;
         trail.sortingOrder = sortingOrder;
         trail.textureMode = LineTextureMode.Stretch;
         trail.widthCurve = isGlowLayer
             ? new AnimationCurve(
-                new Keyframe(0f, 0.82f),
-                new Keyframe(0.16f, 1f),
-                new Keyframe(0.68f, 0.38f),
+                new Keyframe(0f, 0.34f),
+                new Keyframe(0.12f, 0.32f),
+                new Keyframe(0.45f, 0.14f),
                 new Keyframe(1f, 0f))
             : new AnimationCurve(
-                new Keyframe(0f, 0.92f),
-                new Keyframe(0.14f, 1f),
-                new Keyframe(0.62f, 0.42f),
+                new Keyframe(0f, 0.26f),
+                new Keyframe(0.1f, 0.24f),
+                new Keyframe(0.4f, 0.1f),
                 new Keyframe(1f, 0f));
 
         Gradient trailGradient = new Gradient();
@@ -634,9 +634,9 @@ public static class PrototypeSceneBootstrap
                 },
                 new[]
                 {
-                    new GradientAlphaKey(0.12f, 0f),
-                    new GradientAlphaKey(0.08f, 0.22f),
-                    new GradientAlphaKey(0.03f, 0.5f),
+                    new GradientAlphaKey(0.08f, 0f),
+                    new GradientAlphaKey(0.05f, 0.22f),
+                    new GradientAlphaKey(0.02f, 0.5f),
                     new GradientAlphaKey(0.01f, 0.82f),
                     new GradientAlphaKey(0f, 1f)
                 });
