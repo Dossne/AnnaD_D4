@@ -5,7 +5,10 @@ public class GameAudio : MonoBehaviour
 {
     public static GameAudio Instance { get; private set; }
 
+    private const float MusicVolume = 0.32f;
+
     private AudioSource audioSource;
+    private AudioSource musicSource;
     private AudioClip switchClip;
     private AudioClip gameOverClip;
     private AudioClip restartClip;
@@ -19,15 +22,24 @@ public class GameAudio : MonoBehaviour
         }
 
         Instance = this;
+
         audioSource = GetComponent<AudioSource>();
         audioSource.playOnAwake = false;
         audioSource.loop = false;
         audioSource.spatialBlend = 0f;
         audioSource.volume = 0.9f;
 
+        musicSource = gameObject.AddComponent<AudioSource>();
+        musicSource.playOnAwake = false;
+        musicSource.loop = true;
+        musicSource.spatialBlend = 0f;
+        musicSource.volume = MusicVolume;
+
         switchClip = CreateToneClip("Switch", 780f, 1120f, 0.055f, 0.12f);
         gameOverClip = CreateToneClip("GameOver", 360f, 170f, 0.16f, 0.18f);
         restartClip = CreateToneClip("Restart", 420f, 760f, 0.08f, 0.12f);
+
+        StartBackgroundMusic();
     }
 
     private void OnDestroy()
@@ -63,6 +75,23 @@ public class GameAudio : MonoBehaviour
 
         Vector3 position = Camera.main != null ? Camera.main.transform.position : Vector3.zero;
         AudioSource.PlayClipAtPoint(Instance.restartClip, position, 0.8f);
+    }
+
+    private void StartBackgroundMusic()
+    {
+        if (musicSource == null || musicSource.isPlaying)
+        {
+            return;
+        }
+
+        AudioClip[] musicClips = Resources.LoadAll<AudioClip>("Audio/Music");
+        if (musicClips == null || musicClips.Length == 0)
+        {
+            return;
+        }
+
+        musicSource.clip = musicClips[0];
+        musicSource.Play();
     }
 
     private AudioClip CreateToneClip(string clipName, float startFrequency, float endFrequency, float duration, float amplitude)
