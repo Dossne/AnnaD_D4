@@ -114,7 +114,7 @@ public static class PrototypeSceneBootstrap
         Vector3 farLayerScale = GetAspectPreservingScale(farTexture, visibleWidth, visibleHeight, 2f);
 
         CreateParallaxQuad("FarBackground", camera, farTexture, Color.white, new Vector3(0f, 0f, 26f), farLayerScale, new Vector2(1f, 1f), 0.000125f, 0f, 0.00015f, 0f);
-        CreateOverlayQuad("CenterGlow", camera.transform, centerGlow, new Color(1f, 1f, 1f, 0.24f), new Vector3(0f, 0f, 24f), new Vector3(layerWidth * 1.6f, layerHeight, 1f), 7);
+        CreateOverlayQuad("CenterGlow", camera.transform, centerGlow, new Color(1f, 1f, 1f, 0.24f), new Vector3(0f, 0f, 24f), new Vector3(layerWidth * 2.08f, layerHeight, 1f), 7);
         CreateParallaxQuad("MidStars", camera, midStars, new Color(0.72f, 0.84f, 1f, 0.55f), new Vector3(0f, 0f, 22f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.2f, 2f), 0.004f, 0.00075f, 0.003f, 0f);
         CreateParallaxQuad("NearStars", camera, nearStars, new Color(0.95f, 0.98f, 1f, 0.85f), new Vector3(0f, 0f, 20f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.5f, 2.6f), 0.01f, 0.0015f, 0.006f, 0f);
 
@@ -511,7 +511,7 @@ public static class PrototypeSceneBootstrap
     {
         GameObject player = new GameObject("Player");
         player.transform.SetParent(root);
-        player.transform.position = new Vector3(LeftWallX, -4f, 0f);
+        player.transform.position = new Vector3(LeftWallX - 0.75f, -4f, 0f);
 
         Rigidbody2D rb = player.AddComponent<Rigidbody2D>();
         rb.gravityScale = 0f;
@@ -529,7 +529,7 @@ public static class PrototypeSceneBootstrap
         CreatePlayerTrail(player.transform);
 
         PlayerController controller = player.AddComponent<PlayerController>();
-        controller.Configure(4.5f, 34f, LeftWallX, RightWallX, true, body.transform, 6.8f, 10.5f, 0.08f, 0.18f);
+        controller.Configure(4.5f, 34f, LeftWallX - 0.75f, RightWallX + 0.75f, true, body.transform, 6.8f, 10.5f, 0.08f, 0.18f);
 
         return player;
     }
@@ -647,7 +647,7 @@ public static class PrototypeSceneBootstrap
 
         Sprite triangleSprite = LoadTriangleSprite() ?? sprite;
 
-        GameObject body = CreateSpriteObject("Body", obstacle.transform, triangleSprite, new Color(1f, 0.3f, 0.58f, 1f), new Vector3(1f, 1f, 1f), Vector3.zero);
+        GameObject body = CreateSpriteObject("Body", obstacle.transform, triangleSprite, new Color(1f, 0.3f, 0.58f, 1f), new Vector3(1f, 1f, 1f), new Vector3(0.48f, 0f, 0f));
         body.transform.localEulerAngles = new Vector3(0f, 0f, -90f);
         body.GetComponent<SpriteRenderer>().sortingOrder = 2;
         body.AddComponent<ObstacleMarker>();
