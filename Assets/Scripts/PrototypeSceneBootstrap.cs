@@ -9,7 +9,7 @@ public static class PrototypeSceneBootstrap
     private const float LeftWallX = -2.35f;
     private const float RightWallX = 2.35f;
     private const float WallVisualOffset = 0.75f;
-    private const float PlayerWallContactOffset = 0.56f;
+    private const float PlayerWallContactOffset = 0.46f;
     private const string RuntimeRootName = "PrototypeRuntime";
 
     private static float LeftWallVisualX => LeftWallX - WallVisualOffset;
@@ -550,9 +550,9 @@ public static class PrototypeSceneBootstrap
             return;
         }
 
-        CreateJetTrail(player, "LeftJet", new Vector3(-0.18f, -0.52f, 0f), 0.22f, 0.06f, 0.012f, 0);
-        CreateJetTrail(player, "CenterJet", new Vector3(0f, -0.58f, 0f), 0.34f, 0.08f, 0.016f, 1);
-        CreateJetTrail(player, "RightJet", new Vector3(0.18f, -0.52f, 0f), 0.26f, 0.06f, 0.012f, 0);
+        CreateJetTrail(player, "LeftJet", new Vector3(-0.2f, -0.72f, 0f), 0.34f, 0.05f, 0.006f, 0);
+        CreateJetTrail(player, "CenterJet", new Vector3(0f, -0.82f, 0f), 0.46f, 0.065f, 0.008f, 1);
+        CreateJetTrail(player, "RightJet", new Vector3(0.2f, -0.72f, 0f), 0.38f, 0.05f, 0.006f, 0);
     }
 
     private static void CreateJetTrail(Transform player, string name, Vector3 localOffset, float trailTime, float startWidth, float endWidth, int sortingOrder)
@@ -565,29 +565,31 @@ public static class PrototypeSceneBootstrap
         Material trailMaterial = CreateOverlayMaterial() ?? CreateTransparentMaterial();
         if (trailMaterial != null)
         {
-            trailMaterial.color = new Color(0.55f, 0.98f, 1f, 0.78f);
+            trailMaterial.color = new Color(0.55f, 0.98f, 1f, 0.96f);
             trail.sharedMaterial = trailMaterial;
         }
 
         trail.time = trailTime;
-        trail.minVertexDistance = 0.02f;
+        trail.minVertexDistance = 0.01f;
         trail.startWidth = startWidth;
         trail.endWidth = endWidth;
-        trail.numCapVertices = 8;
+        trail.numCapVertices = 10;
+        trail.alignment = LineAlignment.View;
         trail.sortingOrder = sortingOrder;
 
         Gradient trailGradient = new Gradient();
         trailGradient.SetKeys(
             new[]
             {
-                new GradientColorKey(new Color(0.82f, 1f, 1f), 0f),
-                new GradientColorKey(new Color(0.58f, 0.96f, 1f), 0.35f),
-                new GradientColorKey(new Color(0.18f, 0.74f, 1f), 1f)
+                new GradientColorKey(new Color(0.9f, 1f, 1f), 0f),
+                new GradientColorKey(new Color(0.48f, 0.94f, 1f), 0.24f),
+                new GradientColorKey(new Color(0.16f, 0.72f, 1f), 1f)
             },
             new[]
             {
-                new GradientAlphaKey(0.48f, 0f),
-                new GradientAlphaKey(0.18f, 0.35f),
+                new GradientAlphaKey(0.9f, 0f),
+                new GradientAlphaKey(0.42f, 0.24f),
+                new GradientAlphaKey(0.08f, 0.7f),
                 new GradientAlphaKey(0f, 1f)
             });
         trail.colorGradient = trailGradient;
@@ -851,6 +853,7 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
     }
 }
+
 
 
 
