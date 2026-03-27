@@ -663,13 +663,7 @@ public static class PrototypeSceneBootstrap
         obstacle.SetActive(false);
 
         Sprite triangleSprite = LoadTriangleSprite() ?? sprite;
-        Sprite gradientSprite = LoadGradientSprite() ?? triangleSprite;
-
-        GameObject aura = CreateSpriteObject("Aura", obstacle.transform, gradientSprite, new Color(0.9f, 0.2f, 1f, 0.12f), new Vector3(1.35f, 1.75f, 1f), new Vector3(0.48f, 0f, 0f));
-        aura.transform.localEulerAngles = new Vector3(0f, 0f, -90f);
-        aura.GetComponent<SpriteRenderer>().sortingOrder = 0;
-
-        GameObject glow = CreateSpriteObject("Glow", obstacle.transform, triangleSprite, new Color(1f, 0.22f, 0.72f, 0.28f), new Vector3(1.16f, 1.16f, 1f), new Vector3(0.48f, 0f, 0f));
+        GameObject glow = CreateSpriteObject("Glow", obstacle.transform, triangleSprite, new Color(1f, 0.22f, 0.72f, 0.22f), new Vector3(1.08f, 1.08f, 1f), new Vector3(0.48f, 0f, 0f));
         glow.transform.localEulerAngles = new Vector3(0f, 0f, -90f);
         glow.GetComponent<SpriteRenderer>().sortingOrder = 1;
 
