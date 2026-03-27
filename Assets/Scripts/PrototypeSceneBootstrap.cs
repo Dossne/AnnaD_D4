@@ -198,22 +198,23 @@ public static class PrototypeSceneBootstrap
         float wallHeight = visibleHeight + 2f;
         float wallZ = 14f;
         Sprite wallSprite = LoadWallSprite() ?? sprite;
+        Sprite gradientSprite = LoadGradientSprite() ?? wallSprite;
 
-        CreateWallStripe(camera.transform, wallSprite, "LeftWall", LeftWallX - 0.75f, wallHeight, wallZ);
-        CreateWallStripe(camera.transform, wallSprite, "RightWall", RightWallX + 0.75f, wallHeight, wallZ);
+        CreateWallStripe(camera.transform, wallSprite, gradientSprite, "LeftWall", LeftWallX - 0.75f, wallHeight, wallZ);
+        CreateWallStripe(camera.transform, wallSprite, gradientSprite, "RightWall", RightWallX + 0.75f, wallHeight, wallZ);
     }
 
-    private static void CreateWallStripe(Transform parent, Sprite sprite, string name, float x, float height, float z)
+    private static void CreateWallStripe(Transform parent, Sprite sprite, Sprite gradientSprite, string name, float x, float height, float z)
     {
         Color outerGlow = new Color(0.58f, 0.88f, 1f, 0.14f);
         Color midGlow = new Color(0.72f, 0.94f, 1f, 0.22f);
         Color coreColor = new Color(0.96f, 0.98f, 1f, 0.98f);
         Color highlightColor = new Color(0.9f, 0.98f, 1f, 0.28f);
 
-        GameObject aura = CreateSpriteObject(name + "Aura", parent, sprite, outerGlow, new Vector3(2.4f, height, 1f), new Vector3(x, 0f, z + 0.45f));
+        GameObject aura = CreateSpriteObject(name + "Aura", parent, gradientSprite, outerGlow, new Vector3(2.4f, height, 1f), new Vector3(x, 0f, z + 0.45f));
         aura.GetComponent<SpriteRenderer>().sortingOrder = 8;
 
-        GameObject glow = CreateSpriteObject(name + "Glow", parent, sprite, midGlow, new Vector3(1.44f, height, 1f), new Vector3(x, 0f, z + 0.25f));
+        GameObject glow = CreateSpriteObject(name + "Glow", parent, gradientSprite, midGlow, new Vector3(1.44f, height, 1f), new Vector3(x, 0f, z + 0.25f));
         glow.GetComponent<SpriteRenderer>().sortingOrder = 9;
 
         GameObject core = CreateSpriteObject(name, parent, sprite, coreColor, new Vector3(0.44f, height, 1f), new Vector3(x, 0f, z));
@@ -575,6 +576,22 @@ public static class PrototypeSceneBootstrap
             });
         trail.colorGradient = trailGradient;
     }
+    private static Sprite LoadGradientSprite()
+    {
+        string spritePath = Path.Combine(Application.dataPath, "Art", "Sprites", "gradient.png");
+        if (!File.Exists(spritePath))
+        {
+            return null;
+        }
+
+        byte[] fileBytes = File.ReadAllBytes(spritePath);
+        Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+        texture.LoadImage(fileBytes, false);
+        texture.wrapMode = TextureWrapMode.Clamp;
+        texture.filterMode = FilterMode.Bilinear;
+        return Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), texture.width);
+    }
+
     private static Sprite LoadWallSprite()
     {
         string spritePath = Path.Combine(Application.dataPath, "Art", "Sprites", "wall.png");
