@@ -358,12 +358,12 @@ public static class PrototypeSceneBootstrap
         AddOutline(gameOverText.gameObject, new Color(0.18f, 0.9f, 1f, 0.72f), new Vector2(1.5f, -1.5f));
         AddShadow(gameOverText.gameObject, new Color(0f, 0.7f, 0.85f, 0.18f), new Vector2(0f, 0f));
 
-        gameOverScoreText = CreateText(gameOverPanel.transform, font, "GameOverScoreText", "SCORE 0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -182f), 42, neonCyan);
+        gameOverScoreText = CreateText(gameOverPanel.transform, font, "GameOverScoreText", "SCORE 0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -212f), 50, neonCyan);
         gameOverScoreText.alignment = TextAnchor.MiddleCenter;
         gameOverScoreText.fontStyle = FontStyle.Normal;
         AddOutline(gameOverScoreText.gameObject, new Color(0.14f, 0.84f, 1f, 0.92f), new Vector2(2f, -2f));
 
-        Text hintText = CreateText(gameOverPanel.transform, font, "HintText", "Tap anywhere", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -260f), 28, mutedText);
+        Text hintText = CreateText(gameOverPanel.transform, font, "HintText", "Tap anywhere", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -318f), 28, mutedText);
         hintText.alignment = TextAnchor.MiddleCenter;
         AddOutline(hintText.gameObject, new Color(0.08f, 0.35f, 0.45f, 0.65f), new Vector2(1f, -1f));
 
@@ -918,6 +918,7 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
     }
 }
+
 
 
 
