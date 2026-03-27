@@ -324,8 +324,8 @@ public static class PrototypeSceneBootstrap
         scoreText = CreateText(canvas.transform, font, "ScoreText", "0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -148f), 56, neonCyan);
         scoreText.fontStyle = FontStyle.Normal;
         scoreText.alignment = TextAnchor.MiddleCenter;
-        AddOutline(scoreText.gameObject, new Color(0.12f, 0.85f, 1f, 0.9f), new Vector2(2f, -2f));
-        AddShadow(scoreText.gameObject, new Color(0f, 0.65f, 0.82f, 0.28f), new Vector2(0f, 0f));
+        AddOutline(scoreText.gameObject, new Color(0.12f, 0.85f, 1f, 0.6f), new Vector2(1f, -1f));
+        AddShadow(scoreText.gameObject, new Color(0f, 0.65f, 0.82f, 0.16f), new Vector2(0f, 0f));
 
         gameOverPanel = new GameObject("GameOverPanel");
         gameOverPanel.transform.SetParent(canvas.transform);
@@ -812,13 +812,32 @@ public static class PrototypeSceneBootstrap
         GameObject gameObject = new GameObject(name);
         gameObject.transform.SetParent(parent);
         gameObject.transform.localPosition = localPosition;
-        gameObject.transform.localScale = scale;
+        gameObject.transform.localScale = GetNormalizedSpriteScale(sprite, scale);
 
         SpriteRenderer renderer = gameObject.AddComponent<SpriteRenderer>();
         renderer.sprite = sprite;
         renderer.color = color;
 
         return gameObject;
+    }
+
+    private static Vector3 GetNormalizedSpriteScale(Sprite sprite, Vector3 desiredScale)
+    {
+        if (sprite == null)
+        {
+            return desiredScale;
+        }
+
+        Vector2 spriteSize = sprite.bounds.size;
+        if (spriteSize.x <= Mathf.Epsilon || spriteSize.y <= Mathf.Epsilon)
+        {
+            return desiredScale;
+        }
+
+        return new Vector3(
+            desiredScale.x / spriteSize.x,
+            desiredScale.y / spriteSize.y,
+            desiredScale.z);
     }
 
     private static Texture2D LoadSpaceBackgroundTexture()
@@ -948,19 +967,4 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
