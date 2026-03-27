@@ -229,10 +229,10 @@ public static class PrototypeSceneBootstrap
         core.GetComponent<SpriteRenderer>().sortingOrder = 10;
 
         Texture2D shimmerTexture = CreateWallShimmerTexture(64, 256);
-        GameObject shadowPulse = CreateScrollingQuad(name + "ShadowPulse", parent, shimmerTexture, new Color(0f, 0f, 0f, 0.12f), new Vector3(x, 0f, z + 0.09f), new Vector3(0.78f, height, 1f), new Vector2(1f, 1.1f), 0f, 0f, 0.22f, 0f, 8);
+        GameObject shadowPulse = CreateScrollingQuad(name + "ShadowPulse", parent, shimmerTexture, new Color(0f, 0f, 0f, 0.16f), new Vector3(x, 0f, z + 0.09f), new Vector3(1.08f, height, 1f), new Vector2(1f, 0.9f), 0f, 0f, 0.42f, 0f, 8);
         shadowPulse.transform.localEulerAngles = Vector3.zero;
 
-        GameObject pulse = CreateScrollingQuad(name + "Pulse", parent, shimmerTexture, new Color(0.92f, 0.98f, 1f, 0.24f), new Vector3(x, 0f, z + 0.12f), new Vector3(0.5f, height, 1f), new Vector2(1f, 1.3f), 0f, 0f, 0.34f, 0f, 9);
+        GameObject pulse = CreateScrollingQuad(name + "Pulse", parent, shimmerTexture, new Color(0.92f, 0.98f, 1f, 0.34f), new Vector3(x, 0f, z + 0.12f), new Vector3(0.76f, height, 1f), new Vector2(1f, 1f), 0f, 0f, 0.58f, 0f, 9);
         pulse.transform.localEulerAngles = Vector3.zero;
 
         GameObject shimmer = CreateScrollingQuad(name + "Shimmer", parent, shimmerTexture, highlightColor, new Vector3(x, 0f, z + 0.1f), new Vector3(0.3f, height, 1f), new Vector2(1f, 2.5f), 0f, 0f, 0.65f, 0f, 10);
@@ -571,12 +571,12 @@ public static class PrototypeSceneBootstrap
             return;
         }
 
-        CreateJetTrail(player, "LeftJet", new Vector3(-0.19f, -0.48f, 0f), 0.19f, 0.028f, 0.004f, 2, false);
-        CreateJetTrail(player, "LeftJetGlow", new Vector3(-0.19f, -0.48f, 0.02f), 0.24f, 0.046f, 0.01f, 1, true);
-        CreateJetTrail(player, "CenterJet", new Vector3(0f, -0.54f, 0f), 0.26f, 0.036f, 0.005f, 3, false);
-        CreateJetTrail(player, "CenterJetGlow", new Vector3(0f, -0.54f, 0.02f), 0.32f, 0.06f, 0.012f, 1, true);
-        CreateJetTrail(player, "RightJet", new Vector3(0.19f, -0.48f, 0f), 0.21f, 0.028f, 0.004f, 2, false);
-        CreateJetTrail(player, "RightJetGlow", new Vector3(0.19f, -0.48f, 0.02f), 0.24f, 0.046f, 0.01f, 1, true);
+        CreateJetTrail(player, "LeftJet", new Vector3(-0.19f, -0.48f, 0f), 0.18f, 0.018f, 0.0022f, 2, false);
+        CreateJetTrail(player, "LeftJetGlow", new Vector3(-0.19f, -0.48f, 0.02f), 0.2f, 0.026f, 0.006f, 1, true);
+        CreateJetTrail(player, "CenterJet", new Vector3(0f, -0.54f, 0f), 0.24f, 0.022f, 0.003f, 3, false);
+        CreateJetTrail(player, "CenterJetGlow", new Vector3(0f, -0.54f, 0.02f), 0.26f, 0.032f, 0.007f, 1, true);
+        CreateJetTrail(player, "RightJet", new Vector3(0.19f, -0.48f, 0f), 0.18f, 0.018f, 0.0022f, 2, false);
+        CreateJetTrail(player, "RightJetGlow", new Vector3(0.19f, -0.48f, 0.02f), 0.2f, 0.026f, 0.006f, 1, true);
     }
 
     private static void CreateJetTrail(Transform player, string name, Vector3 localOffset, float trailTime, float startWidth, float endWidth, int sortingOrder, bool isGlowLayer)
@@ -628,9 +628,9 @@ public static class PrototypeSceneBootstrap
                 },
                 new[]
                 {
-                    new GradientAlphaKey(0.2f, 0f),
-                    new GradientAlphaKey(0.11f, 0.22f),
-                    new GradientAlphaKey(0.04f, 0.56f),
+                    new GradientAlphaKey(0.12f, 0f),
+                    new GradientAlphaKey(0.08f, 0.22f),
+                    new GradientAlphaKey(0.03f, 0.5f),
                     new GradientAlphaKey(0.01f, 0.82f),
                     new GradientAlphaKey(0f, 1f)
                 });
@@ -646,9 +646,9 @@ public static class PrototypeSceneBootstrap
                 },
                 new[]
                 {
-                    new GradientAlphaKey(0.98f, 0f),
-                    new GradientAlphaKey(0.64f, 0.18f),
-                    new GradientAlphaKey(0.18f, 0.62f),
+                    new GradientAlphaKey(0.92f, 0f),
+                    new GradientAlphaKey(0.58f, 0.16f),
+                    new GradientAlphaKey(0.12f, 0.54f),
                     new GradientAlphaKey(0.01f, 0.82f),
                     new GradientAlphaKey(0f, 1f)
                 });
