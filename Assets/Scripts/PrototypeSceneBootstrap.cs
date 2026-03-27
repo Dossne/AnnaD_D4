@@ -665,13 +665,13 @@ public static class PrototypeSceneBootstrap
         obstacle.SetActive(false);
 
         Sprite triangleSprite = LoadTriangleSprite() ?? sprite;
-        GameObject glow = CreateSpriteObject("Glow", obstacle.transform, triangleSprite, new Color(1f, 0.22f, 0.72f, 0.22f), new Vector3(1.08f, 1.08f, 1f), new Vector3(0.48f, 0f, 0f));
-        glow.transform.localEulerAngles = new Vector3(0f, 0f, -90f);
-        glow.GetComponent<SpriteRenderer>().sortingOrder = 1;
 
-        GameObject body = CreateSpriteObject("Body", obstacle.transform, triangleSprite, new Color(1f, 0.3f, 0.58f, 1f), new Vector3(1f, 1f, 1f), new Vector3(0.48f, 0f, 0f));
+        GameObject body = CreateSpriteObject("Body", obstacle.transform, triangleSprite, Color.white, new Vector3(1f, 1f, 1f), new Vector3(0.48f, 0f, 0f));
         body.transform.localEulerAngles = new Vector3(0f, 0f, -90f);
         body.GetComponent<SpriteRenderer>().sortingOrder = 2;
+        GameObject glow = CreateSpriteObject("Glow", body.transform, triangleSprite, new Color(1f, 0.22f, 0.72f, 0.2f), new Vector3(1.06f, 1.06f, 1f), Vector3.zero);
+        glow.transform.SetAsFirstSibling();
+        glow.GetComponent<SpriteRenderer>().sortingOrder = 1;
         body.AddComponent<ObstacleMarker>();
 
         PolygonCollider2D collider = body.AddComponent<PolygonCollider2D>();
