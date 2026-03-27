@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 [DisallowMultipleComponent]
 public class PrototypeEffectsTuning : MonoBehaviour
@@ -21,7 +21,7 @@ public class PrototypeEffectsTuning : MonoBehaviour
     public float centerTrailGlowTime = 0.34f;
 
     [Header("Round Trail Particles")]
-    public float particleLifetime = 0.46f;
+    public float particleLifetime = 0.25f;
     public float particleStartSize = 0.16f;
     public int particleMaxCount = 14;
     public float particleRateOverTime = 32f;

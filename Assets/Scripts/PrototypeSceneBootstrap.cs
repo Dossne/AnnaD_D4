@@ -750,7 +750,7 @@ public static class PrototypeSceneBootstrap
         main.playOnAwake = true;
         main.loop = true;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
-        float particleLifetime = effectsTuning != null ? effectsTuning.particleLifetime : 0.46f;
+        float particleLifetime = effectsTuning != null ? effectsTuning.particleLifetime : 0.25f;
         float particleStartSize = effectsTuning != null ? effectsTuning.particleStartSize : 0.16f;
         int particleMaxCount = effectsTuning != null ? effectsTuning.particleMaxCount : 14;
         main.startLifetime = particleLifetime;
@@ -818,7 +818,8 @@ public static class PrototypeSceneBootstrap
             for (int x = 0; x < size; x++)
             {
                 float distance = Vector2.Distance(new Vector2(x, y), center);
-                float alpha = Mathf.Clamp01(1f - (distance / radius));
+                float normalized = Mathf.Clamp01(distance / radius);
+                float alpha = 1f - Mathf.SmoothStep(0.62f, 1f, normalized);
                 alpha *= alpha;
                 texture.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
             }
