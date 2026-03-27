@@ -766,9 +766,9 @@ public static class PrototypeSceneBootstrap
 
         var shape = particles.shape;
         shape.enabled = true;
-        shape.shapeType = ParticleSystemShapeType.Edge;
+        shape.shapeType = ParticleSystemShapeType.Box;
         float particleSpawnWidth = effectsTuning != null ? effectsTuning.particleSpawnWidth : 0.96f;
-        shape.scale = new Vector3(particleSpawnWidth, 0f, 0.01f);
+        shape.scale = new Vector3(particleSpawnWidth, 0.001f, 0.01f);
 
         var velocityOverLifetime = particles.velocityOverLifetime;
         velocityOverLifetime.enabled = true;
