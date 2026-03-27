@@ -661,6 +661,12 @@ public static class PrototypeSceneBootstrap
 
     private static Sprite LoadGradientSprite()
     {
+        Sprite resourceSprite = Resources.Load<Sprite>("Art/Sprites/gradient");
+        if (resourceSprite != null)
+        {
+            return resourceSprite;
+        }
+
         string spritePath = Path.Combine(Application.dataPath, "Art", "Sprites", "gradient.png");
         if (!File.Exists(spritePath))
         {
@@ -677,6 +683,12 @@ public static class PrototypeSceneBootstrap
 
     private static Sprite LoadWallSprite()
     {
+        Sprite resourceSprite = Resources.Load<Sprite>("Art/Sprites/wall");
+        if (resourceSprite != null)
+        {
+            return resourceSprite;
+        }
+
         string spritePath = Path.Combine(Application.dataPath, "Art", "Sprites", "wall.png");
         if (!File.Exists(spritePath))
         {
@@ -693,6 +705,12 @@ public static class PrototypeSceneBootstrap
 
     private static Sprite LoadTriangleSprite()
     {
+        Sprite resourceSprite = Resources.Load<Sprite>("Art/Sprites/triangle");
+        if (resourceSprite != null)
+        {
+            return resourceSprite;
+        }
+
         string spritePath = Path.Combine(Application.dataPath, "Art", "Sprites", "triangle.png");
         if (!File.Exists(spritePath))
         {
@@ -709,6 +727,12 @@ public static class PrototypeSceneBootstrap
 
     private static Sprite LoadPlayerSprite()
     {
+        Sprite resourceSprite = Resources.Load<Sprite>("Art/Sprites/player");
+        if (resourceSprite != null)
+        {
+            return resourceSprite;
+        }
+
         string spritePath = Path.Combine(Application.dataPath, "Art", "Sprites", "player.png");
         if (!File.Exists(spritePath))
         {
@@ -722,6 +746,7 @@ public static class PrototypeSceneBootstrap
         texture.filterMode = FilterMode.Bilinear;
         return Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), texture.width * 0.75f);
     }
+
     private static GameObject CreateObstacleTemplate(Transform root, Sprite sprite)
     {
         GameObject obstacle = new GameObject("ObstacleTemplate");
@@ -798,6 +823,12 @@ public static class PrototypeSceneBootstrap
 
     private static Texture2D LoadSpaceBackgroundTexture()
     {
+        Texture2D resourceTexture = Resources.Load<Texture2D>("Art/SpaceBackground");
+        if (resourceTexture != null)
+        {
+            return resourceTexture;
+        }
+
         string texturePath = Path.Combine(Application.dataPath, "Art", "SpaceBackground.png");
         if (!File.Exists(texturePath))
         {
@@ -811,7 +842,6 @@ public static class PrototypeSceneBootstrap
         texture.filterMode = FilterMode.Bilinear;
         return texture;
     }
-
 
     private static Texture2D CreateCenterGlowTexture(int width, int height)
     {
@@ -918,6 +948,7 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
     }
 }
+
 
 
 
