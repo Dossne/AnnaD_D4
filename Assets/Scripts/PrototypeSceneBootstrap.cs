@@ -553,7 +553,7 @@ public static class PrototypeSceneBootstrap
         collider.size = new Vector2(0.7f, 0.7f);
 
         Sprite playerSprite = LoadPlayerSprite() ?? sprite;
-        GameObject body = CreateSpriteObject("Body", player.transform, playerSprite, Color.white, new Vector3(0.805f, 0.805f, 1f), Vector3.zero);
+        GameObject body = CreateSpriteObject("Body", player.transform, playerSprite, Color.white, new Vector3(1.0465f, 1.0465f, 1f), Vector3.zero);
         body.GetComponent<SpriteRenderer>().sortingOrder = 2;
 
         CreatePlayerTrail(player.transform);
@@ -825,15 +825,15 @@ public static class PrototypeSceneBootstrap
         Sprite triangleSprite = LoadTriangleSprite() ?? sprite;
         Sprite triangleGlowSprite = LoadTriangleGlowSprite() ?? triangleSprite;
 
-        GameObject aura = CreateSpriteObject("Aura", obstacle.transform, triangleGlowSprite, new Color(1f, 0.12f, 0.75f, 0.12f), new Vector3(1.24f, 1.24f, 1f), new Vector3(0.48f, 0f, 0f));
+        GameObject aura = CreateSpriteObject("Aura", obstacle.transform, triangleGlowSprite, new Color(1f, 0.12f, 0.75f, 0.12f), new Vector3(1.612f, 1.612f, 1f), new Vector3(0.48f, 0f, 0f));
         aura.transform.localEulerAngles = new Vector3(0f, 0f, -90f);
         aura.GetComponent<SpriteRenderer>().sortingOrder = 0;
 
-        GameObject glow = CreateSpriteObject("Glow", obstacle.transform, triangleGlowSprite, new Color(1f, 0.22f, 0.72f, 0.2f), new Vector3(1.08f, 1.08f, 1f), new Vector3(0.48f, 0f, 0f));
+        GameObject glow = CreateSpriteObject("Glow", obstacle.transform, triangleGlowSprite, new Color(1f, 0.22f, 0.72f, 0.2f), new Vector3(1.404f, 1.404f, 1f), new Vector3(0.48f, 0f, 0f));
         glow.transform.localEulerAngles = new Vector3(0f, 0f, -90f);
         glow.GetComponent<SpriteRenderer>().sortingOrder = 1;
 
-        GameObject body = CreateSpriteObject("Body", obstacle.transform, triangleSprite, Color.white, new Vector3(1f, 1f, 1f), new Vector3(0.48f, 0f, 0f));
+        GameObject body = CreateSpriteObject("Body", obstacle.transform, triangleSprite, Color.white, new Vector3(1.3f, 1.3f, 1f), new Vector3(0.48f, 0f, 0f));
         body.transform.localEulerAngles = new Vector3(0f, 0f, -90f);
         body.GetComponent<SpriteRenderer>().sortingOrder = 2;
         body.AddComponent<ObstacleMarker>();
