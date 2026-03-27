@@ -229,10 +229,13 @@ public static class PrototypeSceneBootstrap
         core.GetComponent<SpriteRenderer>().sortingOrder = 10;
 
         Texture2D shimmerTexture = CreateWallShimmerTexture(64, 256);
-        GameObject pulse = CreateScrollingQuad(name + "Pulse", parent, shimmerTexture, new Color(0.86f, 0.96f, 1f, 0.12f), new Vector3(x, 0f, z + 0.12f), new Vector3(0.62f, height, 1f), new Vector2(1f, 1.4f), 0f, 0f, 0.28f, 0f, 8);
+        GameObject shadowPulse = CreateScrollingQuad(name + "ShadowPulse", parent, shimmerTexture, new Color(0f, 0f, 0f, 0.12f), new Vector3(x, 0f, z + 0.09f), new Vector3(0.78f, height, 1f), new Vector2(1f, 1.1f), 0f, 0f, 0.22f, 0f, 8);
+        shadowPulse.transform.localEulerAngles = Vector3.zero;
+
+        GameObject pulse = CreateScrollingQuad(name + "Pulse", parent, shimmerTexture, new Color(0.92f, 0.98f, 1f, 0.24f), new Vector3(x, 0f, z + 0.12f), new Vector3(0.5f, height, 1f), new Vector2(1f, 1.3f), 0f, 0f, 0.34f, 0f, 9);
         pulse.transform.localEulerAngles = Vector3.zero;
 
-        GameObject shimmer = CreateScrollingQuad(name + "Shimmer", parent, shimmerTexture, highlightColor, new Vector3(x, 0f, z + 0.1f), new Vector3(0.3f, height, 1f), new Vector2(1f, 2.5f), 0f, 0f, 0.65f, 0f, 9);
+        GameObject shimmer = CreateScrollingQuad(name + "Shimmer", parent, shimmerTexture, highlightColor, new Vector3(x, 0f, z + 0.1f), new Vector3(0.3f, height, 1f), new Vector2(1f, 2.5f), 0f, 0f, 0.65f, 0f, 10);
         shimmer.transform.localEulerAngles = Vector3.zero;
 
     }
@@ -568,12 +571,12 @@ public static class PrototypeSceneBootstrap
             return;
         }
 
-        CreateJetTrail(player, "LeftJet", new Vector3(-0.19f, -0.48f, 0f), 0.19f, 0.038f, 0.005f, 2, false);
-        CreateJetTrail(player, "LeftJetGlow", new Vector3(-0.19f, -0.48f, 0.02f), 0.24f, 0.068f, 0.012f, 1, true);
-        CreateJetTrail(player, "CenterJet", new Vector3(0f, -0.54f, 0f), 0.26f, 0.05f, 0.007f, 3, false);
-        CreateJetTrail(player, "CenterJetGlow", new Vector3(0f, -0.54f, 0.02f), 0.32f, 0.084f, 0.016f, 1, true);
-        CreateJetTrail(player, "RightJet", new Vector3(0.19f, -0.48f, 0f), 0.21f, 0.038f, 0.005f, 2, false);
-        CreateJetTrail(player, "RightJetGlow", new Vector3(0.19f, -0.48f, 0.02f), 0.24f, 0.068f, 0.012f, 1, true);
+        CreateJetTrail(player, "LeftJet", new Vector3(-0.19f, -0.48f, 0f), 0.19f, 0.028f, 0.004f, 2, false);
+        CreateJetTrail(player, "LeftJetGlow", new Vector3(-0.19f, -0.48f, 0.02f), 0.24f, 0.046f, 0.01f, 1, true);
+        CreateJetTrail(player, "CenterJet", new Vector3(0f, -0.54f, 0f), 0.26f, 0.036f, 0.005f, 3, false);
+        CreateJetTrail(player, "CenterJetGlow", new Vector3(0f, -0.54f, 0.02f), 0.32f, 0.06f, 0.012f, 1, true);
+        CreateJetTrail(player, "RightJet", new Vector3(0.19f, -0.48f, 0f), 0.21f, 0.028f, 0.004f, 2, false);
+        CreateJetTrail(player, "RightJetGlow", new Vector3(0.19f, -0.48f, 0.02f), 0.24f, 0.046f, 0.01f, 1, true);
     }
 
     private static void CreateJetTrail(Transform player, string name, Vector3 localOffset, float trailTime, float startWidth, float endWidth, int sortingOrder, bool isGlowLayer)
