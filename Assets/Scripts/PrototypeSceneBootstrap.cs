@@ -565,12 +565,15 @@ public static class PrototypeSceneBootstrap
             return;
         }
 
-        CreateJetTrail(player, "LeftJet", new Vector3(-0.2f, -0.54f, 0f), 0.24f, 0.05f, 0.006f, 0);
-        CreateJetTrail(player, "CenterJet", new Vector3(0f, -0.6f, 0f), 0.32f, 0.065f, 0.008f, 1);
-        CreateJetTrail(player, "RightJet", new Vector3(0.2f, -0.54f, 0f), 0.26f, 0.05f, 0.006f, 0);
+        CreateJetTrail(player, "LeftJet", new Vector3(-0.19f, -0.48f, 0f), 0.19f, 0.038f, 0.005f, 2, false);
+        CreateJetTrail(player, "LeftJetGlow", new Vector3(-0.19f, -0.48f, 0.02f), 0.24f, 0.068f, 0.012f, 1, true);
+        CreateJetTrail(player, "CenterJet", new Vector3(0f, -0.54f, 0f), 0.26f, 0.05f, 0.007f, 3, false);
+        CreateJetTrail(player, "CenterJetGlow", new Vector3(0f, -0.54f, 0.02f), 0.32f, 0.084f, 0.016f, 1, true);
+        CreateJetTrail(player, "RightJet", new Vector3(0.19f, -0.48f, 0f), 0.21f, 0.038f, 0.005f, 2, false);
+        CreateJetTrail(player, "RightJetGlow", new Vector3(0.19f, -0.48f, 0.02f), 0.24f, 0.068f, 0.012f, 1, true);
     }
 
-    private static void CreateJetTrail(Transform player, string name, Vector3 localOffset, float trailTime, float startWidth, float endWidth, int sortingOrder)
+    private static void CreateJetTrail(Transform player, string name, Vector3 localOffset, float trailTime, float startWidth, float endWidth, int sortingOrder, bool isGlowLayer)
     {
         GameObject trailAnchor = new GameObject(name);
         trailAnchor.transform.SetParent(player, false);
@@ -580,33 +583,58 @@ public static class PrototypeSceneBootstrap
         Material trailMaterial = CreateOverlayMaterial() ?? CreateTransparentMaterial();
         if (trailMaterial != null)
         {
-            trailMaterial.color = new Color(0.55f, 0.98f, 1f, 0.96f);
+            trailMaterial.color = isGlowLayer
+                ? new Color(0.3f, 0.94f, 1f, 0.42f)
+                : new Color(0.7f, 1f, 1f, 0.98f);
             trail.sharedMaterial = trailMaterial;
         }
 
         trail.time = trailTime;
-        trail.minVertexDistance = 0.01f;
+        trail.minVertexDistance = 0.008f;
         trail.startWidth = startWidth;
         trail.endWidth = endWidth;
-        trail.numCapVertices = 10;
+        trail.numCapVertices = 12;
+        trail.numCornerVertices = 3;
         trail.alignment = LineAlignment.View;
         trail.sortingOrder = sortingOrder;
+        trail.textureMode = LineTextureMode.Stretch;
 
         Gradient trailGradient = new Gradient();
-        trailGradient.SetKeys(
-            new[]
-            {
-                new GradientColorKey(new Color(0.9f, 1f, 1f), 0f),
-                new GradientColorKey(new Color(0.48f, 0.94f, 1f), 0.24f),
-                new GradientColorKey(new Color(0.16f, 0.72f, 1f), 1f)
-            },
-            new[]
-            {
-                new GradientAlphaKey(0.9f, 0f),
-                new GradientAlphaKey(0.42f, 0.24f),
-                new GradientAlphaKey(0.08f, 0.7f),
-                new GradientAlphaKey(0f, 1f)
-            });
+        if (isGlowLayer)
+        {
+            trailGradient.SetKeys(
+                new[]
+                {
+                    new GradientColorKey(new Color(0.46f, 0.98f, 1f), 0f),
+                    new GradientColorKey(new Color(0.24f, 0.78f, 1f), 0.38f),
+                    new GradientColorKey(new Color(0.1f, 0.42f, 0.86f), 1f)
+                },
+                new[]
+                {
+                    new GradientAlphaKey(0.34f, 0f),
+                    new GradientAlphaKey(0.16f, 0.28f),
+                    new GradientAlphaKey(0.05f, 0.72f),
+                    new GradientAlphaKey(0f, 1f)
+                });
+        }
+        else
+        {
+            trailGradient.SetKeys(
+                new[]
+                {
+                    new GradientColorKey(new Color(1f, 1f, 1f), 0f),
+                    new GradientColorKey(new Color(0.62f, 0.98f, 1f), 0.22f),
+                    new GradientColorKey(new Color(0.18f, 0.78f, 1f), 1f)
+                },
+                new[]
+                {
+                    new GradientAlphaKey(0.98f, 0f),
+                    new GradientAlphaKey(0.64f, 0.18f),
+                    new GradientAlphaKey(0.18f, 0.62f),
+                    new GradientAlphaKey(0f, 1f)
+                });
+        }
+
         trail.colorGradient = trailGradient;
     }
 
@@ -725,6 +753,28 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0f, 0.5f), texture.width);
     }
 
+    private static Sprite LoadTriangleGlowSprite()
+    {
+        Sprite resourceSprite = Resources.Load<Sprite>("Art/Sprites/triangle_glow");
+        if (resourceSprite != null)
+        {
+            return resourceSprite;
+        }
+
+        string spritePath = Path.Combine(Application.dataPath, "Art", "Sprites", "triangle_glow.png");
+        if (!File.Exists(spritePath))
+        {
+            return null;
+        }
+
+        byte[] fileBytes = File.ReadAllBytes(spritePath);
+        Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+        texture.LoadImage(fileBytes, false);
+        texture.wrapMode = TextureWrapMode.Clamp;
+        texture.filterMode = FilterMode.Bilinear;
+        return Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0f, 0.5f), texture.width);
+    }
+
     private static Sprite LoadPlayerSprite()
     {
         Sprite resourceSprite = Resources.Load<Sprite>("Art/Sprites/player");
@@ -754,8 +804,13 @@ public static class PrototypeSceneBootstrap
         obstacle.SetActive(false);
 
         Sprite triangleSprite = LoadTriangleSprite() ?? sprite;
+        Sprite triangleGlowSprite = LoadTriangleGlowSprite() ?? triangleSprite;
 
-        GameObject glow = CreateSpriteObject("Glow", obstacle.transform, triangleSprite, new Color(1f, 0.22f, 0.72f, 0.18f), new Vector3(1f, 1f, 1f), new Vector3(0.48f, 0f, 0f));
+        GameObject aura = CreateSpriteObject("Aura", obstacle.transform, triangleGlowSprite, new Color(1f, 0.12f, 0.75f, 0.12f), new Vector3(1.24f, 1.24f, 1f), new Vector3(0.48f, 0f, 0f));
+        aura.transform.localEulerAngles = new Vector3(0f, 0f, -90f);
+        aura.GetComponent<SpriteRenderer>().sortingOrder = 0;
+
+        GameObject glow = CreateSpriteObject("Glow", obstacle.transform, triangleGlowSprite, new Color(1f, 0.22f, 0.72f, 0.2f), new Vector3(1.08f, 1.08f, 1f), new Vector3(0.48f, 0f, 0f));
         glow.transform.localEulerAngles = new Vector3(0f, 0f, -90f);
         glow.GetComponent<SpriteRenderer>().sortingOrder = 1;
 
