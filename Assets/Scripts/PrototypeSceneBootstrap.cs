@@ -570,34 +570,6 @@ public static class PrototypeSceneBootstrap
             });
         mainTrail.colorGradient = trailGradient;
 
-        TrailRenderer glowTrail = player.gameObject.AddComponent<TrailRenderer>();
-        Material glowTrailMaterial = CreateOverlayMaterial() ?? CreateTransparentMaterial();
-        if (glowTrailMaterial != null)
-        {
-            glowTrailMaterial.color = new Color(0.7f, 1f, 1f, 0.35f);
-            glowTrail.sharedMaterial = glowTrailMaterial;
-        }
-        glowTrail.time = 0.36f;
-        glowTrail.minVertexDistance = 0.03f;
-        glowTrail.startWidth = 0.22f;
-        glowTrail.endWidth = 0.04f;
-        glowTrail.numCapVertices = 6;
-        glowTrail.sortingOrder = 0;
-
-        Gradient glowGradient = new Gradient();
-        glowGradient.SetKeys(
-            new[]
-            {
-                new GradientColorKey(new Color(0.55f, 0.98f, 1f), 0f),
-                new GradientColorKey(new Color(0.35f, 0.75f, 1f), 1f)
-            },
-            new[]
-            {
-                new GradientAlphaKey(0.22f, 0f),
-                new GradientAlphaKey(0.08f, 0.45f),
-                new GradientAlphaKey(0f, 1f)
-            });
-        glowTrail.colorGradient = glowGradient;
     }
 
     private static Sprite LoadWallSprite()
