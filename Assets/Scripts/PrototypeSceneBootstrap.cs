@@ -229,6 +229,9 @@ public static class PrototypeSceneBootstrap
         core.GetComponent<SpriteRenderer>().sortingOrder = 10;
 
         Texture2D shimmerTexture = CreateWallShimmerTexture(64, 256);
+        GameObject pulse = CreateScrollingQuad(name + "Pulse", parent, shimmerTexture, new Color(0.86f, 0.96f, 1f, 0.12f), new Vector3(x, 0f, z + 0.12f), new Vector3(0.62f, height, 1f), new Vector2(1f, 1.4f), 0f, 0f, 0.28f, 0f, 8);
+        pulse.transform.localEulerAngles = Vector3.zero;
+
         GameObject shimmer = CreateScrollingQuad(name + "Shimmer", parent, shimmerTexture, highlightColor, new Vector3(x, 0f, z + 0.1f), new Vector3(0.3f, height, 1f), new Vector2(1f, 2.5f), 0f, 0f, 0.65f, 0f, 9);
         shimmer.transform.localEulerAngles = Vector3.zero;
 
@@ -598,6 +601,17 @@ public static class PrototypeSceneBootstrap
         trail.alignment = LineAlignment.View;
         trail.sortingOrder = sortingOrder;
         trail.textureMode = LineTextureMode.Stretch;
+        trail.widthCurve = isGlowLayer
+            ? new AnimationCurve(
+                new Keyframe(0f, 0.82f),
+                new Keyframe(0.16f, 1f),
+                new Keyframe(0.68f, 0.38f),
+                new Keyframe(1f, 0f))
+            : new AnimationCurve(
+                new Keyframe(0f, 0.92f),
+                new Keyframe(0.14f, 1f),
+                new Keyframe(0.62f, 0.42f),
+                new Keyframe(1f, 0f));
 
         Gradient trailGradient = new Gradient();
         if (isGlowLayer)
@@ -611,9 +625,10 @@ public static class PrototypeSceneBootstrap
                 },
                 new[]
                 {
-                    new GradientAlphaKey(0.34f, 0f),
-                    new GradientAlphaKey(0.16f, 0.28f),
-                    new GradientAlphaKey(0.05f, 0.72f),
+                    new GradientAlphaKey(0.2f, 0f),
+                    new GradientAlphaKey(0.11f, 0.22f),
+                    new GradientAlphaKey(0.04f, 0.56f),
+                    new GradientAlphaKey(0.01f, 0.82f),
                     new GradientAlphaKey(0f, 1f)
                 });
         }
@@ -631,6 +646,7 @@ public static class PrototypeSceneBootstrap
                     new GradientAlphaKey(0.98f, 0f),
                     new GradientAlphaKey(0.64f, 0.18f),
                     new GradientAlphaKey(0.18f, 0.62f),
+                    new GradientAlphaKey(0.01f, 0.82f),
                     new GradientAlphaKey(0f, 1f)
                 });
         }
