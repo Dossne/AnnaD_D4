@@ -44,7 +44,7 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        isOnLeftWall = Random.value < 0.5f;
+        isOnLeftWall = startOnLeftWall;
 
         Vector2 startPosition = rb.position;
         startPosition.x = isOnLeftWall ? leftWallX : rightWallX;
@@ -138,3 +138,4 @@ public class PlayerController : MonoBehaviour
         speedIncreasePerSecond = accelerationPerSecond;
     }
 }
+

@@ -9,7 +9,7 @@ public static class PrototypeSceneBootstrap
     private const float LeftWallX = -2.35f;
     private const float RightWallX = 2.35f;
     private const float WallVisualOffset = 0.75f;
-    private const float PlayerWallContactOffset = 0.46f;
+    private const float PlayerWallContactOffset = 0.52f;
     private const string RuntimeRootName = "PrototypeRuntime";
 
     private static float LeftWallVisualX => LeftWallX - WallVisualOffset;
@@ -518,9 +518,11 @@ public static class PrototypeSceneBootstrap
 
     private static GameObject CreatePlayer(Transform root, Sprite sprite)
     {
+        bool startOnLeft = Random.value < 0.5f;
+
         GameObject player = new GameObject("Player");
         player.transform.SetParent(root);
-        player.transform.position = new Vector3(LeftRideX, -4f, 0f);
+        player.transform.position = new Vector3(startOnLeft ? LeftRideX : RightRideX, -4f, 0f);
 
         Rigidbody2D rb = player.AddComponent<Rigidbody2D>();
         rb.gravityScale = 0f;
@@ -538,7 +540,7 @@ public static class PrototypeSceneBootstrap
         CreatePlayerTrail(player.transform);
 
         PlayerController controller = player.AddComponent<PlayerController>();
-        controller.Configure(4.5f, 34f, LeftRideX, RightRideX, true, body.transform, 6.8f, 10.5f, 0.08f, 0.18f);
+        controller.Configure(4.5f, 34f, LeftRideX, RightRideX, startOnLeft, body.transform, 6.8f, 10.5f, 0.08f, 0.18f);
 
         return player;
     }
@@ -853,6 +855,7 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
     }
 }
+
 
 
 
