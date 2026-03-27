@@ -541,41 +541,49 @@ public static class PrototypeSceneBootstrap
             return;
         }
 
-        GameObject trailAnchor = new GameObject("TrailAnchor");
+        CreateJetTrail(player, "LeftJet", new Vector3(-0.18f, -0.52f, 0f), 0.22f, 0.06f, 0.012f, 0);
+        CreateJetTrail(player, "CenterJet", new Vector3(0f, -0.58f, 0f), 0.34f, 0.08f, 0.016f, 1);
+        CreateJetTrail(player, "RightJet", new Vector3(0.18f, -0.52f, 0f), 0.26f, 0.06f, 0.012f, 0);
+    }
+
+    private static void CreateJetTrail(Transform player, string name, Vector3 localOffset, float trailTime, float startWidth, float endWidth, int sortingOrder)
+    {
+        GameObject trailAnchor = new GameObject(name);
         trailAnchor.transform.SetParent(player, false);
-        trailAnchor.transform.localPosition = new Vector3(0f, -0.38f, 0f);
+        trailAnchor.transform.localPosition = localOffset;
 
         TrailRenderer trail = trailAnchor.AddComponent<TrailRenderer>();
         Material trailMaterial = CreateOverlayMaterial() ?? CreateTransparentMaterial();
         if (trailMaterial != null)
         {
-            trailMaterial.color = new Color(0.55f, 0.98f, 1f, 0.75f);
+            trailMaterial.color = new Color(0.55f, 0.98f, 1f, 0.78f);
             trail.sharedMaterial = trailMaterial;
         }
 
-        trail.time = 0.34f;
-        trail.minVertexDistance = 0.025f;
-        trail.startWidth = 0.18f;
-        trail.endWidth = 0.015f;
+        trail.time = trailTime;
+        trail.minVertexDistance = 0.02f;
+        trail.startWidth = startWidth;
+        trail.endWidth = endWidth;
         trail.numCapVertices = 8;
-        trail.sortingOrder = 1;
+        trail.sortingOrder = sortingOrder;
 
         Gradient trailGradient = new Gradient();
         trailGradient.SetKeys(
             new[]
             {
-                new GradientColorKey(new Color(0.72f, 1f, 1f), 0f),
-                new GradientColorKey(new Color(0.5f, 0.92f, 1f), 0.38f),
-                new GradientColorKey(new Color(0.28f, 0.74f, 1f), 1f)
+                new GradientColorKey(new Color(0.82f, 1f, 1f), 0f),
+                new GradientColorKey(new Color(0.58f, 0.96f, 1f), 0.35f),
+                new GradientColorKey(new Color(0.18f, 0.74f, 1f), 1f)
             },
             new[]
             {
-                new GradientAlphaKey(0.42f, 0f),
-                new GradientAlphaKey(0.18f, 0.45f),
+                new GradientAlphaKey(0.48f, 0f),
+                new GradientAlphaKey(0.18f, 0.35f),
                 new GradientAlphaKey(0f, 1f)
             });
         trail.colorGradient = trailGradient;
     }
+
     private static Sprite LoadGradientSprite()
     {
         string spritePath = Path.Combine(Application.dataPath, "Art", "Sprites", "gradient.png");
