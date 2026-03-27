@@ -14,7 +14,9 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private Image flashOverlay;
     [SerializeField] private Button restartButton;
 
+    private const float RestartInputDelay = 1f;
     private float survivalTime;
+    private float gameOverShownAt;
     private bool isGameOver;
     private bool isRestarting;
     private Coroutine flashRoutine;
@@ -50,8 +52,9 @@ public class ScoreManager : MonoBehaviour
     {
         if (isGameOver)
         {
+            bool canRestart = Time.unscaledTime >= gameOverShownAt + RestartInputDelay;
             bool restartPressed = Input.GetMouseButtonDown(0) || Input.touchCount > 0 || Input.GetKeyDown(KeyCode.R);
-            if (!isRestarting && restartPressed)
+            if (canRestart && !isRestarting && restartPressed)
             {
                 StartCoroutine(RestartPrototypeNextFrame());
             }
@@ -76,6 +79,7 @@ public class ScoreManager : MonoBehaviour
         }
 
         isGameOver = true;
+        gameOverShownAt = Time.unscaledTime;
 
         if (gameOverText != null)
         {
@@ -104,6 +108,7 @@ public class ScoreManager : MonoBehaviour
         isGameOver = false;
         isRestarting = false;
         survivalTime = 0f;
+        gameOverShownAt = 0f;
         UpdateScoreText();
         SetGameOverPanelVisible(false);
         SetFlashAlpha(0f);
@@ -129,7 +134,8 @@ public class ScoreManager : MonoBehaviour
 
     private void OnRestartButtonPressed()
     {
-        if (isGameOver && !isRestarting)
+        bool canRestart = Time.unscaledTime >= gameOverShownAt + RestartInputDelay;
+        if (isGameOver && canRestart && !isRestarting)
         {
             StartCoroutine(RestartPrototypeNextFrame());
         }
