@@ -282,7 +282,7 @@ public static class PrototypeSceneBootstrap
         Object.Destroy(quad.GetComponent<Collider>());
 
         MeshRenderer renderer = quad.GetComponent<MeshRenderer>();
-        renderer.material = CreateTransparentMaterial();
+        renderer.material = CreateScrollingMaterial();
         renderer.material.mainTexture = texture;
         renderer.material.mainTextureScale = textureScale;
         renderer.material.mainTextureOffset = Vector2.zero;
@@ -455,7 +455,7 @@ public static class PrototypeSceneBootstrap
         Object.Destroy(quad.GetComponent<Collider>());
 
         MeshRenderer renderer = quad.GetComponent<MeshRenderer>();
-        renderer.material = CreateTransparentMaterial();
+        renderer.material = CreateScrollingMaterial();
         renderer.material.mainTexture = texture;
         renderer.material.mainTextureScale = textureScale;
         renderer.material.mainTextureOffset = Vector2.zero;
@@ -478,6 +478,18 @@ public static class PrototypeSceneBootstrap
         return new Material(shader);
     }
 
+
+    private static Material CreateScrollingMaterial()
+    {
+        Shader shader = FindFirstAvailableShader(
+            "Unlit/Texture",
+            "Unlit/Transparent",
+            "Legacy Shaders/Transparent/Diffuse",
+            "Sprites/Default",
+            "Universal Render Pipeline/Unlit");
+
+        return new Material(shader);
+    }
     private static Material CreateOverlayMaterial()
     {
         Shader shader = FindFirstAvailableShader(
@@ -906,6 +918,7 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
     }
 }
+
 
 
 
