@@ -114,7 +114,7 @@ public static class PrototypeSceneBootstrap
         Vector3 farLayerScale = GetAspectPreservingScale(farTexture, visibleWidth, visibleHeight, 2f);
 
         CreateParallaxQuad("FarBackground", camera, farTexture, new Color(0.82f, 0.86f, 1f, 0.9f), new Vector3(0f, 0f, 26f), farLayerScale, new Vector2(1f, 1f), 0.000125f, 0f, 0.00015f, 0f);
-        CreateParallaxQuad("CenterGlow", camera, centerGlow, Color.white, new Vector3(0f, 0f, 24f), new Vector3(layerWidth * 0.62f, layerHeight, 1f), new Vector2(1f, 1f), 0.0012f, 0f, 0.0006f, 0f);
+        CreateOverlayQuad("CenterGlow", camera.transform, centerGlow, new Color(1f, 1f, 1f, 0.82f), new Vector3(0f, 0f, 24f), new Vector3(layerWidth * 0.62f, layerHeight, 1f), 7);
         CreateParallaxQuad("MidStars", camera, midStars, new Color(0.72f, 0.84f, 1f, 0.55f), new Vector3(0f, 0f, 22f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.2f, 2f), 0.004f, 0.00075f, 0.003f, 0f);
         CreateParallaxQuad("NearStars", camera, nearStars, new Color(0.95f, 0.98f, 1f, 0.85f), new Vector3(0f, 0f, 20f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.5f, 2.6f), 0.01f, 0.0015f, 0.006f, 0f);
 
@@ -296,6 +296,17 @@ public static class PrototypeSceneBootstrap
         return new Material(shader);
     }
 
+    private static Material CreateOverlayMaterial()
+    {
+        Shader shader = FindFirstAvailableShader(
+            "Sprites/Default",
+            "Unlit/Transparent",
+            "Legacy Shaders/Transparent/Diffuse",
+            "Unlit/Texture");
+
+        return new Material(shader);
+    }
+
     private static Material CreateParticleMaterial()
     {
         Shader shader = FindFirstAvailableShader(
@@ -384,175 +395,21 @@ public static class PrototypeSceneBootstrap
         scoreManager.Configure(player.GetComponent<PlayerController>(), scoreText, gameOverPanel, gameOverText, gameOverScoreText, flashOverlay, restartButton);
     }
 
-    private static void CreateCanvas(Transform root, Font font, Sprite sprite, out Text scoreText, out GameObject gameOverPanel, out Text gameOverText, out Text gameOverScoreText, out Image flashOverlay, out Button restartButton)
-    {
-        Color neonCyan = new Color(0.55f, 0.98f, 1f, 1f);
-        Color neonBlue = new Color(0.18f, 0.82f, 1f, 1f);
-        Color neonBorder = new Color(0.36f, 0.92f, 1f, 0.78f);
-        Color panelColor = new Color(0f, 0f, 0f, 0.78f);
-        Color mutedText = new Color(0.8f, 0.94f, 1f, 0.82f);
-
-        GameObject canvasObject = new GameObject("Canvas");
-        canvasObject.transform.SetParent(root);
-
-        Canvas canvas = canvasObject.AddComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-
-        CanvasScaler scaler = canvasObject.AddComponent<CanvasScaler>();
-        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(1080f, 1920f);
-        scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-        scaler.matchWidthOrHeight = 1f;
-
-        canvasObject.AddComponent<GraphicRaycaster>();
-
-        EnsureEventSystem();
-
-        flashOverlay = CreateFullscreenImage(canvas.transform, "FlashOverlay", new Color(1f, 1f, 1f, 0f));
-        flashOverlay.raycastTarget = false;
-
-        scoreText = CreateText(canvas.transform, font, "ScoreText", "0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -96f), 56, neonCyan);
-        scoreText.fontStyle = FontStyle.Bold;
-        scoreText.alignment = TextAnchor.MiddleCenter;
-        AddOutline(scoreText.gameObject, new Color(0.12f, 0.85f, 1f, 0.9f), new Vector2(2f, -2f));
-        AddShadow(scoreText.gameObject, new Color(0f, 0.65f, 0.82f, 0.28f), new Vector2(0f, 0f));
-
-        gameOverPanel = new GameObject("GameOverPanel");
-        gameOverPanel.transform.SetParent(canvas.transform);
-        Image panelImage = gameOverPanel.AddComponent<Image>();
-        panelImage.color = new Color(0f, 0f, 0f, 0f);
-        AddOutline(gameOverPanel, new Color(0.28f, 0.88f, 1f, 0.28f), new Vector2(1f, -1f));
-        AddShadow(gameOverPanel, new Color(0f, 0.72f, 0.9f, 0.1f), new Vector2(0f, 0f));
-
-        RectTransform panelRect = gameOverPanel.GetComponent<RectTransform>();
-        panelRect.anchorMin = new Vector2(0.5f, 0.5f);
-        panelRect.anchorMax = new Vector2(0.5f, 0.5f);
-        panelRect.pivot = new Vector2(0.5f, 0.5f);
-        panelRect.sizeDelta = new Vector2(760f, 470f);
-        panelRect.anchoredPosition = new Vector2(0f, 90f);
-
-        GameObject panelBackdrop = new GameObject("PanelBackdrop");
-        panelBackdrop.transform.SetParent(gameOverPanel.transform, false);
-        Image panelBackdropImage = panelBackdrop.AddComponent<Image>();
-        panelBackdropImage.color = panelColor;
-        RectTransform panelBackdropRect = panelBackdrop.GetComponent<RectTransform>();
-        panelBackdropRect.anchorMin = Vector2.zero;
-        panelBackdropRect.anchorMax = Vector2.one;
-        panelBackdropRect.offsetMin = new Vector2(8f, 8f);
-        panelBackdropRect.offsetMax = new Vector2(-8f, -8f);
-        panelBackdropRect.SetAsFirstSibling();
-
-        gameOverText = CreateText(gameOverPanel.transform, font, "GameOverText", "GAME OVER", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -92f), 84, new Color(0.92f, 1f, 1f, 1f));
-        gameOverText.alignment = TextAnchor.MiddleCenter;
-        gameOverText.fontStyle = FontStyle.Normal;
-        AddOutline(gameOverText.gameObject, new Color(0.18f, 0.9f, 1f, 0.72f), new Vector2(1.5f, -1.5f));
-        AddShadow(gameOverText.gameObject, new Color(0f, 0.7f, 0.85f, 0.18f), new Vector2(0f, 0f));
-
-        gameOverScoreText = CreateText(gameOverPanel.transform, font, "GameOverScoreText", "SCORE 0", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -182f), 42, neonCyan);
-        gameOverScoreText.alignment = TextAnchor.MiddleCenter;
-        gameOverScoreText.fontStyle = FontStyle.Bold;
-        AddOutline(gameOverScoreText.gameObject, new Color(0.14f, 0.84f, 1f, 0.92f), new Vector2(2f, -2f));
-
-        Text hintText = CreateText(gameOverPanel.transform, font, "HintText", "Tap anywhere", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -260f), 28, mutedText);
-        hintText.alignment = TextAnchor.MiddleCenter;
-        AddOutline(hintText.gameObject, new Color(0.08f, 0.35f, 0.45f, 0.65f), new Vector2(1f, -1f));
-
-        restartButton = null;
-
-        gameOverPanel.SetActive(false);
-    }
-
-    private static void EnsureEventSystem()
-    {
-        EventSystem existingEventSystem = Object.FindObjectOfType<EventSystem>();
-        if (existingEventSystem != null)
-        {
-            if (existingEventSystem.GetComponent<StandaloneInputModule>() == null)
-            {
-                existingEventSystem.gameObject.AddComponent<StandaloneInputModule>();
-            }
-
-            return;
-        }
-
-        GameObject eventSystemObject = new GameObject("EventSystem");
-        eventSystemObject.AddComponent<EventSystem>();
-        eventSystemObject.AddComponent<StandaloneInputModule>();
-    }
-
-    private static void AddOutline(GameObject target, Color color, Vector2 distance)
-    {
-        Outline outline = target.AddComponent<Outline>();
-        outline.effectColor = color;
-        outline.effectDistance = distance;
-        outline.useGraphicAlpha = true;
-    }
-
-    private static void AddShadow(GameObject target, Color color, Vector2 distance)
-    {
-        Shadow shadow = target.AddComponent<Shadow>();
-        shadow.effectColor = color;
-        shadow.effectDistance = distance;
-        shadow.useGraphicAlpha = true;
-    }
-
-    private static Image CreateFullscreenImage(Transform parent, string name, Color color)
-    {
-        GameObject imageObject = new GameObject(name);
-        imageObject.transform.SetParent(parent);
-
-        RectTransform rect = imageObject.AddComponent<RectTransform>();
-        rect.anchorMin = Vector2.zero;
-        rect.anchorMax = Vector2.one;
-        rect.offsetMin = Vector2.zero;
-        rect.offsetMax = Vector2.zero;
-
-        Image image = imageObject.AddComponent<Image>();
-        image.color = color;
-        return image;
-    }
-
-    private static Text CreateText(Transform parent, Font font, string name, string content, Vector2 anchorMin, Vector2 anchorMax, Vector2 anchoredPosition, int fontSize, Color color)
-    {
-        GameObject textObject = new GameObject(name);
-        textObject.transform.SetParent(parent);
-
-        RectTransform rect = textObject.AddComponent<RectTransform>();
-        rect.anchorMin = anchorMin;
-        rect.anchorMax = anchorMax;
-        rect.pivot = new Vector2(0.5f, 0.5f);
-        rect.sizeDelta = new Vector2(900f, 140f);
-        rect.anchoredPosition = anchoredPosition;
-
-        Text text = textObject.AddComponent<Text>();
-        text.font = font;
-        text.text = content;
-        text.fontSize = fontSize;
-        text.alignment = TextAnchor.MiddleCenter;
-        text.color = color;
-
-        return text;
-    }
-
-    private static GameObject CreateParallaxQuad(string name, Camera camera, Texture2D texture, Color tint, Vector3 localPosition, Vector3 localScale, Vector2 textureScale, float yScrollFactor, float xScrollFactor, float autoScrollY, float autoScrollX)
+    private static GameObject CreateOverlayQuad(string name, Transform parent, Texture2D texture, Color tint, Vector3 localPosition, Vector3 localScale, int sortingOrder)
     {
         GameObject quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
         quad.name = name;
-        quad.transform.SetParent(camera.transform);
+        quad.transform.SetParent(parent);
         quad.transform.localPosition = localPosition;
         quad.transform.localScale = localScale;
 
         Object.Destroy(quad.GetComponent<Collider>());
 
         MeshRenderer renderer = quad.GetComponent<MeshRenderer>();
-        renderer.material = CreateTransparentMaterial();
+        renderer.material = CreateOverlayMaterial();
         renderer.material.mainTexture = texture;
-        renderer.material.mainTextureScale = textureScale;
-        renderer.material.mainTextureOffset = Vector2.zero;
         renderer.material.color = tint;
-
-        ParallaxMaterialScroller scroller = quad.AddComponent<ParallaxMaterialScroller>();
-        scroller.Configure(camera.transform, yScrollFactor, xScrollFactor, autoScrollY, autoScrollX);
+        renderer.sortingOrder = sortingOrder;
 
         return quad;
     }
