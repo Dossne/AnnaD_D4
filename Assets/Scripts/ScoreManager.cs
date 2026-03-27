@@ -20,6 +20,7 @@ public class ScoreManager : MonoBehaviour
     private bool isGameOver;
     private bool isRestarting;
     private Coroutine flashRoutine;
+    private Coroutine gameOverTextRoutine;
 
     private void Awake()
     {
@@ -45,6 +46,7 @@ public class ScoreManager : MonoBehaviour
         UpdateScoreText();
         SetGameOverPanelVisible(false);
         SetFlashAlpha(0f);
+        ResetGameOverTextScale();
         BindRestartButton();
     }
 
@@ -84,6 +86,14 @@ public class ScoreManager : MonoBehaviour
         if (gameOverText != null)
         {
             gameOverText.text = "GAME OVER";
+            gameOverText.rectTransform.localScale = Vector3.zero;
+
+            if (gameOverTextRoutine != null)
+            {
+                StopCoroutine(gameOverTextRoutine);
+            }
+
+            gameOverTextRoutine = StartCoroutine(AnimateGameOverText());
         }
 
         if (gameOverScoreText != null)
@@ -112,6 +122,7 @@ public class ScoreManager : MonoBehaviour
         UpdateScoreText();
         SetGameOverPanelVisible(false);
         SetFlashAlpha(0f);
+        ResetGameOverTextScale();
 
         if (gameOverScoreText != null)
         {
@@ -147,6 +158,29 @@ public class ScoreManager : MonoBehaviour
         Instance = null;
         yield return null;
         PrototypeSceneBootstrap.RestartPrototype();
+    }
+
+    private IEnumerator AnimateGameOverText()
+    {
+        float duration = 0.2f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            float scale = Mathf.SmoothStep(0f, 1f, t);
+
+            if (gameOverText != null)
+            {
+                gameOverText.rectTransform.localScale = Vector3.one * scale;
+            }
+
+            yield return null;
+        }
+
+        ResetGameOverTextScale();
+        gameOverTextRoutine = null;
     }
 
     private void PlayFlash()
@@ -202,6 +236,14 @@ public class ScoreManager : MonoBehaviour
         else if (gameOverText != null)
         {
             gameOverText.gameObject.SetActive(visible);
+        }
+    }
+
+    private void ResetGameOverTextScale()
+    {
+        if (gameOverText != null)
+        {
+            gameOverText.rectTransform.localScale = Vector3.one;
         }
     }
 

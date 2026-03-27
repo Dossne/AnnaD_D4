@@ -450,38 +450,11 @@ public static class PrototypeSceneBootstrap
         gameOverScoreText.fontStyle = FontStyle.Bold;
         AddOutline(gameOverScoreText.gameObject, new Color(0.14f, 0.84f, 1f, 0.92f), new Vector2(2f, -2f));
 
-        Text hintText = CreateText(gameOverPanel.transform, font, "HintText", "Tap to restart", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -260f), 28, mutedText);
+        Text hintText = CreateText(gameOverPanel.transform, font, "HintText", "Tap anywhere", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -260f), 28, mutedText);
         hintText.alignment = TextAnchor.MiddleCenter;
         AddOutline(hintText.gameObject, new Color(0.08f, 0.35f, 0.45f, 0.65f), new Vector2(1f, -1f));
 
-        GameObject buttonObject = new GameObject("RestartButton");
-        buttonObject.transform.SetParent(gameOverPanel.transform);
-        Image buttonImage = buttonObject.AddComponent<Image>();
-        buttonImage.sprite = sprite;
-        buttonImage.type = Image.Type.Sliced;
-        buttonImage.color = new Color(0.02f, 0.09f, 0.13f, 0.96f);
-        restartButton = buttonObject.AddComponent<Button>();
-        restartButton.targetGraphic = buttonImage;
-        ColorBlock colors = restartButton.colors;
-        colors.normalColor = new Color(0.02f, 0.09f, 0.13f, 0.96f);
-        colors.highlightedColor = new Color(0.04f, 0.13f, 0.18f, 1f);
-        colors.pressedColor = new Color(0.01f, 0.06f, 0.09f, 1f);
-        colors.selectedColor = colors.highlightedColor;
-        restartButton.colors = colors;
-        AddOutline(buttonObject, new Color(0.2f, 0.9f, 1f, 0.95f), new Vector2(2f, -2f));
-        AddShadow(buttonObject, new Color(0f, 0.72f, 0.9f, 0.22f), new Vector2(0f, 0f));
-
-        RectTransform buttonRect = buttonObject.GetComponent<RectTransform>();
-        buttonRect.anchorMin = new Vector2(0.5f, 0.5f);
-        buttonRect.anchorMax = new Vector2(0.5f, 0.5f);
-        buttonRect.pivot = new Vector2(0.5f, 0.5f);
-        buttonRect.sizeDelta = new Vector2(330f, 96f);
-        buttonRect.anchoredPosition = new Vector2(0f, -108f);
-
-        Text buttonText = CreateText(buttonObject.transform, font, "RestartLabel", "RESTART", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, 34, neonCyan);
-        buttonText.alignment = TextAnchor.MiddleCenter;
-        buttonText.fontStyle = FontStyle.Bold;
-        AddOutline(buttonText.gameObject, new Color(0.12f, 0.85f, 1f, 0.92f), new Vector2(1.5f, -1.5f));
+        restartButton = null;
 
         gameOverPanel.SetActive(false);
     }
