@@ -553,8 +553,6 @@ public static class PrototypeSceneBootstrap
         mainTrail.endWidth = 0.02f;
         mainTrail.numCapVertices = 6;
         mainTrail.sortingOrder = 1;
-        mainTrail.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-        mainTrail.receiveShadows = false;
 
         Gradient trailGradient = new Gradient();
         trailGradient.SetKeys(
@@ -585,8 +583,6 @@ public static class PrototypeSceneBootstrap
         glowTrail.endWidth = 0.04f;
         glowTrail.numCapVertices = 6;
         glowTrail.sortingOrder = 0;
-        glowTrail.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-        glowTrail.receiveShadows = false;
 
         Gradient glowGradient = new Gradient();
         glowGradient.SetKeys(
