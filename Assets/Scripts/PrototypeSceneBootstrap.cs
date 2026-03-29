@@ -1129,6 +1129,7 @@ public static class PrototypeSceneBootstrap
         burstRenderer.material.color = new Color(0.46f, 0.98f, 1f, 0.7f);
 
         GameObject glow = CreateSpriteObject("Glow", orb.transform, orbSprite, new Color(0.34f, 0.98f, 1f, 0.62f), new Vector3(2.05f, 2.05f, 1f), Vector3.zero);
+        glow.transform.localScale = new Vector3(0.6817856f, 0.6817856f, 1f);
         SpriteRenderer glowRenderer = glow.GetComponent<SpriteRenderer>();
         glowRenderer.sortingOrder = 1;
         glowRenderer.material = CreateAdditiveTrailMaterial();
