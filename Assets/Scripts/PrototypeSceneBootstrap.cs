@@ -1121,7 +1121,7 @@ public static class PrototypeSceneBootstrap
 
         Sprite burstSprite = CreateOrbBurstSprite(128);
         Sprite ringSprite = CreateOrbRingSprite(96);
-        Sprite orbSprite = CreateCircleSprite(64);
+        Sprite orbSprite = Resources.Load<Sprite>("Art/Sprites/orb") ?? CreateCircleSprite(64);
 
         GameObject outerGlow = CreateSpriteObject("OuterGlow", orb.transform, orbSprite, new Color(0.24f, 0.98f, 1f, 0.42f), new Vector3(2.75f, 2.75f, 1f), Vector3.zero);
         SpriteRenderer outerGlowRenderer = outerGlow.GetComponent<SpriteRenderer>();
