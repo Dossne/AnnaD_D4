@@ -776,9 +776,9 @@ public static class PrototypeSceneBootstrap
         var velocityOverLifetime = particles.velocityOverLifetime;
         velocityOverLifetime.enabled = true;
         velocityOverLifetime.space = ParticleSystemSimulationSpace.World;
-        velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(-0.03f, 0.03f);
-        velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(-0.7f, -1.2f);
-        velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(0f, 0f);
+        velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(0f);
+        velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(-0.95f);
+        velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(0f);
 
         var colorOverLifetime = particles.colorOverLifetime;
         colorOverLifetime.enabled = true;
