@@ -416,10 +416,10 @@ public static class PrototypeSceneBootstrap
         AddShadow(gameOverPanel, new Color(0f, 0.72f, 0.9f, 0.1f), new Vector2(0f, 0f));
 
         RectTransform panelRect = gameOverPanel.GetComponent<RectTransform>();
-        panelRect.anchorMin = new Vector2(0.5f, 0.5f);
-        panelRect.anchorMax = new Vector2(0.5f, 0.5f);
+        panelRect.anchorMin = new Vector2(0.03f, 0.5f);
+        panelRect.anchorMax = new Vector2(0.97f, 0.5f);
         panelRect.pivot = new Vector2(0.5f, 0.5f);
-        panelRect.sizeDelta = new Vector2(760f, 470f);
+        panelRect.sizeDelta = new Vector2(0f, 470f);
         panelRect.anchoredPosition = new Vector2(0f, 90f);
 
         GameObject panelBackdrop = new GameObject("PanelBackdrop");

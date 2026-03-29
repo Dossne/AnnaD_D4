@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
 public class EnergyOrb : MonoBehaviour
@@ -6,6 +6,26 @@ public class EnergyOrb : MonoBehaviour
     [SerializeField] private int scoreValue = 5;
 
     private bool isCollected;
+    private Transform rootTransform;
+    private Vector3 baseScale;
+
+    private void OnEnable()
+    {
+        rootTransform = transform.parent != null ? transform.parent : transform;
+        baseScale = rootTransform.localScale;
+        isCollected = false;
+    }
+
+    private void Update()
+    {
+        if (isCollected || rootTransform == null)
+        {
+            return;
+        }
+
+        float pulse = 1f + Mathf.Sin(Time.time * 4.4f) * 0.04f;
+        rootTransform.localScale = baseScale * pulse;
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -28,7 +48,7 @@ public class EnergyOrb : MonoBehaviour
 
     private IEnumerator CollectRoutine()
     {
-        Transform root = transform.parent != null ? transform.parent : transform;
+        Transform root = rootTransform != null ? rootTransform : (transform.parent != null ? transform.parent : transform);
         Collider2D trigger = GetComponent<Collider2D>();
         if (trigger != null)
         {
@@ -36,21 +56,21 @@ public class EnergyOrb : MonoBehaviour
         }
 
         SpriteRenderer[] renderers = root.GetComponentsInChildren<SpriteRenderer>(true);
-        Vector3 baseScale = root.localScale;
-        float scaleDuration = 0.08f;
+        Vector3 startScale = root.localScale;
+        float scaleDuration = 0.06f;
         float scaleElapsed = 0f;
 
         while (scaleElapsed < scaleDuration)
         {
             scaleElapsed += Time.deltaTime;
             float t = Mathf.Clamp01(scaleElapsed / scaleDuration);
-            root.localScale = Vector3.Lerp(baseScale, baseScale * 1.22f, t);
+            root.localScale = Vector3.Lerp(startScale, baseScale * 1.28f, t);
             yield return null;
         }
 
         CreateBurst(root.position, renderers);
 
-        float fadeDuration = 0.14f;
+        float fadeDuration = 0.08f;
         float fadeElapsed = 0f;
         Color[] baseColors = new Color[renderers.Length];
         for (int i = 0; i < renderers.Length; i++)
@@ -62,7 +82,7 @@ public class EnergyOrb : MonoBehaviour
         {
             fadeElapsed += Time.deltaTime;
             float t = Mathf.Clamp01(fadeElapsed / fadeDuration);
-            root.localScale = Vector3.Lerp(baseScale * 1.22f, baseScale * 0.78f, t);
+            root.localScale = Vector3.Lerp(baseScale * 1.28f, baseScale * 0.6f, t);
 
             for (int i = 0; i < renderers.Length; i++)
             {

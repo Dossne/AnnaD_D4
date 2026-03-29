@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -66,7 +66,7 @@ public class ScoreManager : MonoBehaviour
     {
         UpdateScoreText();
         SetGameOverPanelVisible(false);
-        SetFlashAlpha(0f);
+        SetFlashColor(new Color(1f, 1f, 1f, 0f));
         ResetGameOverTextScale();
         SetPickupPopupVisible(false);
         BindRestartButton();
@@ -126,7 +126,7 @@ public class ScoreManager : MonoBehaviour
 
         Camera.main?.GetComponent<CameraFollow>()?.PlayHitEffect();
         GameAudio.PlayGameOver();
-        PlayFlash();
+        PlayFlash(new Color(1f, 1f, 1f, 0.18f), 0.18f);
         SetGameOverPanelVisible(true);
     }
 
@@ -152,7 +152,7 @@ public class ScoreManager : MonoBehaviour
         gameOverShownAt = 0f;
         UpdateScoreText();
         SetGameOverPanelVisible(false);
-        SetFlashAlpha(0f);
+        SetFlashColor(new Color(1f, 1f, 1f, 0f));
         ResetGameOverTextScale();
         SetPickupPopupVisible(false);
         PrototypeSceneBootstrap.SetCorridorTension(0f);
@@ -186,6 +186,7 @@ public class ScoreManager : MonoBehaviour
         collectedPoints += amount;
         UpdateScoreText();
         ShowPickupPopup("+" + amount);
+        PlayFlash(new Color(0.35f, 0.95f, 1f, 0.12f), 0.2f);
 
         if (isRushMode)
         {
@@ -306,24 +307,23 @@ public class ScoreManager : MonoBehaviour
         corridorRushRoutine = null;
     }
 
-    private IEnumerator FlashRoutine()
+    private IEnumerator FlashRoutine(Color flashColor, float duration)
     {
-        float duration = 0.18f;
         float elapsed = 0f;
 
         while (elapsed < duration)
         {
             elapsed += Time.unscaledDeltaTime;
-            float alpha = Mathf.Lerp(0.18f, 0f, elapsed / duration);
-            SetFlashAlpha(alpha);
+            float alpha = Mathf.Lerp(flashColor.a, 0f, elapsed / duration);
+            SetFlashColor(new Color(flashColor.r, flashColor.g, flashColor.b, alpha));
             yield return null;
         }
 
-        SetFlashAlpha(0f);
+        SetFlashColor(new Color(flashColor.r, flashColor.g, flashColor.b, 0f));
         flashRoutine = null;
     }
 
-    private void PlayFlash()
+    private void PlayFlash(Color flashColor, float duration)
     {
         if (flashOverlay == null)
         {
@@ -335,7 +335,7 @@ public class ScoreManager : MonoBehaviour
             StopCoroutine(flashRoutine);
         }
 
-        flashRoutine = StartCoroutine(FlashRoutine());
+        flashRoutine = StartCoroutine(FlashRoutine(flashColor, duration));
     }
 
     private void StartRushMode()
@@ -413,15 +413,13 @@ public class ScoreManager : MonoBehaviour
         return Mathf.FloorToInt(survivalTime) + collectedPoints;
     }
 
-    private void SetFlashAlpha(float alpha)
+    private void SetFlashColor(Color color)
     {
         if (flashOverlay == null)
         {
             return;
         }
 
-        Color color = flashOverlay.color;
-        color.a = alpha;
         flashOverlay.color = color;
     }
 
