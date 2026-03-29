@@ -156,6 +156,7 @@ public class EnergyOrbSpawner : MonoBehaviour
         {
             GameObject orb = Instantiate(orbPrefab, new Vector3(centerX, startY + spacing * i, 0f), Quaternion.identity, transform);
             orb.SetActive(true);
+            orb.transform.localScale = Vector3.one * 0.7f;
             spawnedOrbs.Enqueue(orb);
         }
 

@@ -186,7 +186,7 @@ public class ScoreManager : MonoBehaviour
         collectedPoints += amount;
         UpdateScoreText();
         ShowPickupPopup("+" + amount);
-        PlayFlash(new Color(0.35f, 0.95f, 1f, 0.12f), 0.2f);
+        PlayFlash(new Color(0.35f, 0.95f, 1f, 0.06f), 0.2f);
 
         if (isRushMode)
         {
@@ -477,3 +477,4 @@ public class ScoreManager : MonoBehaviour
         }
     }
 }
+
