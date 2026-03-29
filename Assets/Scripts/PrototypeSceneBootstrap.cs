@@ -1123,43 +1123,43 @@ public static class PrototypeSceneBootstrap
         Sprite ringSprite = CreateOrbRingSprite(96);
         Sprite orbSprite = CreateCircleSprite(64);
 
-        GameObject outerGlow = CreateSpriteObject("OuterGlow", orb.transform, orbSprite, new Color(0.22f, 0.95f, 1f, 0.34f), new Vector3(2.3f, 2.3f, 1f), Vector3.zero);
+        GameObject outerGlow = CreateSpriteObject("OuterGlow", orb.transform, orbSprite, new Color(0.24f, 0.98f, 1f, 0.42f), new Vector3(2.75f, 2.75f, 1f), Vector3.zero);
         SpriteRenderer outerGlowRenderer = outerGlow.GetComponent<SpriteRenderer>();
         outerGlowRenderer.sortingOrder = 0;
         outerGlowRenderer.material = CreateAdditiveTrailMaterial();
-        outerGlowRenderer.material.color = new Color(0.22f, 0.95f, 1f, 0.34f);
+        outerGlowRenderer.material.color = new Color(0.24f, 0.98f, 1f, 0.44f);
 
-        GameObject burst = CreateSpriteObject("Burst", orb.transform, burstSprite, new Color(0.42f, 0.96f, 1f, 0.58f), new Vector3(2.35f, 2.35f, 1f), Vector3.zero);
+        GameObject burst = CreateSpriteObject("Burst", orb.transform, burstSprite, new Color(0.48f, 0.98f, 1f, 0.72f), new Vector3(2.7f, 2.7f, 1f), Vector3.zero);
         SpriteRenderer burstRenderer = burst.GetComponent<SpriteRenderer>();
         burstRenderer.sortingOrder = 1;
         burstRenderer.material = CreateAdditiveTrailMaterial();
-        burstRenderer.material.color = new Color(0.42f, 0.96f, 1f, 0.54f);
+        burstRenderer.material.color = new Color(0.46f, 0.98f, 1f, 0.7f);
 
-        GameObject glow = CreateSpriteObject("Glow", orb.transform, orbSprite, new Color(0.3f, 0.96f, 1f, 0.48f), new Vector3(1.78f, 1.78f, 1f), Vector3.zero);
+        GameObject glow = CreateSpriteObject("Glow", orb.transform, orbSprite, new Color(0.34f, 0.98f, 1f, 0.62f), new Vector3(2.05f, 2.05f, 1f), Vector3.zero);
         SpriteRenderer glowRenderer = glow.GetComponent<SpriteRenderer>();
         glowRenderer.sortingOrder = 2;
         glowRenderer.material = CreateAdditiveTrailMaterial();
-        glowRenderer.material.color = new Color(0.28f, 0.96f, 1f, 0.52f);
+        glowRenderer.material.color = new Color(0.32f, 0.98f, 1f, 0.64f);
 
-        GameObject ring = CreateSpriteObject("Ring", orb.transform, ringSprite, new Color(0.68f, 1f, 1f, 0.98f), new Vector3(1.18f, 1.18f, 1f), Vector3.zero);
+        GameObject ring = CreateSpriteObject("Ring", orb.transform, ringSprite, new Color(0.82f, 1f, 1f, 1f), new Vector3(1.32f, 1.32f, 1f), Vector3.zero);
         SpriteRenderer ringRenderer = ring.GetComponent<SpriteRenderer>();
         ringRenderer.sortingOrder = 3;
         ringRenderer.material = CreateAdditiveTrailMaterial();
-        ringRenderer.material.color = new Color(0.62f, 1f, 1f, 1f);
+        ringRenderer.material.color = new Color(0.76f, 1f, 1f, 1f);
 
-        GameObject core = CreateSpriteObject("Core", orb.transform, orbSprite, new Color(0.82f, 1f, 1f, 1f), new Vector3(0.82f, 0.82f, 1f), Vector3.zero);
+        GameObject core = CreateSpriteObject("Core", orb.transform, orbSprite, new Color(0.94f, 1f, 1f, 1f), new Vector3(1.02f, 1.02f, 1f), Vector3.zero);
         SpriteRenderer coreRenderer = core.GetComponent<SpriteRenderer>();
         coreRenderer.sortingOrder = 4;
         coreRenderer.material = CreateAdditiveTrailMaterial();
-        coreRenderer.material.color = new Color(0.88f, 1f, 1f, 1f);
+        coreRenderer.material.color = new Color(1f, 1f, 1f, 1f);
 
-        GameObject body = CreateSpriteObject("Body", orb.transform, orbSprite, Color.white, new Vector3(0.38f, 0.38f, 1f), Vector3.zero);
-        body.GetComponent<SpriteRenderer>().sortingOrder = 5;
+        GameObject body = CreateSpriteObject("Body", orb.transform, orbSprite, Color.white, new Vector3(0.46f, 0.46f, 1f), Vector3.zero);
+        body.GetComponent<SpriteRenderer>().sortingOrder = 6;
         body.AddComponent<EnergyOrb>();
 
         CircleCollider2D collider = body.AddComponent<CircleCollider2D>();
         collider.isTrigger = true;
-        collider.radius = 1.35f;
+        collider.radius = 1.55f;
 
         return orb;
     }

@@ -27,7 +27,7 @@ public class EnergyOrb : MonoBehaviour
 
         if (!isCollected)
         {
-            float pulse = 1f + Mathf.Sin(Time.time * 4.1f) * 0.06f;
+            float pulse = 1f + Mathf.Sin(Time.time * 3.8f) * 0.08f;
             rootTransform.localScale = baseScale * pulse;
         }
 
