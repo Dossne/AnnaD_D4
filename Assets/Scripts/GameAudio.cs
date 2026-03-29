@@ -52,6 +52,11 @@ public class GameAudio : MonoBehaviour
         }
     }
 
+    public static void PrepareForPrototypeRebuild()
+    {
+        Instance = null;
+    }
+
     public static void PlaySwitch()
     {
         if (Instance != null && Instance.switchClip != null)

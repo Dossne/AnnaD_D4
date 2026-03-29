@@ -27,6 +27,8 @@ public static class PrototypeSceneBootstrap
 
     public static void RestartPrototype()
     {
+        ScoreManager.PrepareForPrototypeRebuild();
+        GameAudio.PrepareForPrototypeRebuild();
         RebuildPrototype();
     }
 

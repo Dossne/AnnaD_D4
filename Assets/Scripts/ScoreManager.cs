@@ -42,6 +42,11 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
+    public static void PrepareForPrototypeRebuild()
+    {
+        Instance = null;
+    }
+
     private void Start()
     {
         UpdateScoreText();
