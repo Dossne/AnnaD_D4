@@ -1120,41 +1120,28 @@ public static class PrototypeSceneBootstrap
         orb.SetActive(false);
 
         Sprite burstSprite = CreateOrbBurstSprite(128);
-        Sprite ringSprite = CreateOrbRingSprite(96);
         Sprite orbSprite = Resources.Load<Sprite>("Art/Sprites/orb") ?? CreateCircleSprite(64);
-
-        GameObject outerGlow = CreateSpriteObject("OuterGlow", orb.transform, orbSprite, new Color(0.24f, 0.98f, 1f, 0.42f), new Vector3(2.75f, 2.75f, 1f), Vector3.zero);
-        SpriteRenderer outerGlowRenderer = outerGlow.GetComponent<SpriteRenderer>();
-        outerGlowRenderer.sortingOrder = 0;
-        outerGlowRenderer.material = CreateAdditiveTrailMaterial();
-        outerGlowRenderer.material.color = new Color(0.24f, 0.98f, 1f, 0.44f);
 
         GameObject burst = CreateSpriteObject("Burst", orb.transform, burstSprite, new Color(0.48f, 0.98f, 1f, 0.72f), new Vector3(2.7f, 2.7f, 1f), Vector3.zero);
         SpriteRenderer burstRenderer = burst.GetComponent<SpriteRenderer>();
-        burstRenderer.sortingOrder = 1;
+        burstRenderer.sortingOrder = 0;
         burstRenderer.material = CreateAdditiveTrailMaterial();
         burstRenderer.material.color = new Color(0.46f, 0.98f, 1f, 0.7f);
 
         GameObject glow = CreateSpriteObject("Glow", orb.transform, orbSprite, new Color(0.34f, 0.98f, 1f, 0.62f), new Vector3(2.05f, 2.05f, 1f), Vector3.zero);
         SpriteRenderer glowRenderer = glow.GetComponent<SpriteRenderer>();
-        glowRenderer.sortingOrder = 2;
+        glowRenderer.sortingOrder = 1;
         glowRenderer.material = CreateAdditiveTrailMaterial();
         glowRenderer.material.color = new Color(0.32f, 0.98f, 1f, 0.64f);
 
-        GameObject ring = CreateSpriteObject("Ring", orb.transform, ringSprite, new Color(0.82f, 1f, 1f, 1f), new Vector3(1.32f, 1.32f, 1f), Vector3.zero);
-        SpriteRenderer ringRenderer = ring.GetComponent<SpriteRenderer>();
-        ringRenderer.sortingOrder = 3;
-        ringRenderer.material = CreateAdditiveTrailMaterial();
-        ringRenderer.material.color = new Color(0.76f, 1f, 1f, 1f);
-
         GameObject core = CreateSpriteObject("Core", orb.transform, orbSprite, new Color(0.94f, 1f, 1f, 1f), new Vector3(1.02f, 1.02f, 1f), Vector3.zero);
         SpriteRenderer coreRenderer = core.GetComponent<SpriteRenderer>();
-        coreRenderer.sortingOrder = 4;
+        coreRenderer.sortingOrder = 2;
         coreRenderer.material = CreateAdditiveTrailMaterial();
         coreRenderer.material.color = new Color(1f, 1f, 1f, 1f);
 
         GameObject body = CreateSpriteObject("Body", orb.transform, orbSprite, Color.white, new Vector3(0.46f, 0.46f, 1f), Vector3.zero);
-        body.GetComponent<SpriteRenderer>().sortingOrder = 6;
+        body.GetComponent<SpriteRenderer>().sortingOrder = 4;
         body.AddComponent<EnergyOrb>();
 
         CircleCollider2D collider = body.AddComponent<CircleCollider2D>();
