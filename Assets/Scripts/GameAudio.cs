@@ -94,6 +94,14 @@ public class GameAudio : MonoBehaviour
             return;
         }
 
+        AudioClip preferredClip = Resources.Load<AudioClip>("Audio/Music/music_2");
+        if (preferredClip != null)
+        {
+            musicSource.clip = preferredClip;
+            musicSource.Play();
+            return;
+        }
+
         AudioClip[] musicClips = Resources.LoadAll<AudioClip>("Audio/Music");
         if (musicClips == null || musicClips.Length == 0)
         {
