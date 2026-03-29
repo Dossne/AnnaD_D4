@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -349,7 +349,7 @@ public class ScoreManager : MonoBehaviour
         rushCollectedOrbs = 0;
         collectedOrbs = 0;
 
-        obstacleSpawner?.SetPaused(true);
+        obstacleSpawner?.BeginRushMode();
         orbSpawner?.SetPaused(true);
         orbSpawner?.ClearAllOrbs();
         orbSpawner?.SpawnRushOrbs(player.transform.position.y + RushSpawnOffsetY, RushOrbsToFinish, RushOrbSpacing);
@@ -366,7 +366,7 @@ public class ScoreManager : MonoBehaviour
 
         isRushMode = false;
         rushCollectedOrbs = 0;
-        obstacleSpawner?.SetPaused(false);
+        obstacleSpawner?.EndRushMode();
         orbSpawner?.SetPaused(false);
         player?.ExitRushMode();
         StartCorridorRushAnimation(0f);

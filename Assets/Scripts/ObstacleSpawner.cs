@@ -23,6 +23,7 @@ public class ObstacleSpawner : MonoBehaviour
     private int sameSideChainCount;
     private int consecutiveEmptyRows;
     private bool isPaused;
+    private float difficultyMultiplier = 1f;
 
     private struct DifficultyPhase
     {
@@ -41,14 +42,9 @@ public class ObstacleSpawner : MonoBehaviour
             return;
         }
 
-        nextSpawnOnLeft = Random.value < 0.5f;
-        sameSideChainCount = 0;
-        consecutiveEmptyRows = 0;
-
+        ResetSpawnerState(false);
         SeedOpeningRows();
-
-        float firstOffscreenSpawnY = Mathf.Max(GetTopOfViewY() + spawnPaddingAboveView, player.position.y + startOffsetY);
-        nextSpawnY = Mathf.Ceil(firstOffscreenSpawnY / spawnStepY) * spawnStepY;
+        ResetNextSpawnY(startOffsetY);
     }
 
     private void Update()
@@ -87,9 +83,10 @@ public class ObstacleSpawner : MonoBehaviour
 
     private DifficultyPhase GetCurrentPhase()
     {
+        DifficultyPhase phase;
         if (elapsedTime < 10f)
         {
-            return new DifficultyPhase
+            phase = new DifficultyPhase
             {
                 spawnChance = 0.45f,
                 sideChangeChance = 0.12f,
@@ -97,10 +94,9 @@ public class ObstacleSpawner : MonoBehaviour
                 maxEmptyRows = 1
             };
         }
-
-        if (elapsedTime < 30f)
+        else if (elapsedTime < 30f)
         {
-            return new DifficultyPhase
+            phase = new DifficultyPhase
             {
                 spawnChance = 0.65f,
                 sideChangeChance = 0.45f,
@@ -108,14 +104,22 @@ public class ObstacleSpawner : MonoBehaviour
                 maxEmptyRows = 1
             };
         }
-
-        return new DifficultyPhase
+        else
         {
-            spawnChance = 0.85f,
-            sideChangeChance = 0.65f,
-            maxChainLength = 2,
-            maxEmptyRows = 0
-        };
+            phase = new DifficultyPhase
+            {
+                spawnChance = 0.85f,
+                sideChangeChance = 0.65f,
+                maxChainLength = 2,
+                maxEmptyRows = 0
+            };
+        }
+
+        phase.spawnChance = Mathf.Clamp01(phase.spawnChance * difficultyMultiplier);
+        phase.sideChangeChance = Mathf.Clamp01(phase.sideChangeChance * difficultyMultiplier);
+        phase.maxChainLength = Mathf.Max(1, Mathf.RoundToInt(phase.maxChainLength / difficultyMultiplier));
+        phase.maxEmptyRows = difficultyMultiplier > 1f ? Mathf.Max(0, phase.maxEmptyRows - 1) : phase.maxEmptyRows;
+        return phase;
     }
 
     private float GetTopOfViewY()
@@ -224,6 +228,23 @@ public class ObstacleSpawner : MonoBehaviour
         }
     }
 
+    private void ResetSpawnerState(bool randomizeSide)
+    {
+        if (randomizeSide)
+        {
+            nextSpawnOnLeft = Random.value < 0.5f;
+        }
+
+        sameSideChainCount = 0;
+        consecutiveEmptyRows = 0;
+    }
+
+    private void ResetNextSpawnY(float offsetY)
+    {
+        float firstOffscreenSpawnY = Mathf.Max(GetTopOfViewY() + spawnPaddingAboveView, player.position.y + offsetY);
+        nextSpawnY = Mathf.Ceil(firstOffscreenSpawnY / spawnStepY) * spawnStepY;
+    }
+
     public void Configure(
         GameObject template,
         Transform playerTarget,
@@ -246,5 +267,28 @@ public class ObstacleSpawner : MonoBehaviour
     public void SetPaused(bool paused)
     {
         isPaused = paused;
+    }
+
+    public void BeginRushMode()
+    {
+        isPaused = true;
+        ClearAllObstacles();
+    }
+
+    public void EndRushMode()
+    {
+        isPaused = false;
+        difficultyMultiplier = 1.25f;
+        elapsedTime = 0f;
+        ResetSpawnerState(true);
+        ResetNextSpawnY(6f);
+    }
+
+    public void ClearAllObstacles()
+    {
+        while (spawnedObstacles.Count > 0)
+        {
+            DestroyOldestObstacle();
+        }
     }
 }
