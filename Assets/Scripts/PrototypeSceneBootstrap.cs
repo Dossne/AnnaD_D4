@@ -634,7 +634,7 @@ public static class PrototypeSceneBootstrap
             return;
         }
 
-        Sprite lineSprite = LoadRoundSprite() ?? LoadLineSprite();
+        Sprite lineSprite = LoadLineSprite();
         Texture2D lineTexture = lineSprite != null ? lineSprite.texture : null;
 
         float sideTrailTime = effectsTuning != null ? effectsTuning.sideTrailTime : 0.22f;
@@ -949,27 +949,6 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), texture.width);
     }
 
-    private static Sprite LoadRoundSprite()
-    {
-        Sprite resourceSprite = Resources.Load<Sprite>("Art/Sprites/Round");
-        if (resourceSprite != null)
-        {
-            return resourceSprite;
-        }
-
-        string spritePath = Path.Combine(Application.dataPath, "Art", "Sprites", "Round.png");
-        if (!File.Exists(spritePath))
-        {
-            return null;
-        }
-
-        byte[] fileBytes = File.ReadAllBytes(spritePath);
-        Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-        texture.LoadImage(fileBytes, false);
-        texture.wrapMode = TextureWrapMode.Clamp;
-        texture.filterMode = FilterMode.Bilinear;
-        return Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), texture.width);
-    }
     private static Sprite LoadWallSprite()
     {
         Sprite resourceSprite = Resources.Load<Sprite>("Art/Sprites/wall");
