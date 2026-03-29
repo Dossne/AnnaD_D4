@@ -1135,6 +1135,7 @@ public static class PrototypeSceneBootstrap
         glowRenderer.material.color = new Color(0.32f, 0.98f, 1f, 0.64f);
 
         GameObject body = CreateSpriteObject("Body", orb.transform, orbSprite, Color.white, new Vector3(0.65f, 0.65f, 1f), Vector3.zero);
+        body.transform.localScale = new Vector3(0.65f, 0.65f, 1f);
         body.GetComponent<SpriteRenderer>().sortingOrder = 2;
         body.AddComponent<EnergyOrb>();
 
