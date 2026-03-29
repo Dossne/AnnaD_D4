@@ -128,21 +128,17 @@ public static class PrototypeSceneBootstrap
     {
         float visibleHeight = camera.orthographicSize * 2f;
         float visibleWidth = visibleHeight * camera.aspect;
-        float layerWidth = visibleWidth + 2f;
         float layerHeight = visibleHeight + 2f;
 
         Texture2D farTexture = LoadSpaceBackgroundTexture();
         Texture2D centerGlow = CreateCenterGlowTexture(128, 512);
-        Texture2D midStars = CreateStarTexture(256, 512, 90, 1, 0.25f, 0.7f);
-        Texture2D nearStars = CreateStarTexture(256, 512, 85, 2, 0.315f, 0.7f);
-
         Vector3 farLayerScale = GetAspectPreservingScale(farTexture, visibleWidth, visibleHeight, 2f);
 
         CreateParallaxQuad("FarBackground", camera, farTexture, Color.white, new Vector3(0f, 0f, 26f), farLayerScale, new Vector2(1f, 1f), 0.000125f, 0f, 0.00015f, 0f);
         float centerGlowWidth = effectsTuning != null ? effectsTuning.centerGlowWidth : 14f;
         CreateOverlayQuad("CenterGlow", camera.transform, centerGlow, new Color(1f, 1f, 1f, 0.24f), new Vector3(0f, 0f, 24f), new Vector3(centerGlowWidth, layerHeight, 1f), 7);
-        CreateParallaxQuad("MidStars", camera, midStars, new Color(0.72f, 0.84f, 1f, 0.55f), new Vector3(0f, 0f, 22f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.2f, 2f), 0.004f, 0.00075f, 0.003f, 0f);
-        CreateParallaxQuad("NearStars", camera, nearStars, new Color(0.95f, 0.98f, 1f, 0.6f), new Vector3(0f, 0f, 20f), new Vector3(layerWidth, layerHeight, 1f), new Vector2(1.5f, 2.6f), 0.054f, 0.009f, 0.03f, 0f);
+        CreateStarField(camera, "MidStars", new Vector3(0f, 0f, 22f), visibleWidth, visibleHeight, 42, 0.02f, 0.045f, new Color(0.72f, 0.84f, 1f, 0.42f), 0.24f);
+        CreateStarField(camera, "NearStars", new Vector3(0f, 0f, 20f), visibleWidth, visibleHeight, 64, 0.028f, 0.065f, new Color(0.95f, 0.98f, 1f, 0.54f), 0.58f);
 
         CreateSpaceParticles(camera, visibleWidth, visibleHeight);
     }
@@ -218,6 +214,67 @@ public static class PrototypeSceneBootstrap
         particles.Play();
     }
 
+
+    private static void CreateStarField(Camera camera, string name, Vector3 localPosition, float visibleWidth, float visibleHeight, int maxParticles, float minSize, float maxSize, Color color, float fallSpeed)
+    {
+        GameObject starsObject = new GameObject(name);
+        starsObject.transform.SetParent(camera.transform);
+        starsObject.transform.localPosition = localPosition;
+
+        ParticleSystem stars = starsObject.AddComponent<ParticleSystem>();
+        ParticleSystemRenderer renderer = starsObject.GetComponent<ParticleSystemRenderer>();
+        renderer.material = CreateParticleMaterial();
+        renderer.renderMode = ParticleSystemRenderMode.Billboard;
+        renderer.sortMode = ParticleSystemSortMode.Distance;
+        renderer.minParticleSize = minSize;
+        renderer.maxParticleSize = maxSize;
+
+        var main = stars.main;
+        main.playOnAwake = true;
+        main.loop = true;
+        main.prewarm = true;
+        main.simulationSpace = ParticleSystemSimulationSpace.Local;
+        main.startLifetime = (visibleHeight + 4f) / Mathf.Max(0.01f, fallSpeed);
+        main.startSpeed = fallSpeed;
+        main.startSize = new ParticleSystem.MinMaxCurve(minSize, maxSize);
+        main.startColor = color;
+        main.maxParticles = maxParticles;
+
+        var emission = stars.emission;
+        emission.rateOverTime = maxParticles / Mathf.Max(0.1f, main.startLifetime.constant);
+
+        var shape = stars.shape;
+        shape.enabled = true;
+        shape.shapeType = ParticleSystemShapeType.Box;
+        shape.scale = new Vector3(visibleWidth + 2f, visibleHeight + 4f, 0.1f);
+        shape.position = new Vector3(0f, (visibleHeight * 0.5f) + 1f, 0f);
+
+        var velocityOverLifetime = stars.velocityOverLifetime;
+        velocityOverLifetime.enabled = true;
+        velocityOverLifetime.space = ParticleSystemSimulationSpace.Local;
+        velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(0f);
+        velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(-fallSpeed);
+        velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(0f);
+
+        var colorOverLifetime = stars.colorOverLifetime;
+        colorOverLifetime.enabled = true;
+        Gradient gradient = new Gradient();
+        gradient.SetKeys(
+            new[]
+            {
+                new GradientColorKey(new Color(color.r, color.g, color.b), 0f),
+                new GradientColorKey(new Color(color.r, color.g, color.b), 1f)
+            },
+            new[]
+            {
+                new GradientAlphaKey(color.a, 0f),
+                new GradientAlphaKey(color.a * 0.75f, 0.35f),
+                new GradientAlphaKey(0f, 1f)
+            });
+        colorOverLifetime.color = new ParticleSystem.MinMaxGradient(gradient);
+
+        stars.Play();
+    }
     private static void CreateWalls(Camera camera, Sprite sprite)
     {
         float visibleHeight = camera.orthographicSize * 2f;
@@ -659,9 +716,7 @@ public static class PrototypeSceneBootstrap
             return;
         }
 
-        Sprite lineSprite = LoadLineSprite();
-        Texture2D lineTexture = lineSprite != null ? lineSprite.texture : null;
-
+        Texture2D lineTexture = null;
         float sideTrailTime = effectsTuning != null ? effectsTuning.sideTrailTime : 0.22f;
         float sideTrailGlowTime = effectsTuning != null ? effectsTuning.sideTrailGlowTime : 0.28f;
         float centerTrailTime = effectsTuning != null ? effectsTuning.centerTrailTime : 0.28f;
@@ -697,7 +752,7 @@ public static class PrototypeSceneBootstrap
         }
 
         trail.time = trailTime;
-        trail.minVertexDistance = 0.004f;
+        trail.minVertexDistance = 0.002f;
         trail.startWidth = startWidth;
         trail.endWidth = endWidth;
         trail.numCapVertices = 12;
@@ -780,7 +835,7 @@ public static class PrototypeSceneBootstrap
         var main = particles.main;
         main.playOnAwake = true;
         main.loop = true;
-        main.simulationSpace = ParticleSystemSimulationSpace.World;
+        main.simulationSpace = ParticleSystemSimulationSpace.Local;
         float particleLifetime = effectsTuning != null ? effectsTuning.particleLifetime : 0.30f;
         float particleStartSize = effectsTuning != null ? effectsTuning.particleStartSize : 0.11f;
         int particleMaxCount = effectsTuning != null ? effectsTuning.particleMaxCount : 22;
@@ -803,7 +858,7 @@ public static class PrototypeSceneBootstrap
 
         var velocityOverLifetime = particles.velocityOverLifetime;
         velocityOverLifetime.enabled = true;
-        velocityOverLifetime.space = ParticleSystemSimulationSpace.World;
+        velocityOverLifetime.space = ParticleSystemSimulationSpace.Local;
         velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(0f);
         velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(-0.95f);
         velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(0f);
