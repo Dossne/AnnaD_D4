@@ -781,7 +781,7 @@ public static class PrototypeSceneBootstrap
         main.playOnAwake = true;
         main.loop = true;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
-        float particleLifetime = effectsTuning != null ? effectsTuning.particleLifetime : 0.125f;
+        float particleLifetime = effectsTuning != null ? effectsTuning.particleLifetime : 0.0625f;
         float particleStartSize = effectsTuning != null ? effectsTuning.particleStartSize : 0.11f;
         int particleMaxCount = effectsTuning != null ? effectsTuning.particleMaxCount : 22;
         main.startLifetime = particleLifetime;
@@ -798,7 +798,7 @@ public static class PrototypeSceneBootstrap
         var shape = particles.shape;
         shape.enabled = true;
         shape.shapeType = ParticleSystemShapeType.Box;
-        float particleSpawnWidth = effectsTuning != null ? effectsTuning.particleSpawnWidth : 0.539f;
+        float particleSpawnWidth = effectsTuning != null ? effectsTuning.particleSpawnWidth : 0.3773f;
         shape.scale = new Vector3(particleSpawnWidth, 0.001f, 0.01f);
 
         var velocityOverLifetime = particles.velocityOverLifetime;
@@ -1123,7 +1123,7 @@ public static class PrototypeSceneBootstrap
         Sprite ringSprite = CreateOrbRingSprite(96);
         Sprite orbSprite = CreateCircleSprite(64);
 
-        GameObject burst = CreateSpriteObject("Burst", orb.transform, burstSprite, new Color(0.35f, 0.92f, 1f, 0.42f), new Vector3(1.7f, 1.7f, 1f), Vector3.zero);
+        GameObject burst = CreateSpriteObject("Burst", orb.transform, burstSprite, new Color(0.35f, 0.92f, 1f, 0.3f), new Vector3(1.4f, 1.4f, 1f), Vector3.zero);
         burst.GetComponent<SpriteRenderer>().sortingOrder = 0;
 
         GameObject glow = CreateSpriteObject("Glow", orb.transform, orbSprite, new Color(0.28f, 0.95f, 1f, 0.24f), new Vector3(1.2f, 1.2f, 1f), Vector3.zero);
@@ -1297,12 +1297,18 @@ public static class PrototypeSceneBootstrap
             {
                 Vector2 delta = new Vector2(x, y) - center;
                 float distance = delta.magnitude;
-                float normalized = Mathf.Clamp01(distance / radius);
+                float normalized = distance / radius;
+                if (normalized > 1f)
+                {
+                    texture.SetPixel(x, y, new Color(0f, 0f, 0f, 0f));
+                    continue;
+                }
+
                 float angle = Mathf.Atan2(delta.y, delta.x);
-                float rays = 0.5f + 0.5f * Mathf.Cos(angle * 10f);
-                float radialFade = 1f - Mathf.SmoothStep(0.08f, 1f, normalized);
-                float centerFade = 1f - Mathf.SmoothStep(0f, 0.22f, normalized);
-                float alpha = Mathf.Clamp01(radialFade * 0.38f + rays * radialFade * 0.28f + centerFade * 0.22f);
+                float rayMask = Mathf.Pow(Mathf.Clamp01(0.5f + 0.5f * Mathf.Cos(angle * 10f)), 4f);
+                float circularMask = Mathf.Pow(1f - normalized, 2.6f);
+                float halo = Mathf.Pow(1f - normalized, 4f) * 0.2f;
+                float alpha = Mathf.Clamp01(rayMask * circularMask * 0.9f + halo);
                 texture.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
             }
         }

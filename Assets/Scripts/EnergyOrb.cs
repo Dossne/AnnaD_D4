@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 
 public class EnergyOrb : MonoBehaviour
@@ -99,6 +99,7 @@ public class EnergyOrb : MonoBehaviour
         burstObject.transform.position = position;
 
         ParticleSystem burst = burstObject.AddComponent<ParticleSystem>();
+        burst.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         ParticleSystemRenderer renderer = burstObject.GetComponent<ParticleSystemRenderer>();
         Material material = new Material(Shader.Find("Sprites/Default"));
         material.mainTexture = sprite.texture;
