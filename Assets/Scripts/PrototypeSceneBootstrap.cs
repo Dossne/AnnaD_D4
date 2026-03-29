@@ -60,7 +60,8 @@ public static class PrototypeSceneBootstrap
 
         GameObject player = CreatePlayer(root.transform, baseSprite);
         GameObject obstacleTemplate = CreateObstacleTemplate(root.transform, baseSprite);
-        CreateManagers(root.transform, camera, player, obstacleTemplate, font, baseSprite);
+        GameObject energyOrbTemplate = CreateEnergyOrbTemplate(root.transform, baseSprite);
+        CreateManagers(root.transform, camera, player, obstacleTemplate, energyOrbTemplate, font, baseSprite);
     }
 
     private static void ClearExistingPrototype(Camera camera)
@@ -1060,7 +1061,29 @@ public static class PrototypeSceneBootstrap
         return obstacle;
     }
 
-    private static void CreateManagers(Transform root, Camera camera, GameObject player, GameObject obstacleTemplate, Font font, Sprite sprite)
+    private static GameObject CreateEnergyOrbTemplate(Transform root, Sprite sprite)
+    {
+        GameObject orb = new GameObject("EnergyOrbTemplate");
+        orb.transform.SetParent(root);
+        orb.SetActive(false);
+
+        Sprite orbSprite = CreateCircleSprite(64);
+
+        GameObject glow = CreateSpriteObject("Glow", orb.transform, orbSprite, new Color(0.22f, 0.95f, 1f, 0.2f), new Vector3(1.15f, 1.15f, 1f), Vector3.zero);
+        glow.GetComponent<SpriteRenderer>().sortingOrder = 0;
+
+        GameObject body = CreateSpriteObject("Body", orb.transform, orbSprite, new Color(0.8f, 1f, 1f, 0.98f), new Vector3(0.42f, 0.42f, 1f), Vector3.zero);
+        body.GetComponent<SpriteRenderer>().sortingOrder = 1;
+        body.AddComponent<EnergyOrb>();
+
+        CircleCollider2D collider = body.AddComponent<CircleCollider2D>();
+        collider.isTrigger = true;
+        collider.radius = 0.5f;
+
+        return orb;
+    }
+
+    private static void CreateManagers(Transform root, Camera camera, GameObject player, GameObject obstacleTemplate, GameObject energyOrbTemplate, Font font, Sprite sprite)
     {
         GameObject gameManagerObject = new GameObject("GameManager");
         gameManagerObject.transform.SetParent(root);
@@ -1071,6 +1094,11 @@ public static class PrototypeSceneBootstrap
         spawnerObject.transform.SetParent(root);
         ObstacleSpawner spawner = spawnerObject.AddComponent<ObstacleSpawner>();
         spawner.Configure(obstacleTemplate, player.transform, LeftWallVisualX, RightWallVisualX, 10f, 3f, 0.7f, 36);
+
+        GameObject orbSpawnerObject = new GameObject("EnergyOrbSpawner");
+        orbSpawnerObject.transform.SetParent(root);
+        EnergyOrbSpawner orbSpawner = orbSpawnerObject.AddComponent<EnergyOrbSpawner>();
+        orbSpawner.Configure(energyOrbTemplate, player.transform, 0f, 12f, 8f, 8, 0.55f);
 
         CameraFollow follow = camera.GetComponent<CameraFollow>();
         follow.Configure(player.transform, 3.5f);
@@ -1151,6 +1179,12 @@ public static class PrototypeSceneBootstrap
         texture.wrapMode = TextureWrapMode.Repeat;
         texture.filterMode = FilterMode.Bilinear;
         return texture;
+    }
+
+    private static Sprite CreateCircleSprite(int size)
+    {
+        Texture2D texture = CreateCircleTexture(size);
+        return Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), size);
     }
 
     private static Texture2D CreateCenterGlowTexture(int width, int height)

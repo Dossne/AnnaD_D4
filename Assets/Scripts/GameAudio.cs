@@ -12,6 +12,7 @@ public class GameAudio : MonoBehaviour
     private AudioClip switchClip;
     private AudioClip gameOverClip;
     private AudioClip restartClip;
+    private AudioClip pickupClip;
 
     private void Awake()
     {
@@ -38,6 +39,7 @@ public class GameAudio : MonoBehaviour
         switchClip = CreateToneClip("Switch", 780f, 1120f, 0.055f, 0.12f);
         gameOverClip = CreateToneClip("GameOver", 360f, 170f, 0.16f, 0.18f);
         restartClip = CreateToneClip("Restart", 420f, 760f, 0.08f, 0.12f);
+        pickupClip = CreateToneClip("Pickup", 920f, 1380f, 0.06f, 0.1f);
 
         StartBackgroundMusic();
     }
@@ -63,6 +65,14 @@ public class GameAudio : MonoBehaviour
         if (Instance != null && Instance.gameOverClip != null)
         {
             Instance.audioSource.PlayOneShot(Instance.gameOverClip, 0.95f);
+        }
+    }
+
+    public static void PlayPickup()
+    {
+        if (Instance != null && Instance.pickupClip != null)
+        {
+            Instance.audioSource.PlayOneShot(Instance.pickupClip, 0.7f);
         }
     }
 

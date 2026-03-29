@@ -16,6 +16,7 @@ public class ScoreManager : MonoBehaviour
 
     private const float RestartInputDelay = 1f;
     private float survivalTime;
+    private int collectedPoints;
     private float gameOverShownAt;
     private bool isGameOver;
     private bool isRestarting;
@@ -98,7 +99,7 @@ public class ScoreManager : MonoBehaviour
 
         if (gameOverScoreText != null)
         {
-            gameOverScoreText.text = "SCORE " + Mathf.FloorToInt(survivalTime);
+            gameOverScoreText.text = "SCORE " + GetCurrentScore();
         }
 
         Camera.main?.GetComponent<CameraFollow>()?.PlayHitEffect();
@@ -119,6 +120,7 @@ public class ScoreManager : MonoBehaviour
         isGameOver = false;
         isRestarting = false;
         survivalTime = 0f;
+        collectedPoints = 0;
         gameOverShownAt = 0f;
         UpdateScoreText();
         SetGameOverPanelVisible(false);
@@ -131,6 +133,17 @@ public class ScoreManager : MonoBehaviour
         }
 
         BindRestartButton();
+    }
+
+    public void AddPoints(int amount)
+    {
+        if (isGameOver || amount <= 0)
+        {
+            return;
+        }
+
+        collectedPoints += amount;
+        UpdateScoreText();
     }
 
     private void BindRestartButton()
@@ -185,21 +198,6 @@ public class ScoreManager : MonoBehaviour
         gameOverTextRoutine = null;
     }
 
-    private void PlayFlash()
-    {
-        if (flashOverlay == null)
-        {
-            return;
-        }
-
-        if (flashRoutine != null)
-        {
-            StopCoroutine(flashRoutine);
-        }
-
-        flashRoutine = StartCoroutine(FlashRoutine());
-    }
-
     private IEnumerator FlashRoutine()
     {
         float duration = 0.18f;
@@ -215,6 +213,26 @@ public class ScoreManager : MonoBehaviour
 
         SetFlashAlpha(0f);
         flashRoutine = null;
+    }
+
+    private void PlayFlash()
+    {
+        if (flashOverlay == null)
+        {
+            return;
+        }
+
+        if (flashRoutine != null)
+        {
+            StopCoroutine(flashRoutine);
+        }
+
+        flashRoutine = StartCoroutine(FlashRoutine());
+    }
+
+    private int GetCurrentScore()
+    {
+        return Mathf.FloorToInt(survivalTime) + collectedPoints;
     }
 
     private void SetFlashAlpha(float alpha)
@@ -253,7 +271,7 @@ public class ScoreManager : MonoBehaviour
     {
         if (scoreText != null)
         {
-            scoreText.text = Mathf.FloorToInt(survivalTime).ToString();
+            scoreText.text = GetCurrentScore().ToString();
         }
     }
 }
