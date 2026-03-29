@@ -416,8 +416,8 @@ public static class PrototypeSceneBootstrap
         AddShadow(gameOverPanel, new Color(0f, 0.72f, 0.9f, 0.1f), new Vector2(0f, 0f));
 
         RectTransform panelRect = gameOverPanel.GetComponent<RectTransform>();
-        panelRect.anchorMin = new Vector2(0.03f, 0.5f);
-        panelRect.anchorMax = new Vector2(0.97f, 0.5f);
+        panelRect.anchorMin = new Vector2(0f, 0.5f);
+        panelRect.anchorMax = new Vector2(1f, 0.5f);
         panelRect.pivot = new Vector2(0.5f, 0.5f);
         panelRect.sizeDelta = new Vector2(0f, 470f);
         panelRect.anchoredPosition = new Vector2(0f, 90f);
@@ -429,8 +429,8 @@ public static class PrototypeSceneBootstrap
         RectTransform panelBackdropRect = panelBackdrop.GetComponent<RectTransform>();
         panelBackdropRect.anchorMin = Vector2.zero;
         panelBackdropRect.anchorMax = Vector2.one;
-        panelBackdropRect.offsetMin = new Vector2(8f, 8f);
-        panelBackdropRect.offsetMax = new Vector2(-8f, -8f);
+        panelBackdropRect.offsetMin = Vector2.zero;
+        panelBackdropRect.offsetMax = Vector2.zero;
         panelBackdropRect.SetAsFirstSibling();
 
         gameOverText = CreateText(gameOverPanel.transform, font, "GameOverText", "GAME OVER", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -132f), 84, new Color(0.92f, 1f, 1f, 1f));
@@ -781,7 +781,7 @@ public static class PrototypeSceneBootstrap
         main.playOnAwake = true;
         main.loop = true;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
-        float particleLifetime = effectsTuning != null ? effectsTuning.particleLifetime : 0.0625f;
+        float particleLifetime = effectsTuning != null ? effectsTuning.particleLifetime : 0.30f;
         float particleStartSize = effectsTuning != null ? effectsTuning.particleStartSize : 0.11f;
         int particleMaxCount = effectsTuning != null ? effectsTuning.particleMaxCount : 22;
         main.startLifetime = particleLifetime;
@@ -798,7 +798,7 @@ public static class PrototypeSceneBootstrap
         var shape = particles.shape;
         shape.enabled = true;
         shape.shapeType = ParticleSystemShapeType.Box;
-        float particleSpawnWidth = effectsTuning != null ? effectsTuning.particleSpawnWidth : 0.3773f;
+        float particleSpawnWidth = effectsTuning != null ? effectsTuning.particleSpawnWidth : 0.69f;
         shape.scale = new Vector3(particleSpawnWidth, 0.001f, 0.01f);
 
         var velocityOverLifetime = particles.velocityOverLifetime;
@@ -1123,25 +1123,25 @@ public static class PrototypeSceneBootstrap
         Sprite ringSprite = CreateOrbRingSprite(96);
         Sprite orbSprite = CreateCircleSprite(64);
 
-        GameObject burst = CreateSpriteObject("Burst", orb.transform, burstSprite, new Color(0.35f, 0.92f, 1f, 0.3f), new Vector3(1.4f, 1.4f, 1f), Vector3.zero);
+        GameObject burst = CreateSpriteObject("Burst", orb.transform, burstSprite, new Color(0.35f, 0.92f, 1f, 0.34f), new Vector3(1.95f, 1.95f, 1f), Vector3.zero);
         burst.GetComponent<SpriteRenderer>().sortingOrder = 0;
 
-        GameObject glow = CreateSpriteObject("Glow", orb.transform, orbSprite, new Color(0.28f, 0.95f, 1f, 0.24f), new Vector3(1.2f, 1.2f, 1f), Vector3.zero);
+        GameObject glow = CreateSpriteObject("Glow", orb.transform, orbSprite, new Color(0.28f, 0.95f, 1f, 0.28f), new Vector3(1.45f, 1.45f, 1f), Vector3.zero);
         glow.GetComponent<SpriteRenderer>().sortingOrder = 1;
 
-        GameObject ring = CreateSpriteObject("Ring", orb.transform, ringSprite, new Color(0.46f, 0.98f, 1f, 0.85f), new Vector3(0.82f, 0.82f, 1f), Vector3.zero);
+        GameObject ring = CreateSpriteObject("Ring", orb.transform, ringSprite, new Color(0.46f, 0.98f, 1f, 0.88f), new Vector3(1.02f, 1.02f, 1f), Vector3.zero);
         ring.GetComponent<SpriteRenderer>().sortingOrder = 2;
 
-        GameObject core = CreateSpriteObject("Core", orb.transform, orbSprite, new Color(0.7f, 1f, 1f, 1f), new Vector3(0.54f, 0.54f, 1f), Vector3.zero);
+        GameObject core = CreateSpriteObject("Core", orb.transform, orbSprite, new Color(0.7f, 1f, 1f, 1f), new Vector3(0.68f, 0.68f, 1f), Vector3.zero);
         core.GetComponent<SpriteRenderer>().sortingOrder = 3;
 
-        GameObject body = CreateSpriteObject("Body", orb.transform, orbSprite, Color.white, new Vector3(0.24f, 0.24f, 1f), Vector3.zero);
+        GameObject body = CreateSpriteObject("Body", orb.transform, orbSprite, Color.white, new Vector3(0.3f, 0.3f, 1f), Vector3.zero);
         body.GetComponent<SpriteRenderer>().sortingOrder = 4;
         body.AddComponent<EnergyOrb>();
 
         CircleCollider2D collider = body.AddComponent<CircleCollider2D>();
         collider.isTrigger = true;
-        collider.radius = 1f;
+        collider.radius = 1.2f;
 
         return orb;
     }

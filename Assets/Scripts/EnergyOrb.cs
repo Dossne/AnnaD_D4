@@ -8,23 +8,33 @@ public class EnergyOrb : MonoBehaviour
     private bool isCollected;
     private Transform rootTransform;
     private Vector3 baseScale;
+    private Transform burstTransform;
 
     private void OnEnable()
     {
         rootTransform = transform.parent != null ? transform.parent : transform;
         baseScale = rootTransform.localScale;
+        burstTransform = rootTransform.Find("Burst");
         isCollected = false;
     }
 
     private void Update()
     {
-        if (isCollected || rootTransform == null)
+        if (rootTransform == null)
         {
             return;
         }
 
-        float pulse = 1f + Mathf.Sin(Time.time * 4.4f) * 0.04f;
-        rootTransform.localScale = baseScale * pulse;
+        if (!isCollected)
+        {
+            float pulse = 1f + Mathf.Sin(Time.time * 4.4f) * 0.04f;
+            rootTransform.localScale = baseScale * pulse;
+        }
+
+        if (burstTransform != null)
+        {
+            burstTransform.localRotation = Quaternion.Euler(0f, 0f, Time.time * 34f);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)

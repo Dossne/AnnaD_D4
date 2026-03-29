@@ -61,7 +61,7 @@ public class GameAudio : MonoBehaviour
     {
         if (Instance != null && Instance.switchClip != null)
         {
-            Instance.audioSource.PlayOneShot(Instance.switchClip, 0.75f);
+            Instance.audioSource.PlayOneShot(Instance.switchClip, 0.5f);
         }
     }
 
@@ -77,7 +77,7 @@ public class GameAudio : MonoBehaviour
     {
         if (Instance != null && Instance.pickupClip != null)
         {
-            Instance.audioSource.PlayOneShot(Instance.pickupClip, 0.52f);
+            Instance.audioSource.PlayOneShot(Instance.pickupClip, 0.8f);
         }
     }
 
