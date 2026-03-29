@@ -1134,14 +1134,8 @@ public static class PrototypeSceneBootstrap
         glowRenderer.material = CreateAdditiveTrailMaterial();
         glowRenderer.material.color = new Color(0.32f, 0.98f, 1f, 0.64f);
 
-        GameObject core = CreateSpriteObject("Core", orb.transform, orbSprite, new Color(0.94f, 1f, 1f, 1f), new Vector3(1.02f, 1.02f, 1f), Vector3.zero);
-        SpriteRenderer coreRenderer = core.GetComponent<SpriteRenderer>();
-        coreRenderer.sortingOrder = 2;
-        coreRenderer.material = CreateAdditiveTrailMaterial();
-        coreRenderer.material.color = new Color(1f, 1f, 1f, 1f);
-
-        GameObject body = CreateSpriteObject("Body", orb.transform, orbSprite, Color.white, new Vector3(0.46f, 0.46f, 1f), Vector3.zero);
-        body.GetComponent<SpriteRenderer>().sortingOrder = 4;
+        GameObject body = CreateSpriteObject("Body", orb.transform, orbSprite, Color.white, new Vector3(0.65f, 0.65f, 1f), Vector3.zero);
+        body.GetComponent<SpriteRenderer>().sortingOrder = 2;
         body.AddComponent<EnergyOrb>();
 
         CircleCollider2D collider = body.AddComponent<CircleCollider2D>();
