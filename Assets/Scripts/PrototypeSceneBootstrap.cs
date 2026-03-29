@@ -743,17 +743,17 @@ public static class PrototypeSceneBootstrap
         renderer.material.mainTexture = CreateCircleTexture(64);
         renderer.renderMode = ParticleSystemRenderMode.Billboard;
         renderer.sortMode = ParticleSystemSortMode.Distance;
-        renderer.minParticleSize = 0.02f;
-        renderer.maxParticleSize = 0.12f;
-        renderer.sortingOrder = 1;
+        renderer.minParticleSize = 0.03f;
+        renderer.maxParticleSize = 0.16f;
+        renderer.sortingOrder = 3;
 
         var main = particles.main;
         main.playOnAwake = true;
         main.loop = true;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
         float particleLifetime = effectsTuning != null ? effectsTuning.particleLifetime : 0.25f;
-        float particleStartSize = effectsTuning != null ? effectsTuning.particleStartSize : 0.16f;
-        int particleMaxCount = effectsTuning != null ? effectsTuning.particleMaxCount : 14;
+        float particleStartSize = effectsTuning != null ? effectsTuning.particleStartSize : 0.22f;
+        int particleMaxCount = effectsTuning != null ? effectsTuning.particleMaxCount : 22;
         main.startLifetime = particleLifetime;
         main.startSpeed = 0.12f;
         main.startSize = particleStartSize;
@@ -763,7 +763,7 @@ public static class PrototypeSceneBootstrap
             new Color(0.5f, 0.92f, 1f, 0.72f));
 
         var emission = particles.emission;
-        emission.rateOverTime = effectsTuning != null ? effectsTuning.particleRateOverTime : 32f;
+        emission.rateOverTime = effectsTuning != null ? effectsTuning.particleRateOverTime : 48f;
 
         var shape = particles.shape;
         shape.enabled = true;
