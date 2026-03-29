@@ -745,7 +745,9 @@ public static class PrototypeSceneBootstrap
         renderer.sortMode = ParticleSystemSortMode.Distance;
         renderer.minParticleSize = 0.03f;
         renderer.maxParticleSize = 0.16f;
-        renderer.sortingOrder = 3;
+        int particleSortingOrder = effectsTuning != null ? effectsTuning.particleSortingOrder : 3;
+        float particleAlphaMultiplier = effectsTuning != null ? effectsTuning.particleAlphaMultiplier : 1.3f;
+        renderer.sortingOrder = particleSortingOrder;
 
         var main = particles.main;
         main.playOnAwake = true;
@@ -759,8 +761,8 @@ public static class PrototypeSceneBootstrap
         main.startSize = particleStartSize;
         main.maxParticles = particleMaxCount;
         main.startColor = new ParticleSystem.MinMaxGradient(
-            new Color(0.82f, 1f, 1f, 0.88f),
-            new Color(0.5f, 0.92f, 1f, 0.72f));
+            new Color(0.82f, 1f, 1f, Mathf.Clamp01(0.88f * particleAlphaMultiplier)),
+            new Color(0.5f, 0.92f, 1f, Mathf.Clamp01(0.72f * particleAlphaMultiplier)));
 
         var emission = particles.emission;
         emission.rateOverTime = effectsTuning != null ? effectsTuning.particleRateOverTime : 48f;
@@ -768,7 +770,7 @@ public static class PrototypeSceneBootstrap
         var shape = particles.shape;
         shape.enabled = true;
         shape.shapeType = ParticleSystemShapeType.Box;
-        float particleSpawnWidth = effectsTuning != null ? effectsTuning.particleSpawnWidth : 0.96f;
+        float particleSpawnWidth = effectsTuning != null ? effectsTuning.particleSpawnWidth : 0.77f;
         shape.scale = new Vector3(particleSpawnWidth, 0.001f, 0.01f);
 
         var velocityOverLifetime = particles.velocityOverLifetime;
@@ -789,8 +791,8 @@ public static class PrototypeSceneBootstrap
             },
             new[]
             {
-                new GradientAlphaKey(0.72f, 0f),
-                new GradientAlphaKey(0.32f, 0.35f),
+                new GradientAlphaKey(Mathf.Clamp01(0.72f * particleAlphaMultiplier), 0f),
+                new GradientAlphaKey(Mathf.Clamp01(0.32f * particleAlphaMultiplier), 0.35f),
                 new GradientAlphaKey(0f, 1f)
             });
         colorOverLifetime.color = new ParticleSystem.MinMaxGradient(colorGradient);

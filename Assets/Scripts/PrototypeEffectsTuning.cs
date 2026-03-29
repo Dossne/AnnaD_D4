@@ -25,5 +25,7 @@ public class PrototypeEffectsTuning : MonoBehaviour
     public float particleStartSize = 0.22f;
     public int particleMaxCount = 22;
     public float particleRateOverTime = 48f;
-    public float particleSpawnWidth = 0.96f;
+    public float particleSpawnWidth = 0.77f;
+    public float particleAlphaMultiplier = 1.3f;
+    public int particleSortingOrder = 3;
 }
