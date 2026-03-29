@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 
 public class EnergyOrb : MonoBehaviour
@@ -27,7 +27,7 @@ public class EnergyOrb : MonoBehaviour
 
         if (!isCollected)
         {
-            float pulse = 1f + Mathf.Sin(Time.time * 4.4f) * 0.04f;
+            float pulse = 1f + Mathf.Sin(Time.time * 4.1f) * 0.06f;
             rootTransform.localScale = baseScale * pulse;
         }
 

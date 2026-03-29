@@ -1123,29 +1123,46 @@ public static class PrototypeSceneBootstrap
         Sprite ringSprite = CreateOrbRingSprite(96);
         Sprite orbSprite = CreateCircleSprite(64);
 
-        GameObject burst = CreateSpriteObject("Burst", orb.transform, burstSprite, new Color(0.35f, 0.92f, 1f, 0.34f), new Vector3(1.95f, 1.95f, 1f), Vector3.zero);
-        burst.GetComponent<SpriteRenderer>().sortingOrder = 0;
+        GameObject outerGlow = CreateSpriteObject("OuterGlow", orb.transform, orbSprite, new Color(0.22f, 0.95f, 1f, 0.34f), new Vector3(2.3f, 2.3f, 1f), Vector3.zero);
+        SpriteRenderer outerGlowRenderer = outerGlow.GetComponent<SpriteRenderer>();
+        outerGlowRenderer.sortingOrder = 0;
+        outerGlowRenderer.material = CreateAdditiveTrailMaterial();
+        outerGlowRenderer.material.color = new Color(0.22f, 0.95f, 1f, 0.34f);
 
-        GameObject glow = CreateSpriteObject("Glow", orb.transform, orbSprite, new Color(0.28f, 0.95f, 1f, 0.28f), new Vector3(1.45f, 1.45f, 1f), Vector3.zero);
-        glow.GetComponent<SpriteRenderer>().sortingOrder = 1;
+        GameObject burst = CreateSpriteObject("Burst", orb.transform, burstSprite, new Color(0.42f, 0.96f, 1f, 0.58f), new Vector3(2.35f, 2.35f, 1f), Vector3.zero);
+        SpriteRenderer burstRenderer = burst.GetComponent<SpriteRenderer>();
+        burstRenderer.sortingOrder = 1;
+        burstRenderer.material = CreateAdditiveTrailMaterial();
+        burstRenderer.material.color = new Color(0.42f, 0.96f, 1f, 0.54f);
 
-        GameObject ring = CreateSpriteObject("Ring", orb.transform, ringSprite, new Color(0.46f, 0.98f, 1f, 0.88f), new Vector3(1.02f, 1.02f, 1f), Vector3.zero);
-        ring.GetComponent<SpriteRenderer>().sortingOrder = 2;
+        GameObject glow = CreateSpriteObject("Glow", orb.transform, orbSprite, new Color(0.3f, 0.96f, 1f, 0.48f), new Vector3(1.78f, 1.78f, 1f), Vector3.zero);
+        SpriteRenderer glowRenderer = glow.GetComponent<SpriteRenderer>();
+        glowRenderer.sortingOrder = 2;
+        glowRenderer.material = CreateAdditiveTrailMaterial();
+        glowRenderer.material.color = new Color(0.28f, 0.96f, 1f, 0.52f);
 
-        GameObject core = CreateSpriteObject("Core", orb.transform, orbSprite, new Color(0.7f, 1f, 1f, 1f), new Vector3(0.68f, 0.68f, 1f), Vector3.zero);
-        core.GetComponent<SpriteRenderer>().sortingOrder = 3;
+        GameObject ring = CreateSpriteObject("Ring", orb.transform, ringSprite, new Color(0.68f, 1f, 1f, 0.98f), new Vector3(1.18f, 1.18f, 1f), Vector3.zero);
+        SpriteRenderer ringRenderer = ring.GetComponent<SpriteRenderer>();
+        ringRenderer.sortingOrder = 3;
+        ringRenderer.material = CreateAdditiveTrailMaterial();
+        ringRenderer.material.color = new Color(0.62f, 1f, 1f, 1f);
 
-        GameObject body = CreateSpriteObject("Body", orb.transform, orbSprite, Color.white, new Vector3(0.3f, 0.3f, 1f), Vector3.zero);
-        body.GetComponent<SpriteRenderer>().sortingOrder = 4;
+        GameObject core = CreateSpriteObject("Core", orb.transform, orbSprite, new Color(0.82f, 1f, 1f, 1f), new Vector3(0.82f, 0.82f, 1f), Vector3.zero);
+        SpriteRenderer coreRenderer = core.GetComponent<SpriteRenderer>();
+        coreRenderer.sortingOrder = 4;
+        coreRenderer.material = CreateAdditiveTrailMaterial();
+        coreRenderer.material.color = new Color(0.88f, 1f, 1f, 1f);
+
+        GameObject body = CreateSpriteObject("Body", orb.transform, orbSprite, Color.white, new Vector3(0.38f, 0.38f, 1f), Vector3.zero);
+        body.GetComponent<SpriteRenderer>().sortingOrder = 5;
         body.AddComponent<EnergyOrb>();
 
         CircleCollider2D collider = body.AddComponent<CircleCollider2D>();
         collider.isTrigger = true;
-        collider.radius = 1.2f;
+        collider.radius = 1.35f;
 
         return orb;
     }
-
     private static void CreateManagers(Transform root, Camera camera, GameObject player, GameObject obstacleTemplate, GameObject energyOrbTemplate, Font font, Sprite sprite)
     {
         GameObject gameManagerObject = new GameObject("GameManager");
