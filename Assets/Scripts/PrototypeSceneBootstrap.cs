@@ -1119,18 +1119,29 @@ public static class PrototypeSceneBootstrap
         orb.transform.SetParent(root);
         orb.SetActive(false);
 
+        Sprite burstSprite = CreateOrbBurstSprite(128);
+        Sprite ringSprite = CreateOrbRingSprite(96);
         Sprite orbSprite = CreateCircleSprite(64);
 
-        GameObject glow = CreateSpriteObject("Glow", orb.transform, orbSprite, new Color(0.22f, 0.95f, 1f, 0.2f), new Vector3(1.15f, 1.15f, 1f), Vector3.zero);
-        glow.GetComponent<SpriteRenderer>().sortingOrder = 0;
+        GameObject burst = CreateSpriteObject("Burst", orb.transform, burstSprite, new Color(0.35f, 0.92f, 1f, 0.42f), new Vector3(1.7f, 1.7f, 1f), Vector3.zero);
+        burst.GetComponent<SpriteRenderer>().sortingOrder = 0;
 
-        GameObject body = CreateSpriteObject("Body", orb.transform, orbSprite, new Color(0.8f, 1f, 1f, 0.98f), new Vector3(0.42f, 0.42f, 1f), Vector3.zero);
-        body.GetComponent<SpriteRenderer>().sortingOrder = 1;
+        GameObject glow = CreateSpriteObject("Glow", orb.transform, orbSprite, new Color(0.28f, 0.95f, 1f, 0.24f), new Vector3(1.2f, 1.2f, 1f), Vector3.zero);
+        glow.GetComponent<SpriteRenderer>().sortingOrder = 1;
+
+        GameObject ring = CreateSpriteObject("Ring", orb.transform, ringSprite, new Color(0.46f, 0.98f, 1f, 0.85f), new Vector3(0.82f, 0.82f, 1f), Vector3.zero);
+        ring.GetComponent<SpriteRenderer>().sortingOrder = 2;
+
+        GameObject core = CreateSpriteObject("Core", orb.transform, orbSprite, new Color(0.7f, 1f, 1f, 1f), new Vector3(0.54f, 0.54f, 1f), Vector3.zero);
+        core.GetComponent<SpriteRenderer>().sortingOrder = 3;
+
+        GameObject body = CreateSpriteObject("Body", orb.transform, orbSprite, Color.white, new Vector3(0.24f, 0.24f, 1f), Vector3.zero);
+        body.GetComponent<SpriteRenderer>().sortingOrder = 4;
         body.AddComponent<EnergyOrb>();
 
         CircleCollider2D collider = body.AddComponent<CircleCollider2D>();
         collider.isTrigger = true;
-        collider.radius = 0.5f;
+        collider.radius = 1f;
 
         return orb;
     }
@@ -1272,6 +1283,57 @@ public static class PrototypeSceneBootstrap
         return Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), size);
     }
 
+    private static Sprite CreateOrbBurstSprite(int size)
+    {
+        Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        texture.wrapMode = TextureWrapMode.Clamp;
+        texture.filterMode = FilterMode.Bilinear;
+        Vector2 center = new Vector2((size - 1) * 0.5f, (size - 1) * 0.5f);
+        float radius = size * 0.5f;
+
+        for (int y = 0; y < size; y++)
+        {
+            for (int x = 0; x < size; x++)
+            {
+                Vector2 delta = new Vector2(x, y) - center;
+                float distance = delta.magnitude;
+                float normalized = Mathf.Clamp01(distance / radius);
+                float angle = Mathf.Atan2(delta.y, delta.x);
+                float rays = 0.5f + 0.5f * Mathf.Cos(angle * 10f);
+                float radialFade = 1f - Mathf.SmoothStep(0.08f, 1f, normalized);
+                float centerFade = 1f - Mathf.SmoothStep(0f, 0.22f, normalized);
+                float alpha = Mathf.Clamp01(radialFade * 0.38f + rays * radialFade * 0.28f + centerFade * 0.22f);
+                texture.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
+            }
+        }
+
+        texture.Apply();
+        return Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), size);
+    }
+
+    private static Sprite CreateOrbRingSprite(int size)
+    {
+        Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        texture.wrapMode = TextureWrapMode.Clamp;
+        texture.filterMode = FilterMode.Bilinear;
+        Vector2 center = new Vector2((size - 1) * 0.5f, (size - 1) * 0.5f);
+        float radius = size * 0.5f;
+
+        for (int y = 0; y < size; y++)
+        {
+            for (int x = 0; x < size; x++)
+            {
+                float distance = Vector2.Distance(new Vector2(x, y), center) / radius;
+                float ring = 1f - Mathf.Abs(distance - 0.58f) / 0.08f;
+                float alpha = Mathf.Clamp01(ring);
+                alpha *= alpha;
+                texture.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
+            }
+        }
+
+        texture.Apply();
+        return Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), size);
+    }
     private static Texture2D CreateCenterGlowTexture(int width, int height)
     {
         Texture2D texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
