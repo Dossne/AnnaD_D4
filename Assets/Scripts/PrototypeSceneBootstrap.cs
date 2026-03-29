@@ -771,8 +771,8 @@ public static class PrototypeSceneBootstrap
         renderer.material.mainTexture = roundSprite != null ? roundSprite.texture : CreateCircleTexture(64);
         renderer.renderMode = ParticleSystemRenderMode.Billboard;
         renderer.sortMode = ParticleSystemSortMode.Distance;
-        renderer.minParticleSize = 0.03f;
-        renderer.maxParticleSize = 0.16f;
+        renderer.minParticleSize = 0.015f;
+        renderer.maxParticleSize = 0.08f;
         int particleSortingOrder = effectsTuning != null ? effectsTuning.particleSortingOrder : 3;
         float particleAlphaMultiplier = effectsTuning != null ? effectsTuning.particleAlphaMultiplier : 1.3f;
         renderer.sortingOrder = particleSortingOrder;
@@ -781,8 +781,8 @@ public static class PrototypeSceneBootstrap
         main.playOnAwake = true;
         main.loop = true;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
-        float particleLifetime = effectsTuning != null ? effectsTuning.particleLifetime : 0.25f;
-        float particleStartSize = effectsTuning != null ? effectsTuning.particleStartSize : 0.22f;
+        float particleLifetime = effectsTuning != null ? effectsTuning.particleLifetime : 0.125f;
+        float particleStartSize = effectsTuning != null ? effectsTuning.particleStartSize : 0.11f;
         int particleMaxCount = effectsTuning != null ? effectsTuning.particleMaxCount : 22;
         main.startLifetime = particleLifetime;
         main.startSpeed = 0.12f;
@@ -798,7 +798,7 @@ public static class PrototypeSceneBootstrap
         var shape = particles.shape;
         shape.enabled = true;
         shape.shapeType = ParticleSystemShapeType.Box;
-        float particleSpawnWidth = effectsTuning != null ? effectsTuning.particleSpawnWidth : 0.77f;
+        float particleSpawnWidth = effectsTuning != null ? effectsTuning.particleSpawnWidth : 0.539f;
         shape.scale = new Vector3(particleSpawnWidth, 0.001f, 0.01f);
 
         var velocityOverLifetime = particles.velocityOverLifetime;

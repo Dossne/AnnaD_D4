@@ -21,11 +21,11 @@ public class PrototypeEffectsTuning : MonoBehaviour
     public float centerTrailGlowTime = 0.34f;
 
     [Header("Round Trail Particles")]
-    public float particleLifetime = 0.25f;
-    public float particleStartSize = 0.22f;
+    public float particleLifetime = 0.125f;
+    public float particleStartSize = 0.11f;
     public int particleMaxCount = 22;
     public float particleRateOverTime = 48f;
-    public float particleSpawnWidth = 0.77f;
+    public float particleSpawnWidth = 0.539f;
     public float particleAlphaMultiplier = 1.3f;
     public int particleSortingOrder = 3;
 }
