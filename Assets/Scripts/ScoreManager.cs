@@ -18,7 +18,8 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private EnergyOrbSpawner orbSpawner;
 
     private const float RestartInputDelay = 1f;
-    private const int OrbsToStartRush = 10;
+    private const int InitialRushOrbRequirement = 10;
+    private const int RushRequirementStep = 5;
     private const int RushOrbsToFinish = 10;
     private const float RushWallTension = 1f;
     private const float RushUpwardSpeed = 18f;
@@ -29,6 +30,7 @@ public class ScoreManager : MonoBehaviour
     private int collectedPoints;
     private int collectedOrbs;
     private int rushCollectedOrbs;
+    private int nextRushOrbRequirement;
     private float gameOverShownAt;
     private bool isGameOver;
     private bool isRestarting;
@@ -148,8 +150,9 @@ public class ScoreManager : MonoBehaviour
         survivalTime = 0f;
         collectedPoints = 0;
         collectedOrbs = 0;
-        rushCollectedOrbs = 0;
         gameOverShownAt = 0f;
+        rushCollectedOrbs = 0;
+        nextRushOrbRequirement = InitialRushOrbRequirement;
         UpdateScoreText();
         SetGameOverPanelVisible(false);
         SetFlashColor(new Color(1f, 1f, 1f, 0f));
@@ -200,7 +203,7 @@ public class ScoreManager : MonoBehaviour
         }
 
         collectedOrbs++;
-        if (collectedOrbs >= OrbsToStartRush)
+        if (collectedOrbs >= nextRushOrbRequirement)
         {
             StartRushMode();
         }
@@ -372,6 +375,7 @@ public class ScoreManager : MonoBehaviour
 
         isRushMode = false;
         rushCollectedOrbs = 0;
+        nextRushOrbRequirement += RushRequirementStep;
         obstacleSpawner?.EndRushMode();
         orbSpawner?.SetPaused(false);
         player?.ExitRushMode();
@@ -382,6 +386,7 @@ public class ScoreManager : MonoBehaviour
     {
         isRushMode = false;
         rushCollectedOrbs = 0;
+        nextRushOrbRequirement = InitialRushOrbRequirement;
         collectedOrbs = 0;
         obstacleSpawner?.SetPaused(false);
         orbSpawner?.SetPaused(false);
@@ -477,4 +482,6 @@ public class ScoreManager : MonoBehaviour
         }
     }
 }
+
+
 

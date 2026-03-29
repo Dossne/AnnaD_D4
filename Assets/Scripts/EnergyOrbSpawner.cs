@@ -11,7 +11,7 @@ public class EnergyOrbSpawner : MonoBehaviour
     [SerializeField] private int maxSpawnedOrbs = 8;
     [SerializeField] private float spawnPaddingAboveView = 3f;
     [SerializeField] private float cleanupPaddingBelowView = 4f;
-    [SerializeField] private float spawnChance = 0.55f;
+    [SerializeField] private float spawnChance = 0.385f;
 
     private readonly Queue<GameObject> spawnedOrbs = new Queue<GameObject>();
     private float nextSpawnY;
@@ -129,7 +129,7 @@ public class EnergyOrbSpawner : MonoBehaviour
         startOffsetY = offsetY;
         spawnStepY = stepY;
         maxSpawnedOrbs = maxOrbs;
-        spawnChance = chance;
+        spawnChance = Mathf.Clamp01(chance * 0.7f);
     }
 
     public void SetPaused(bool paused)
@@ -163,3 +163,4 @@ public class EnergyOrbSpawner : MonoBehaviour
         nextSpawnY = Mathf.Max(nextSpawnY, startY + spacing * count);
     }
 }
+
