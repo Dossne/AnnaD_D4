@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class ObstacleSpawner : MonoBehaviour
@@ -22,6 +22,7 @@ public class ObstacleSpawner : MonoBehaviour
     private bool nextSpawnOnLeft = true;
     private int sameSideChainCount;
     private int consecutiveEmptyRows;
+    private bool isPaused;
 
     private struct DifficultyPhase
     {
@@ -58,6 +59,12 @@ public class ObstacleSpawner : MonoBehaviour
         }
 
         elapsedTime += Time.deltaTime;
+        CleanupObstaclesBelowView();
+
+        if (isPaused)
+        {
+            return;
+        }
 
         float spawnTriggerY = Mathf.Max(player.position.y + startOffsetY, GetTopOfViewY() + spawnPaddingAboveView);
         while (spawnTriggerY >= nextSpawnY)
@@ -65,8 +72,6 @@ public class ObstacleSpawner : MonoBehaviour
             SpawnRow(nextSpawnY, false);
             nextSpawnY += spawnStepY;
         }
-
-        CleanupObstaclesBelowView();
     }
 
     private void SeedOpeningRows()
@@ -236,5 +241,10 @@ public class ObstacleSpawner : MonoBehaviour
         startOffsetY = offsetY;
         spawnStepY = stepY;
         maxSpawnedObstacles = maxObstacles;
+    }
+
+    public void SetPaused(bool paused)
+    {
+        isPaused = paused;
     }
 }

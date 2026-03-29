@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
@@ -20,8 +20,11 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private bool isAlive = true;
     private bool isOnLeftWall;
+    private bool isInRushMode;
     private float elapsedRunTime;
     private float inputBlockTimer;
+    private float rushCenterX;
+    private float rushUpwardSpeed;
 
     public bool IsAlive => isAlive;
 
@@ -61,7 +64,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        if (isAlive && (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)))
+        if (!isInRushMode && isAlive && (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)))
         {
             SwitchSide();
         }
@@ -76,9 +79,9 @@ public class PlayerController : MonoBehaviour
         }
 
         elapsedRunTime += Time.fixedDeltaTime;
-        float currentUpwardSpeed = GetCurrentUpwardSpeed();
+        float currentUpwardSpeed = isInRushMode ? rushUpwardSpeed : GetCurrentUpwardSpeed();
 
-        float targetX = isOnLeftWall ? leftWallX : rightWallX;
+        float targetX = isInRushMode ? rushCenterX : (isOnLeftWall ? leftWallX : rightWallX);
         float nextX = Mathf.MoveTowards(rb.position.x, targetX, switchSpeed * Time.fixedDeltaTime);
         if (Mathf.Abs(targetX - nextX) <= wallSnapDistance)
         {
@@ -137,5 +140,18 @@ public class PlayerController : MonoBehaviour
         lateUpwardSpeed = lateSpeed;
         wallSnapDistance = snapDistance;
         speedIncreasePerSecond = accelerationPerSecond;
+    }
+
+    public void EnterRushMode(float centerX, float upwardSpeed)
+    {
+        isInRushMode = true;
+        rushCenterX = centerX;
+        rushUpwardSpeed = upwardSpeed;
+        inputBlockTimer = 0f;
+    }
+
+    public void ExitRushMode()
+    {
+        isInRushMode = false;
     }
 }

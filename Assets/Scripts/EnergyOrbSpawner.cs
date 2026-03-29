@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class EnergyOrbSpawner : MonoBehaviour
@@ -15,6 +15,7 @@ public class EnergyOrbSpawner : MonoBehaviour
 
     private readonly Queue<GameObject> spawnedOrbs = new Queue<GameObject>();
     private float nextSpawnY;
+    private bool isPaused;
 
     private void Start()
     {
@@ -36,6 +37,13 @@ public class EnergyOrbSpawner : MonoBehaviour
             return;
         }
 
+        CleanupOrbsBelowView();
+
+        if (isPaused)
+        {
+            return;
+        }
+
         float spawnTriggerY = Mathf.Max(player.position.y + startOffsetY, GetTopOfViewY() + spawnPaddingAboveView);
         while (spawnTriggerY >= nextSpawnY)
         {
@@ -46,8 +54,6 @@ public class EnergyOrbSpawner : MonoBehaviour
 
             nextSpawnY += spawnStepY;
         }
-
-        CleanupOrbsBelowView();
     }
 
     private void SpawnOrb(float spawnY)
@@ -124,5 +130,33 @@ public class EnergyOrbSpawner : MonoBehaviour
         spawnStepY = stepY;
         maxSpawnedOrbs = maxOrbs;
         spawnChance = chance;
+    }
+
+    public void SetPaused(bool paused)
+    {
+        isPaused = paused;
+    }
+
+    public void ClearAllOrbs()
+    {
+        while (spawnedOrbs.Count > 0)
+        {
+            DestroyOldestOrb();
+        }
+    }
+
+    public void SpawnRushOrbs(float startY, int count, float spacing)
+    {
+        if (orbPrefab == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            SpawnOrb(startY + spacing * i);
+        }
+
+        nextSpawnY = Mathf.Max(nextSpawnY, startY + spacing * count);
     }
 }

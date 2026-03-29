@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EnergyOrb : MonoBehaviour
 {
@@ -12,7 +12,7 @@ public class EnergyOrb : MonoBehaviour
             return;
         }
 
-        ScoreManager.Instance?.AddPoints(scoreValue);
+        ScoreManager.Instance?.CollectOrb(scoreValue);
         GameAudio.PlayPickup();
 
         GameObject target = transform.parent != null ? transform.parent.gameObject : gameObject;

@@ -6,13 +6,22 @@ using UnityEngine.UI;
 
 public static class PrototypeSceneBootstrap
 {
+    private struct WallPart
+    {
+        public Transform transform;
+        public float baseX;
+        public bool isLeft;
+    }
     private const float LeftWallX = -2.35f;
     private const float RightWallX = 2.35f;
     private const float WallVisualOffset = 0.75f;
     private const float PlayerWallContactOffset = 0.68f;
     private const string RuntimeRootName = "PrototypeRuntime";
+    private const float RushWallOffset = 1.05f;
 
     private static PrototypeEffectsTuning effectsTuning;
+    private static readonly System.Collections.Generic.List<WallPart> wallParts = new System.Collections.Generic.List<WallPart>();
+    private static float corridorTension;
 
     private static float LeftWallVisualX => LeftWallX - WallVisualOffset;
     private static float RightWallVisualX => RightWallX + WallVisualOffset;
@@ -68,6 +77,9 @@ public static class PrototypeSceneBootstrap
 
     private static void ClearExistingPrototype(Camera camera)
     {
+        wallParts.Clear();
+        corridorTension = 0f;
+
         GameObject existingRoot = GameObject.Find(RuntimeRootName);
         if (existingRoot != null)
         {
@@ -228,12 +240,15 @@ public static class PrototypeSceneBootstrap
 
         GameObject aura = CreateSpriteObject(name + "Aura", parent, gradientSprite, outerGlow, new Vector3(2.4f, height, 1f), new Vector3(x, 0f, z + 0.45f));
         aura.GetComponent<SpriteRenderer>().sortingOrder = 8;
+        RegisterWallPart(aura.transform, pointRight, x);
 
         GameObject glow = CreateSpriteObject(name + "Glow", parent, gradientSprite, midGlow, new Vector3(1f, height, 1f), new Vector3(x, 0f, z + 0.25f));
         glow.GetComponent<SpriteRenderer>().sortingOrder = 9;
+        RegisterWallPart(glow.transform, pointRight, x);
 
         GameObject core = CreateSpriteObject(name, parent, sprite, coreColor, new Vector3(0.44f, height, 1f), new Vector3(x, 0f, z));
         core.GetComponent<SpriteRenderer>().sortingOrder = 10;
+        RegisterWallPart(core.transform, pointRight, x);
 
         Texture2D shimmerTexture = CreateWallShimmerTexture(64, 256);
         float shadowPulseSpeed = pointRight
@@ -250,13 +265,16 @@ public static class PrototypeSceneBootstrap
         GameObject shadowPulse = CreateScrollingQuad(name + "ShadowPulse", parent, shimmerTexture, new Color(0.12f, 0f, 0.08f, shadowPulseAlpha), new Vector3(x, 0f, z + 0.09f), new Vector3(0.66f, height, 1f), pulseTextureScale, 0f, 0f, shadowPulseSpeed, 0f, 8);
         shadowPulse.transform.localEulerAngles = Vector3.zero;
         shadowPulse.GetComponent<MeshRenderer>().material.mainTextureOffset = new Vector2(0f, pointRight ? 0.12f : 0.58f);
+        RegisterWallPart(shadowPulse.transform, pointRight, x);
 
         GameObject pulse = CreateScrollingQuad(name + "Pulse", parent, shimmerTexture, new Color(1f, 0.45f, 0.78f, pulseAlpha), new Vector3(x, 0f, z + 0.12f), new Vector3(0.66f, height, 1f), pulseTextureScale, 0f, 0f, pulseSpeed, 0f, 9);
         pulse.transform.localEulerAngles = Vector3.zero;
         pulse.GetComponent<MeshRenderer>().material.mainTextureOffset = new Vector2(0f, pointRight ? 0.67f : 0.21f);
+        RegisterWallPart(pulse.transform, pointRight, x);
 
         GameObject shimmer = CreateScrollingQuad(name + "Shimmer", parent, shimmerTexture, highlightColor, new Vector3(x, 0f, z + 0.1f), new Vector3(0.3f, height, 1f), new Vector2(1f, 2.5f), 0f, 0f, 0.65f, 0f, 10);
         shimmer.transform.localEulerAngles = Vector3.zero;
+        RegisterWallPart(shimmer.transform, pointRight, x);
 
     }
 
@@ -321,7 +339,7 @@ public static class PrototypeSceneBootstrap
         return quad;
     }
 
-    private static void CreateCanvas(Transform root, Font font, Sprite sprite, out Text scoreText, out GameObject gameOverPanel, out Text gameOverText, out Text gameOverScoreText, out Image flashOverlay, out Button restartButton)
+    private static void CreateCanvas(Transform root, Font font, Sprite sprite, out Text scoreText, out GameObject gameOverPanel, out Text gameOverText, out Text gameOverScoreText, out Text pickupPopupText, out Image flashOverlay, out Button restartButton)
     {
         Color neonCyan = new Color(0.55f, 0.98f, 1f, 1f);
         Color neonBorder = new Color(0.36f, 0.92f, 1f, 0.78f);
@@ -382,6 +400,13 @@ public static class PrototypeSceneBootstrap
         scoreText.alignment = TextAnchor.MiddleCenter;
         AddOutline(scoreText.gameObject, new Color(0.12f, 0.85f, 1f, 0.14f), new Vector2(0.5f, -0.5f));
         AddShadow(scoreText.gameObject, new Color(0.1f, 0.85f, 1f, 0.36f), new Vector2(0f, 0f));
+
+        pickupPopupText = CreateText(canvas.transform, font, "PickupPopupText", "+5", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -250f), 98, new Color(0.88f, 1f, 1f, 0f));
+        pickupPopupText.fontStyle = FontStyle.Bold;
+        pickupPopupText.alignment = TextAnchor.MiddleCenter;
+        AddOutline(pickupPopupText.gameObject, new Color(0.18f, 0.92f, 1f, 0.76f), new Vector2(2f, -2f));
+        AddShadow(pickupPopupText.gameObject, new Color(0f, 0.72f, 0.9f, 0.42f), new Vector2(0f, 0f));
+        pickupPopupText.gameObject.SetActive(false);
 
         gameOverPanel = new GameObject("GameOverPanel");
         gameOverPanel.transform.SetParent(canvas.transform);
@@ -1130,8 +1155,8 @@ public static class PrototypeSceneBootstrap
         CameraFollow follow = camera.GetComponent<CameraFollow>();
         follow.Configure(player.transform, 3.5f);
 
-        CreateCanvas(root, font, sprite, out Text scoreText, out GameObject gameOverPanel, out Text gameOverText, out Text gameOverScoreText, out Image flashOverlay, out Button restartButton);
-        scoreManager.Configure(player.GetComponent<PlayerController>(), scoreText, gameOverPanel, gameOverText, gameOverScoreText, flashOverlay, restartButton);
+        CreateCanvas(root, font, sprite, out Text scoreText, out GameObject gameOverPanel, out Text gameOverText, out Text gameOverScoreText, out Text pickupPopupText, out Image flashOverlay, out Button restartButton);
+        scoreManager.Configure(player.GetComponent<PlayerController>(), scoreText, gameOverPanel, gameOverText, gameOverScoreText, pickupPopupText, flashOverlay, restartButton, spawner, orbSpawner);
     }
 
     private static GameObject CreateOverlayQuad(string name, Transform parent, Texture2D texture, Color tint, Vector3 localPosition, Vector3 localScale, int sortingOrder)
@@ -1167,6 +1192,39 @@ public static class PrototypeSceneBootstrap
         return gameObject;
     }
 
+    private static void RegisterWallPart(Transform wallTransform, bool isLeft, float baseX)
+    {
+        wallParts.Add(new WallPart
+        {
+            transform = wallTransform,
+            baseX = baseX,
+            isLeft = isLeft
+        });
+    }
+
+    public static float GetCorridorTension()
+    {
+        return corridorTension;
+    }
+
+    public static void SetCorridorTension(float tension)
+    {
+        corridorTension = Mathf.Clamp01(tension);
+        float offset = RushWallOffset * corridorTension;
+
+        for (int i = 0; i < wallParts.Count; i++)
+        {
+            WallPart part = wallParts[i];
+            if (part.transform == null)
+            {
+                continue;
+            }
+
+            Vector3 localPosition = part.transform.localPosition;
+            localPosition.x = part.isLeft ? part.baseX + offset : part.baseX - offset;
+            part.transform.localPosition = localPosition;
+        }
+    }
     private static Vector3 GetNormalizedSpriteScale(Sprite sprite, Vector3 desiredScale)
     {
         if (sprite == null)
