@@ -207,8 +207,8 @@ public static class PrototypeSceneBootstrap
         velocityOverLifetime.enabled = true;
         velocityOverLifetime.space = ParticleSystemSimulationSpace.Local;
         velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(0f);
-        velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(-0.16f, -0.16f);
-        velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(0f, 0f);
+        velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(-0.16f);
+        velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(0f);
 
         var noise = particles.noise;
         noise.enabled = true;
@@ -897,9 +897,9 @@ public static class PrototypeSceneBootstrap
         var velocityOverLifetime = sparks.velocityOverLifetime;
         velocityOverLifetime.enabled = true;
         velocityOverLifetime.space = ParticleSystemSimulationSpace.Local;
-        velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(-0.22f, 0.22f);
-        velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(-5.4f, -3.8f);
-        velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(0f, 0f);
+        velocityOverLifetime.x = new ParticleSystem.MinMaxCurve(0f);
+        velocityOverLifetime.y = new ParticleSystem.MinMaxCurve(-4.6f);
+        velocityOverLifetime.z = new ParticleSystem.MinMaxCurve(0f);
 
         var noise = sparks.noise;
         noise.enabled = true;

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnergyOrbSpawner : MonoBehaviour
@@ -154,7 +154,9 @@ public class EnergyOrbSpawner : MonoBehaviour
 
         for (int i = 0; i < count; i++)
         {
-            SpawnOrb(startY + spacing * i);
+            GameObject orb = Instantiate(orbPrefab, new Vector3(centerX, startY + spacing * i, 0f), Quaternion.identity, transform);
+            orb.SetActive(true);
+            spawnedOrbs.Enqueue(orb);
         }
 
         nextSpawnY = Mathf.Max(nextSpawnY, startY + spacing * count);
