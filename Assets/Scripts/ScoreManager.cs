@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -326,6 +326,12 @@ public class ScoreManager : MonoBehaviour
     private void PlayFlash(Color flashColor, float duration)
     {
         if (flashOverlay == null)
+        {
+            return;
+        }
+
+        // Disable orb pickup screen flash during the narrow rush corridor.
+        if (isRushMode && flashColor.r < 0.5f && flashColor.g > 0.9f)
         {
             return;
         }
