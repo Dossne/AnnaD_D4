@@ -742,7 +742,8 @@ public static class PrototypeSceneBootstrap
         ParticleSystem particles = trailParticlesObject.AddComponent<ParticleSystem>();
         ParticleSystemRenderer renderer = trailParticlesObject.GetComponent<ParticleSystemRenderer>();
         renderer.material = CreateAdditiveTrailMaterial();
-        renderer.material.mainTexture = CreateCircleTexture(64);
+        Sprite roundSprite = LoadRoundSprite();
+        renderer.material.mainTexture = roundSprite != null ? roundSprite.texture : CreateCircleTexture(64);
         renderer.renderMode = ParticleSystemRenderMode.Billboard;
         renderer.sortMode = ParticleSystemSortMode.Distance;
         renderer.minParticleSize = 0.03f;
@@ -936,6 +937,28 @@ public static class PrototypeSceneBootstrap
         }
 
         string spritePath = Path.Combine(Application.dataPath, "Art", "Sprites", "line.png");
+        if (!File.Exists(spritePath))
+        {
+            return null;
+        }
+
+        byte[] fileBytes = File.ReadAllBytes(spritePath);
+        Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+        texture.LoadImage(fileBytes, false);
+        texture.wrapMode = TextureWrapMode.Clamp;
+        texture.filterMode = FilterMode.Bilinear;
+        return Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), texture.width);
+    }
+
+    private static Sprite LoadRoundSprite()
+    {
+        Sprite resourceSprite = Resources.Load<Sprite>("Art/Sprites/Round");
+        if (resourceSprite != null)
+        {
+            return resourceSprite;
+        }
+
+        string spritePath = Path.Combine(Application.dataPath, "Art", "Sprites", "Round.png");
         if (!File.Exists(spritePath))
         {
             return null;
